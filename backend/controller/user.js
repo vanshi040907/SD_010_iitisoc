@@ -24,4 +24,37 @@ async function LoginUser(req,res) {
 
 
 }
+async function UserEnterRoom(req, res) {
+    const {roomid} = req.body;
+    const userid = req.user._id;
+    const user = await User.findOne({_id : userid});
+    if(!user) return res.json({error:"invalid user"});
+    const room = await User.findOne({code : roomid});
+    if(!room) return res.json({error:"invalid roomid"})
+    
+    return res.json({user:room.author,room_id: roomid})
+
+    
+
+}
+async function UserAllowed(req, res) {
+    const {roomid} = req.params.roomid;
+    const userid = req.user._id;
+    const user = await User.findOne({_id : userid});
+    const room = await User.findOne({code : roomid});
+    
+room.participants.push(user);
+await room.save();
+return res.json({success:"true"});
+
+
+    
+
+
+
+    
+
+}
+
+
 module.exports = {SigninUser,LoginUser};
