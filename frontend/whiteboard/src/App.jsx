@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import './App.css'
-import 
+import Workspace from './pages/Workspace'
 function App() {
 
   return (
     <>
-      
+      <Workspace />
     </>
   )
 }
