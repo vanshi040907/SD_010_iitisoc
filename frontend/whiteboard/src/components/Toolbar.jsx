@@ -55,7 +55,7 @@ const Toolbar = () => {
   return (
     <>
       <div
-        className="flex flex-col items-center gap-1 px-2 py-3 rounded-2xl border border-white/10 shadow-2xl"
+        className=" w-18 fixed top-36 left-4 flex flex-col items-center gap-1 px-2 py-3 rounded-2xl border border-white/10 shadow-2xl"
         style={{
           background: "rgba(15, 12, 30, 0.85)",
           backdropFilter: "blur(16px)",
@@ -130,7 +130,7 @@ const Toolbar = () => {
         <ToolTipButton id="redo" icon={Redo2} label="Redo" onClick={() => {}} isActive={false} />
       </div>
 
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full border border-white/10 text-xs text-slate-400"
+      <div className="left-13 -translate-x-1/2 fixed top-154 px-4 py-1.5 rounded-full border border-white/10 text-xs text-slate-400"
         style={{ background: "rgba(15,12,30,0.8)", backdropFilter: "blur(8px)" }}
       >
         Active: <span className="text-purple-400 font-medium capitalize">{activeTool === "shape" ? activeShape : activeTool}</span>

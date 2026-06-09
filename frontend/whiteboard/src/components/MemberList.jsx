@@ -13,7 +13,7 @@ const MEMBERS = [
 ];
 
 const Avatar = ({member, size = "md"}) => {
-  const dim = member.role === "Host" ? "w-8 h-8 text-sm" : "w-7 h-7 text-xs";
+  const dim = member.role === "Host" ? "w-12 h-12 text-2xl" : "w-9 h-9 text-m";
   return(
     <div
       className={`${dim} rounded-full flex items-center justify-center font-semibold text-white flex-shrink-0 ring-2 ring-[#0d0d1a]`}
@@ -44,7 +44,7 @@ const MemberList = () => {
           {/* here i writing the logic for stacking of the initials  */}
           <div className="flex items-center">
             {MEMBERS.slice(0, 3).map((m, i) => (
-              <div key={m.id} className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold text-white ring-2 ring-[#0d0d1a] flex-shrink-0"
+              <div key={m.id} className="w-10 h-10 rounded-full flex items-center justify-center text-l font-semibold text-white ring-2 ring-[#0d0d1a] flex-shrink-0"
               style={{ background:"#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0'), marginLeft: i === 0 ? 0 : "-8px", zIndex: 3 - i }}
               >
                 {m.name[0]}
@@ -52,7 +52,7 @@ const MemberList = () => {
             ))}
              {/* For Extra members */}
             {MEMBERS.length > 3 && (
-            <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold text-slate-300 ring-2 ring-[#0d0d1a] flex-shrink-0"
+            <div className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-semibold text-slate-300 ring-2 ring-[#0d0d1a] flex-shrink-0"
               style={{ background: "rgba(255,255,255,0.1)", marginLeft: "-8px" }}
             >
               +{MEMBERS.length - 3}
@@ -60,9 +60,9 @@ const MemberList = () => {
           )}
           </div>
 
-          <div className="flex flex-col items-start leading-tight">
-          <span className="text-white text-xs font-semibold">{MEMBERS.length} Members</span>
-          <span className="text-purple-400 text-[10px]">{onlineCount} online</span>
+          <div className="h-14 flex flex-col justify-center items-start leading-tight">
+          <span className="text-white text-m font-semibold">{MEMBERS.length} Members</span>
+          <span className="text-purple-400 text-[12px]">{onlineCount} online</span>
          </div>
 
          <ChevronDown
@@ -72,7 +72,7 @@ const MemberList = () => {
         </button>
 
         <div
-        className="mt-2 w-64 rounded-xl border border-white/10 overflow-hidden"
+        className="mt-2 w-69.5 rounded-xl border border-white/10 overflow-hidden"
         style={{
           background: "rgba(15, 12, 30, 0.92)",
           backdropFilter: "blur(16px)",
