@@ -1,6 +1,8 @@
 // Welcome.jsx
 
 import { useState } from "react";
+import { motion } from 'framer-motion'
+import { Link } from "react-router-dom"
 
 export default function Welcome() {
     const [myName, setMyName] = useState("");
@@ -45,19 +47,26 @@ export default function Welcome() {
     return (
         <div className="min-h-screen bg-[#080412] flex flex-col justify-center items-center px-5 py-10 font-[Nunito]">
 
-            {/* Background blobs — pure Tailwind arbitrary */}
-            <div className="fixed top-0 left-0 w-[500px] h-[500px] rounded-full bg-violet-900/20 blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-            <div className="fixed bottom-0 right-0 w-[500px] h-[500px] rounded-full bg-indigo-900/20 blur-[120px] translate-x-1/2 translate-y-1/2 pointer-events-none" />
+            <div className="fixed top-0 left-0 w-[500px] h-[500px] rounded-full bg-violet-900/20 -translate-x-1/2 -translate-y-1/2 blur-[200px] " />
+
+            <div className="fixed top-0 right-0 w-[500px] h-[500px] rounded-full bg-violet-900/20 translate-x-1/2 -translate-y-1/2 blur-[200px] " />
+
+            <div className="fixed bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-violet-900/20 -translate-x-1/2 translate-y-1/2 blur-[200px] " />
+
+            <div className="fixed bottom-0 right-0 w-[500px] h-[500px] rounded-full bg-violet-900/20 blur-[200px] translate-x-1/2 translate-y-1/2 " />
 
             {/* Header */}
-            <div className="text-center mb-12 z-10">
+            <motion.div initial={{ opacity: 0, y: -50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1 }}
+                className="text-center mb-12">
                 <h1 className="text-5xl font-black text-white tracking-tight font-[Clash_Display] mb-2">
                     ✏️ Whiteboard
                 </h1>
                 <p className="text-violet-300/70 text-base">
                     Draw together, in real time.
                 </p>
-            </div>
+            </motion.div>
 
             {/* Cards row */}
             <div className="w-full max-w-3xl flex flex-col md:flex-row gap-5 z-10">
@@ -165,6 +174,6 @@ export default function Welcome() {
             </div>
 
 
-        </div>
+        </div >
     );
 }
