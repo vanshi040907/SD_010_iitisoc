@@ -3,6 +3,7 @@ import Toolbar from '../components/Toolbar'
 import TitleCard_download from '../components/TitleCard_download'
 import MemberList from '../components/MemberList'
 import SessionStatus from '../components/SessionStatus'
+import Invite_help from '../components/Invite_help'
 const Workspace = () => {
   return (
      <div className="min-h-screen flex items-center justify-center"
@@ -14,6 +15,7 @@ const Workspace = () => {
         <Toolbar/>
         <MemberList />
         <SessionStatus />
+        <Invite_help />
     </div>
   )
 }
