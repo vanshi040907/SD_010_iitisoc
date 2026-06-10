@@ -1,9 +1,10 @@
 const {Router} = require("express");
 const router = Router();
-const {SigninUser,LoginUser} = require("../controller/user");
+const {SigninUser,LoginUser,UserAllowed,UserEnterRoom} = require("../controller/user");
 
 router.post("/signin",SigninUser);
 router.post("/login",LoginUser);
+
 
 
 
