@@ -1,15 +1,16 @@
 import React from 'react'
-import { useState} from "react";
+import { useState, useContext} from "react";
 import { LogOut, Smile } from "lucide-react";
+import { ThemeContext } from '../context/ThemeContext';
 
 const EMOJIS = ["👍", "❤️", "😂", "😮", "🔥", "🎉", "👏", "💡", "✅", "🚀"];
  
-const CURRENT_USER = "Vanshika";
- 
+const CURRENT_USER = "Vanshika"; 
 let reactionIdCounter = 0;
 
-
 const SessionStatus = () => {
+
+  const {isDark, theme} = useContext(ThemeContext);
 
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [reactions, setReactions] = useState([]);
@@ -25,9 +26,7 @@ const SessionStatus = () => {
   };
 
   const glassStyle = {
-    background: "rgba(15, 12, 30, 0.88)",
-    backdropFilter: "blur(16px)",
-    boxShadow: "0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)",
+    ...theme.glass
   };
 
   return (
@@ -52,7 +51,7 @@ const SessionStatus = () => {
       ))}
 
       <div
-        className="fixed bottom-20 left-1/2 -translate-x-1/2 px-3 py-2.5 rounded-2xl border border-white/10 flex items-center gap-1 z-40"
+        className={`fixed bottom-20 left-1/2 -translate-x-1/2 px-3 py-2.5 rounded-2xl border ${theme.divider} flex items-center gap-1 z-40`}
         style={{
           ...glassStyle,
           maxHeight: emojiOpen ? "80px" : "0px",
@@ -67,7 +66,7 @@ const SessionStatus = () => {
             <button
              key={emoji}
              onClick={() => LaunchReaction(emoji)}
-             className="text-xl w-9 h-9 rounded-xl flex items-center justify-center hover:bg-white/10 transition-all duration-150 hover:scale-125"
+             className={`text-xl w-9 h-9 rounded-xl flex items-center justify-center ${theme.hoverEmoji} transition-all duration-150 hover:scale-125`}
              >
               {emoji}
              </button>
@@ -77,35 +76,35 @@ const SessionStatus = () => {
       {/* Bottom card */}
       <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
         <div
-          className="flex items-center gap-1 px-2 py-2 rounded-2xl border border-white/10"
+          className={`flex items-center gap-1 px-2 py-2 rounded-2xl border ${theme.divider}`}
           style={glassStyle}
         >
           <div className="relative group">
             <button
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/15 hover:bg-red-500/25 border border-red-500/20 hover:border-red-500/40 text-red-400 hover:text-red-300 transition-all duration-200"
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl ${theme.leaveBtn} hover:bg-red-500/25 hover:border-red-500/40 hover:text-red-300 transition-all duration-200`}
               onClick={() => alert("Session ended.")}
               >
                 <LogOut size={15} strokeWidth={1.8} />
                 <span className="text-xs font-medium">Leave</span>
               </button>
-              <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md bg-[#1a1a2e] border border-white/10 text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl">
+              <div className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md bg-[#1a1a2e] border ${theme.divider} text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl`}>
                 Leave Session 
                 <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1a1a2e]" />
               </div>
           </div>
 
-          <div className="w-px h-7 bg-white/10 mx-1 rounded-full" />
+          <div className={`w-px h-7 ${theme.divider} mx-1 rounded-full`} />
 
           <div className="relative group">
             <button
              onClick={() => { setEmojiOpen(!emojiOpen); }}
               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${
-                emojiOpen ? "bg-purple-600 text-white shadow-lg shadow-purple-900/60" : "text-slate-400 hover:text-white hover:bg-white/10"
+                emojiOpen ? "${theme.activeBg} ${theme.textPrimary} shadow-lg ${theme.activeShadow}" : `${theme.textSecondary} ${theme.whiteHover} ${theme.hoverEmoji}`
               }`}
             >
               <Smile size={17} strokeWidth={1.8} />
             </button>
-            <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md bg-[#1a1a2e] border border-white/10 text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl">
+            <div className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md bg-[#1a1a2e] border ${theme.divider} text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl`}>
               React
               <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1a1a2e]" />
             </div>

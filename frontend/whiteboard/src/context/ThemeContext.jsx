@@ -24,6 +24,9 @@ const themes = {
     awayPill: "bg-white/5 text-slate-500",
     leaveBtn: "bg-red-500/15 border-red-500/20 text-red-400",
     iconButtonHover: "hover:text-white hover:bg-white/10",
+    iconBg: "bg-purple-600/20",   
+    hoverEmoji:"hover:bg-white/10",
+    whiteHover: "hover:text-white"
   },
 
   light: {
@@ -48,6 +51,9 @@ const themes = {
     awayPill: "bg-purple-50 text-[#b3a3c4]",
     leaveBtn: "bg-red-100 border-red-200 text-red-500",
     iconButtonHover: "hover:text-[#3d2a5c] hover:bg-purple-500/10",
+    iconBg: "bg-purple-400/15",
+    hoverEmoji: "hover:bg-purple-500/10",
+    whiteHover:"hover:text-[#3d2a5c]"
   },
 };
 

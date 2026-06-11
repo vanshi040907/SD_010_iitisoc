@@ -3,8 +3,6 @@ import { useState } from "react";
 import { Share2, HelpCircle, X, Copy, Check, Link, Zap, Users, Pencil, MessageCircle, Smile, ChevronDown, ChevronUp } from "lucide-react";
 import { ThemeContext } from '../context/ThemeContext';
 
-
-
 const glassDark = {
   background: "rgba(15, 12, 30, 0.92)",
   backdropFilter: "blur(20px)",
@@ -40,7 +38,8 @@ function SharePopup({onClose}){
 
     const {isDark} = useContext(ThemeContext);
     const glass = isDark ? glassDark : glassLight;
-  
+    const {theme} = useContext(ThemeContext);
+
     const copy = (text, setter)=>{
         navigator.clipboard.writeText(text).catch(()=>{
             comnsole.log("Error!! Unable to copy due to restricted permissions. ");
@@ -53,30 +52,30 @@ function SharePopup({onClose}){
         <>
          <Backdrop onClick={onClose}/>
          <div
-           className="fixed z-60 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-2xl border border-white/10 overflow-hidden"
+           className={`fixed z-60 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-2xl border ${theme.border} overflow-hidden`}
            style={{ ...glass, zIndex: 60 }}
            onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+            <div className={`flex items-center justify-between px-6 py-4 border-b ${theme.border}`}>
              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-purple-600/20 flex items-center justify-center">
-                  <Share2 size={15} className="text-purple-400" />
+                <div className={`w-8 h-8 rounded-xl ${theme.iconBg} flex items-center justify-center`}>
+                  <Share2 size={15} className={`${theme.accent}`} />
                 </div>
                 <div>
-                    <p className="text-white text-sm font-semibold">Share Room</p>
-                    <p className="text-slate-500 text-xs">Invite others to collaborate</p>
+                    <p className={`${theme.textPrimary} text-sm font-semibold`}>Share Room</p>
+                    <p className={`${theme.textMuted} text-xs`}>Invite others to collaborate</p>
                 </div>
              </div>
             
-             <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors w-7 h-7 rounded-lg hover:bg-white/10 flex items-center justify-center">
+             <button onClick={onClose} className={`${theme.textMuted} ${theme.iconButtonHover} transition-colors w-7 h-7 rounded-lg flex items-center justify-center`}>
                <X size={15} />
              </button>
             </div>
 
             <div className="px-6 py-5 flex flex-col gap-5">
                 <div>
-                    <label className="text-slate-400 text-xs font-medium uppercase tracking-wider mb-2 block">Room Code</label>
+                    <label className={`${theme.textSecondary} text-xs font-medium uppercase tracking-wider mb-2 block`}>Room Code</label>
                     <div className="flex items-center gap-2">
-                        <div className="flex-1 flex items-center justify-center py-3 rounded-xl border border-white/10 font-mono text-2xl font-bold tracking-[0.25em] text-white"
+                        <div className={`flex-1 flex items-center justify-center py-3 rounded-xl border ${theme.border} font-mono text-2xl font-bold tracking-[0.25em] ${theme.textPrimary}`}
                          style={{ background: "rgba(168,85,247,0.08)" }}>
                             {ROOM_CODE}
                         </div>
@@ -85,7 +84,7 @@ function SharePopup({onClose}){
                           className={`w-11 h-11 rounded-xl flex items-center justify-center border transition-all duration-200 flex-shrink-0 ${
                           codeCopied
                             ? "bg-green-500/20 border-green-500/30 text-green-400"
-                            : "border-white/10 text-slate-400 hover:text-white hover:bg-white/10"}`}
+                            : "${theme.border} ${theme.textSecondary} ${theme.iconButtonHover}"}`}
                             >{codeCopied ? <Check size={16} /> : <Copy size={16} />}
                         </button>
                     </div>
@@ -93,17 +92,17 @@ function SharePopup({onClose}){
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="flex-1 h-px bg-white/10" />
+                  <div className={`flex-1 h-px ${theme.divider}`} />
                   <span className="text-slate-600 text-xs">or share link</span>
-                  <div className="flex-1 h-px bg-white/10" />
+                  <div className={`flex-1 h-px ${theme.divider}`} />
                 </div>
 
                 <div>
-                    <label className="text-slate-400 text-xs font-medium uppercase tracking-wider mb-2 block"> ROOM LINK</label>
+                    <label className={`${theme.textSecondary} text-xs font-medium uppercase tracking-wider mb-2 block`}> ROOM LINK</label>
                     <div className="flex items-center gap-2">
-                        <div className="flex-1 flex items-center gap-2 px-3 py-2.5 rounded-xl border border-white/10 min-w-0"
+                        <div className={`flex-1 flex items-center gap-2 px-3 py-2.5 rounded-xl border ${theme.border} min-w-0`}
                          style={{ background: "rgba(255,255,255,0.04)" }}>
-                            <Link size={13} className="text-slate-500 flex-shrink-0" />
+                            <Link size={13} className={`${theme.textMuted} flex-shrink-0`} />
                             <span className="text-slate-300 text-xs truncate font-mono">{ROOM_LINK}</span>
                         </div>
 
@@ -111,15 +110,15 @@ function SharePopup({onClose}){
                          className={`w-11 h-11 rounded-xl flex items-center justify-center border transition-all duration-200 flex-shrink-0 ${
                          linkCopied
                          ? "bg-green-500/20 border-green-500/30 text-green-400"
-                         : "border-white/10 text-slate-400 hover:text-white hover:bg-white/10"}`}
+                         : "${theme.border} ${theme.textSecondary} ${theme.iconButtonHover}"}`}
                         >
                              {linkCopied ? <Check size={16} /> : <Copy size={16} />}
                         </button>
                     </div>
                 </div>
             </div>
-            <div className="px-6 py-4 border-t border-white/10 flex items-center gap-2">
-                <span className="text-slate-500 text-xs">Anyone with the code or link can join this room</span>
+            <div className={`px-6 py-4 border-t ${theme.border} flex items-center gap-2`}>
+                <span className={`${theme.textMuted} text-xs`}>Anyone with the code or link can join this room</span>
             </div>
          </div>
         </>
@@ -143,33 +142,34 @@ function AboutPopup({onClose}){
 
   const {isDark} = useContext(ThemeContext);
   const glass = isDark ? glassDark : glassLight;
+  const {theme} = useContext(ThemeContext);
 
     return(
         <>
           <Backdrop onClick={onClose} />
           <div
-          className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg rounded-2xl border border-white/10 overflow-hidden flex flex-col"
+          className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg rounded-2xl border ${theme.border} overflow-hidden flex flex-col`}
           style={{ ...glass, zIndex: 60, maxHeight: "85vh" }}
           onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 flex-shrink-0">
+            <div className={`flex items-center justify-between px-6 py-4 border-b ${theme.border} flex-shrink-0`}>
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-purple-600/20 flex items-center justify-center">
-                  <HelpCircle size={15} className="text-purple-400" />
+                <div className={`w-8 h-8 rounded-xl ${theme.iconBg} flex items-center justify-center`}>
+                  <HelpCircle size={15} className={`${theme.accent}`} />
                 </div>
                 <div>
-                  <p className="text-white text-sm font-semibold">About & Help</p>
-                  <p className="text-slate-500 text-xs">Features </p>
+                  <p className={`${theme.textPrimary} text-sm font-semibold`}>About & Help</p>
+                  <p className={`${theme.textMuted} text-xs`}>Features </p>
                 </div>
               </div>
-              <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors w-7 h-7 rounded-lg hover:bg-white/10 flex items-center justify-center">
+              <button onClick={onClose} className={`${theme.textMuted}  transition-colors w-7 h-7 rounded-lg ${theme.iconButtonHover}flex items-center justify-center`}>
                 <X size={15} />
               </button>
             </div>
 
             <div className="overflow-y-auto flex-1 px-6 py-5 flex flex-col gap-6">
               <div>
-               <p className="text-slate-400 text-xs font-medium uppercase tracking-wider mb-3">Features</p>
+               <p className={`${theme.textSecondary} text-xs font-medium uppercase tracking-wider mb-3`}>Features</p>
                <div className="flex flex-col gap-2">
                 {FEATURES.map((feature)=>{
                   const Icon=feature.icon;
@@ -177,14 +177,14 @@ function AboutPopup({onClose}){
                   return(
                     <div
                   key={feature.title}
-                  className="flex items-start gap-3 px-4 py-3 rounded-xl border border-white/10"
+                  className={`flex items-start gap-3 px-4 py-3 rounded-xl border ${theme.border}`}
                   style={{ background: "rgba(255,255,255,0.03)" }}>
                     <div className="w-7 h-7 rounded-lg bg-purple-600/15 flex items-center justify-center flex-shrink-0 mt-0.5">
-                     <Icon size={13} className="text-purple-400" />
+                     <Icon size={13} className={`${theme.accent}`} />
                     </div>
                     <div>
-                      <p className="text-white text-xs font-semibold">{feature.title}</p>
-                    <p className="text-slate-500 text-xs mt-0.5 leading-relaxed">{feature.desc}</p>
+                      <p className={`${theme.textPrimary} text-xs font-semibold`}>{feature.title}</p>
+                    <p className={`${theme.textMuted} text-xs mt-0.5 leading-relaxed`}>{feature.desc}</p>
                     </div>
                   </div>
                   )
@@ -201,39 +201,37 @@ const Invite_help = () => {
 
   const [shareOpen, setShareOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
-
+  const {theme} = useContext(ThemeContext);
 
   const glassBtn = {
-    background: "rgba(15, 12, 30, 0.85)",
-    backdropFilter: "blur(16px)",
-    boxShadow: "0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)",
+    ...theme.glass
   };
 
   return (
     <>
-     <div className="fixed bottom-4 right-4 z-40 flex items-center gap-1.5 px-2 py-2 rounded-xl border border-white/10" style={glassBtn}>
+     <div className={`fixed bottom-4 right-4 z-40 flex items-center gap-1.5 px-2 py-2 rounded-xl border ${theme.border}`} style={glassBtn}>
       <div className="relative group">
         <button
           onClick={() => { setShareOpen(true); setAboutOpen(false); }}
-          className="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-slate-300 ${theme.iconButtonHover} transition-all duration-200`}>
             <Share2 size={15} strokeWidth={1.8} />
             <span className="text-xs font-medium">Share</span>
         </button>
-        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md bg-[#1a1a2e] border border-white/10 text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl">
+        <div className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md bg-[#1a1a2e] border ${theme.border} text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl`}>
           Share room code 
           <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1a1a2e]" />
         </div>
       </div>
 
-      <div className="w-px h-5 bg-white/10 rounded-full" />
+      <div className={`w-px h-5 ${theme.divider} rounded-full`} />
 
       <div className="relative group">
         <button
          onClick={() => { setAboutOpen(true); setShareOpen(false); }}
-         className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all duration-200">
+         className={`w-9 h-9 rounded-lg flex items-center justify-center ${theme.textSecondary} ${theme.iconButtonHover} transition-all duration-200`}>
            <HelpCircle size={16} strokeWidth={1.8} />
         </button>
-        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md bg-[#1a1a2e] border border-white/10 text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl">
+        <div className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md bg-[#1a1a2e] border ${theme.border} text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl`}>
           About & Help
           <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1a1a2e]" />
         </div>

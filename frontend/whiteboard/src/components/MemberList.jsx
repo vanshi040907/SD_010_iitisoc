@@ -1,6 +1,7 @@
 import React from 'react'
-import { useState } from "react";
-import { Users, ChevronDown, Circle } from "lucide-react";
+import { useState, useContext } from "react";
+import { Users, ChevronDown, Circle, TheaterIcon } from "lucide-react";
+import { ThemeContext } from '../context/ThemeContext';
 
 // Right now i have taken a random array for the members. later we will fetch these details from the Database.
 
@@ -13,6 +14,8 @@ const MEMBERS = [
 ];
 
 const Avatar = ({member, size = "md"}) => {
+
+  const {theme, isDark} = useContext(ThemeContext);
   const dim = member.role === "Host" ? "w-12 h-12 text-2xl" : "w-9 h-9 text-m";
   return(
     <div
@@ -29,16 +32,15 @@ const MemberList = () => {
 
   const [open, setOpen] = useState(false);
   const onlineCount = MEMBERS.filter((m) => m.online).length;
+  const {theme} = useContext(ThemeContext);
 
   return (
     <div className="fixed top-4 right-4 z-50 flex flex-col items-end">
       <button
        onClick={()=> setOpen(!open)}
-       className="flex items-center gap-2.5 px-3 py-2 rounded-xl border border-white/10 transition-all duration-200 hover:border-purple-500/40"
+       className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border ${theme.border} transition-all duration-200 hover:border-purple-500/40`}
         style={{
-          background: "rgba(15, 12, 30, 0.85)",
-          backdropFilter: "blur(16px)",
-          boxShadow: "0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)",
+          ...theme.glass
         }}
         >
           {/* here i writing the logic for stacking of the initials  */}
@@ -62,17 +64,17 @@ const MemberList = () => {
 
           <div className="h-14 flex flex-col justify-center items-start leading-tight">
           <span className="text-white text-m font-semibold">{MEMBERS.length} Members</span>
-          <span className="text-purple-400 text-[12px]">{onlineCount} online</span>
+          <span className={`${theme.accent} text-[12px]`}>{onlineCount} online</span>
          </div>
 
          <ChevronDown
           size={14}
-          className={`text-slate-400 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+          className={`${theme.textSecondary}transition-transform duration-300 ${open ? "rotate-180" : ""}`}
         />
         </button>
 
         <div
-        className="mt-2 w-69.5 rounded-xl border border-white/10 overflow-hidden"
+        className={`mt-2 w-69.5 rounded-xl border ${theme.border} overflow-hidden`}
         style={{
           background: "rgba(15, 12, 30, 0.92)",
           backdropFilter: "blur(16px)",
@@ -86,8 +88,8 @@ const MemberList = () => {
           pointerEvents: open ? "auto" : "none",
         }}
         >
-          <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10">
-           <Users size={13} className="text-purple-400" />
+          <div className={`flex items-center gap-2 px-4 py-3 border-b ${theme.border}`}>
+           <Users size={13} className="${theme.accent}" />
            <span className="text-slate-300 text-xs font-semibold uppercase tracking-wider">VIEWERS</span>
           </div>
 
@@ -106,14 +108,14 @@ const MemberList = () => {
                 
                 <div className="flex flex-col leading-tight flex-1 min-w-0">
                   <span className="text-white text-sm font-medium truncate">{m.name}</span>
-                <span className="text-slate-500 text-xs">{m.role}</span>
+                <span className={`${theme.textMuted} text-xs`}>{m.role}</span>
                 </div>
 
                 <span
                 className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
                   m.online
                     ? "bg-green-500/15 text-green-400"
-                    : "bg-white/5 text-slate-500"
+                    : "bg-white/5 `bg-white/5 ${theme.textMuted}`"
                 }`}
               >
                 {m.online ? "Online" : "Away"}
@@ -122,9 +124,9 @@ const MemberList = () => {
             ))}
           </div>
 
-          <div className="px-4 py-2.5 border-t border-white/10 flex items-center gap-1.5">
+          <div className={`px-4 py-2.5 border-t ${theme.border} flex items-center gap-1.5`}>
            <Circle size={7} className="text-green-400 fill-green-400" />
-           <span className="text-slate-500 text-xs">{onlineCount} of {MEMBERS.length} currently active</span>
+           <span className={`${theme.textMuted} text-xs`}>{onlineCount} of {MEMBERS.length} currently active</span>
           </div>
         </div>
     </div>
