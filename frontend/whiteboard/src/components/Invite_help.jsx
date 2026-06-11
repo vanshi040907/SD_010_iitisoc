@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useState } from "react";
 import { Share2, HelpCircle, X, Copy, Check, Link, Zap, Users, Pencil, MessageCircle, Smile, ChevronDown, ChevronUp } from "lucide-react";
+import { ThemeContext } from '../context/ThemeContext';
 
-const glass = {
+
+
+const glassDark = {
   background: "rgba(15, 12, 30, 0.92)",
   backdropFilter: "blur(20px)",
+  border: "rgba(255, 255, 255, 0.1)",
   boxShadow: "0 24px 64px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.07)",
 };
+
+const glassLight = {
+  background: "rgba(255, 255, 255, 0.75)",
+  backdropFilter: "blur(20px)",
+  border: "rgba(168, 85, 247, 0.15)",
+  boxShadow: "0 4px 24px rgba(168,85,247,0.12), inset 0 1px 0 rgba(255,255,255,0.6)",
+};
+ 
 
 function Backdrop({ onClick }) {
   return (
@@ -26,6 +38,9 @@ function SharePopup({onClose}){
     const [codeCopied, setCodeCopied] = useState(false);
     const [linkCopied, setLinkCopied] = useState(false);
 
+    const {isDark} = useContext(ThemeContext);
+    const glass = isDark ? glassDark : glassLight;
+  
     const copy = (text, setter)=>{
         navigator.clipboard.writeText(text).catch(()=>{
             comnsole.log("Error!! Unable to copy due to restricted permissions. ");
@@ -125,6 +140,10 @@ const FEATURES = [
 ];
 
 function AboutPopup({onClose}){
+
+  const {isDark} = useContext(ThemeContext);
+  const glass = isDark ? glassDark : glassLight;
+
     return(
         <>
           <Backdrop onClick={onClose} />
@@ -182,6 +201,7 @@ const Invite_help = () => {
 
   const [shareOpen, setShareOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+
 
   const glassBtn = {
     background: "rgba(15, 12, 30, 0.85)",
