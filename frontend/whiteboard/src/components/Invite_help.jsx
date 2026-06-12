@@ -55,14 +55,14 @@ function SharePopup({onClose}){
            className={`fixed z-60 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-2xl border ${theme.border} overflow-hidden`}
            style={{ ...glass, zIndex: 60 }}
            onClick={(e) => e.stopPropagation()}>
-            <div className={`flex items-center justify-between px-6 py-4 border-b ${theme.border}`}>
+            <div className={`flex items-center justify-between px-6 py-4 border-b ${theme.popupBorder}`}>
              <div className="flex items-center gap-2.5">
                 <div className={`w-8 h-8 rounded-xl ${theme.iconBg} flex items-center justify-center`}>
                   <Share2 size={15} className={`${theme.accent}`} />
                 </div>
                 <div>
                     <p className={`${theme.textPrimary} text-sm font-semibold`}>Share Room</p>
-                    <p className={`${theme.textMuted} text-xs`}>Invite others to collaborate</p>
+                    <p className={`${theme.textSecondary} text-xs`}>Invite others to collaborate</p>
                 </div>
              </div>
             
@@ -73,9 +73,9 @@ function SharePopup({onClose}){
 
             <div className="px-6 py-5 flex flex-col gap-5">
                 <div>
-                    <label className={`${theme.textSecondary} text-xs font-medium uppercase tracking-wider mb-2 block`}>Room Code</label>
+                    <label className={`${theme.popupLabel} text-xs font-medium uppercase tracking-wider mb-2 block`}>Room Code</label>
                     <div className="flex items-center gap-2">
-                        <div className={`flex-1 flex items-center justify-center py-3 rounded-xl border ${theme.border} font-mono text-2xl font-bold tracking-[0.25em] ${theme.textPrimary}`}
+                        <div className={`flex-1 flex items-center justify-center py-3 rounded-xl border ${theme.popupBorder} font-mono text-2xl font-bold tracking-[0.25em] ${theme.textPrimary}`}
                          style={{ background: "rgba(168,85,247,0.08)" }}>
                             {ROOM_CODE}
                         </div>
@@ -83,42 +83,42 @@ function SharePopup({onClose}){
                           onClick={() => copy(ROOM_CODE, setCodeCopied)}
                           className={`w-11 h-11 rounded-xl flex items-center justify-center border transition-all duration-200 flex-shrink-0 ${
                           codeCopied
-                            ? "bg-green-500/20 border-green-500/30 text-green-400"
-                            : "${theme.border} ${theme.textSecondary} ${theme.iconButtonHover}"}`}
+                            ? `${theme.copied}`
+                            : `${theme.popupBorder} ${theme.textPrimary} ${theme.iconButtonHover}` }`}
                             >{codeCopied ? <Check size={16} /> : <Copy size={16} />}
                         </button>
                     </div>
-                    <p className="text-slate-600 text-xs mt-2 text-center">Share this code with anyone you want to invite</p>
+                    <p className={`${theme.textSecondary} text-xs mt-2 text-center`}>Share this code with anyone you want to invite</p>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className={`flex-1 h-px ${theme.divider}`} />
+                  <div className={`flex-1 h-px ${theme.popupDiv}`} />
                   <span className="text-slate-600 text-xs">or share link</span>
-                  <div className={`flex-1 h-px ${theme.divider}`} />
+                  <div className={`flex-1 h-px ${theme.popupDiv}`} />
                 </div>
 
                 <div>
-                    <label className={`${theme.textSecondary} text-xs font-medium uppercase tracking-wider mb-2 block`}> ROOM LINK</label>
+                    <label className={`${theme.popupLabel} text-xs font-medium uppercase tracking-wider mb-2 block`}> ROOM LINK</label>
                     <div className="flex items-center gap-2">
-                        <div className={`flex-1 flex items-center gap-2 px-3 py-2.5 rounded-xl border ${theme.border} min-w-0`}
-                         style={{ background: "rgba(255,255,255,0.04)" }}>
-                            <Link size={13} className={`${theme.textMuted} flex-shrink-0`} />
-                            <span className="text-slate-300 text-xs truncate font-mono">{ROOM_LINK}</span>
+                        <div className={`flex-1 flex items-center gap-2 px-3 py-2.5 rounded-xl border ${theme.popupBorder} min-w-0 ${theme.textPrimary}`}
+                         style={{ background: "rgba(168,85,247,0.08)" }}>
+                            <Link size={13} className={`${theme.textPrimary} flex-shrink-0`} />
+                            <span className={`${theme.textPrimary} text-xs truncate font-mono`}>{ROOM_LINK}</span>
                         </div>
 
                         <button onClick={() => copy(ROOM_LINK, setLinkCopied)}
                          className={`w-11 h-11 rounded-xl flex items-center justify-center border transition-all duration-200 flex-shrink-0 ${
                          linkCopied
-                         ? "bg-green-500/20 border-green-500/30 text-green-400"
-                         : "${theme.border} ${theme.textSecondary} ${theme.iconButtonHover}"}`}
+                         ? `${theme.copied}`
+                         : `${theme.popupBorder} ${theme.textPrimary} ${theme.iconButtonHover}`}`}
                         >
                              {linkCopied ? <Check size={16} /> : <Copy size={16} />}
                         </button>
                     </div>
                 </div>
             </div>
-            <div className={`px-6 py-4 border-t ${theme.border} flex items-center gap-2`}>
-                <span className={`${theme.textMuted} text-xs`}>Anyone with the code or link can join this room</span>
+            <div className={`px-6 py-4 border-t ${theme.popupBorder} flex items-center gap-2`}>
+                <span className={`${theme.textSecondary} text-xs`}>Anyone with the code or link can join this room</span>
             </div>
          </div>
         </>
@@ -148,18 +148,18 @@ function AboutPopup({onClose}){
         <>
           <Backdrop onClick={onClose} />
           <div
-          className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg rounded-2xl border ${theme.border} overflow-hidden flex flex-col`}
+          className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg rounded-2xl border ${theme.popupBorder} overflow-hidden flex flex-col`}
           style={{ ...glass, zIndex: 60, maxHeight: "85vh" }}
           onClick={(e) => e.stopPropagation()}
           >
-            <div className={`flex items-center justify-between px-6 py-4 border-b ${theme.border} flex-shrink-0`}>
+            <div className={`flex items-center justify-between px-6 py-4 border-b ${theme.popupBorder} flex-shrink-0`}>
               <div className="flex items-center gap-2.5">
-                <div className={`w-8 h-8 rounded-xl ${theme.iconBg} flex items-center justify-center`}>
-                  <HelpCircle size={15} className={`${theme.accent}`} />
+                <div className={`w-10 h-10 rounded-xl ${theme.iconBg} flex items-center justify-center`}>
+                  <HelpCircle size={20} className={`${theme.accent}`} />
                 </div>
                 <div>
                   <p className={`${theme.textPrimary} text-sm font-semibold`}>About & Help</p>
-                  <p className={`${theme.textMuted} text-xs`}>Features </p>
+                  <p className={`${theme.textSecondary} text-xs`}>Features </p>
                 </div>
               </div>
               <button onClick={onClose} className={`${theme.textMuted}  transition-colors w-7 h-7 rounded-lg ${theme.iconButtonHover}flex items-center justify-center`}>
@@ -169,7 +169,7 @@ function AboutPopup({onClose}){
 
             <div className="overflow-y-auto flex-1 px-6 py-5 flex flex-col gap-6">
               <div>
-               <p className={`${theme.textSecondary} text-xs font-medium uppercase tracking-wider mb-3`}>Features</p>
+               <p className={`${theme.popupLabel} text-xs font-medium uppercase tracking-wider mb-3`}>Features</p>
                <div className="flex flex-col gap-2">
                 {FEATURES.map((feature)=>{
                   const Icon=feature.icon;
@@ -177,14 +177,14 @@ function AboutPopup({onClose}){
                   return(
                     <div
                   key={feature.title}
-                  className={`flex items-start gap-3 px-4 py-3 rounded-xl border ${theme.border}`}
+                  className={`flex items-start gap-3 px-4 py-3 rounded-xl border ${theme.popupBorder}`}
                   style={{ background: "rgba(255,255,255,0.03)" }}>
-                    <div className="w-7 h-7 rounded-lg bg-purple-600/15 flex items-center justify-center flex-shrink-0 mt-0.5">
-                     <Icon size={13} className={`${theme.accent}`} />
+                    <div className="w-9 h-9 rounded-lg bg-purple-600/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                     <Icon size={18} className={`${theme.accent}`} />
                     </div>
                     <div>
                       <p className={`${theme.textPrimary} text-xs font-semibold`}>{feature.title}</p>
-                    <p className={`${theme.textMuted} text-xs mt-0.5 leading-relaxed`}>{feature.desc}</p>
+                    <p className={`${theme.textSecondary} text-xs mt-0.5 leading-relaxed`}>{feature.desc}</p>
                     </div>
                   </div>
                   )
@@ -213,11 +213,12 @@ const Invite_help = () => {
       <div className="relative group">
         <button
           onClick={() => { setShareOpen(true); setAboutOpen(false); }}
-          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-slate-300 ${theme.iconButtonHover} transition-all duration-200`}>
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg ${theme.textPrimary} ${theme.iconButtonHover} transition-all duration-200`}>
             <Share2 size={15} strokeWidth={1.8} />
             <span className="text-xs font-medium">Share</span>
         </button>
-        <div className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md bg-[#1a1a2e] border ${theme.border} text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl`}>
+        <div className={`absolute bottom-full mb-4 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md border ${theme.border} text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl`}
+        style={{background:theme.tooltipBg}}>
           Share room code 
           <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1a1a2e]" />
         </div>
@@ -228,10 +229,11 @@ const Invite_help = () => {
       <div className="relative group">
         <button
          onClick={() => { setAboutOpen(true); setShareOpen(false); }}
-         className={`w-9 h-9 rounded-lg flex items-center justify-center ${theme.textSecondary} ${theme.iconButtonHover} transition-all duration-200`}>
+         className={`w-9 h-9 rounded-lg flex items-center justify-center ${theme.textPrimary} ${theme.iconButtonHover} transition-all duration-200`}>
            <HelpCircle size={16} strokeWidth={1.8} />
         </button>
-        <div className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md bg-[#1a1a2e] border ${theme.border} text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl`}>
+        <div className={`absolute bottom-full mb-4 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md ${theme.border} text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl`
+      }style={{background:theme.tooltipBg}}>
           About & Help
           <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1a1a2e]" />
         </div>

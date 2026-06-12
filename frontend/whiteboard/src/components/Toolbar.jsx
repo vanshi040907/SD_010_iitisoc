@@ -47,7 +47,10 @@ const Toolbar = () => {
           <Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />
         </button>
 
-        <div className={`absolute left-full ml-3 px-2 py-1 rounded-md bg-[#1a1a2e] border ${theme.border} text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-50 shadow-xl`}>
+        <div className={`absolute left-full ml-6 px-2 py-1 rounded-md border ${theme.border} text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-50 shadow-xl`}
+        style={{
+          background:theme.tooltipBg
+        }}>
         {label}
         <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#1a1a2e]" />
       </div>
@@ -93,7 +96,10 @@ const Toolbar = () => {
                 className={`absolute bottom-1.5 right-1.5 transition-transform duration-200 ${shapesOpen ? "rotate-180" : ""}`}
               /> 
               </button>
-              <div className={`absolute left-full ml-3 px-2 py-1 rounded-md bg-[#1a1a2e] border ${theme.border} text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-50 shadow-xl`}>
+              <div className={`absolute left-full ml-6 px-2 py-1 rounded-md border ${theme.border} text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-50 shadow-xl`}
+              style ={
+                {background:theme.tooltipBg}
+              }>
               Shapes
               <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#1a1a2e]" />
            </div>
@@ -132,7 +138,7 @@ const Toolbar = () => {
       </div>
 
       <div className={`left-13 -translate-x-1/2 fixed top-154 px-4 py-1.5 rounded-full border ${theme.border} text-xs ${theme.textSecondary}`}
-        style={{ background: "rgba(15,12,30,0.8)", backdropFilter: "blur(8px)" }}
+        style={{ ...theme.glass }}
       >
         Active: <span className={`${theme.accent} font-medium capitalize`}>{activeTool === "shape" ? activeShape : activeTool}</span>
       </div>

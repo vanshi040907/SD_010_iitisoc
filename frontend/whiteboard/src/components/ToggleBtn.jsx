@@ -13,12 +13,14 @@ const ToggleBtn = () => {
             ...theme.glass
           }}>
                  <button
+                 className=" h-18"
                  onClick={toggleTheme}>
                     {isDark ? <Sun /> : <Moon />
                     }
                     {/* {console.log(isDark)} */}
                  </button>
-                </div>
+                 
+    </div>
     </div>
   )
 }

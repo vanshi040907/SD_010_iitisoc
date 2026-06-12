@@ -34,7 +34,8 @@ const TitleCard_download = (RoomName) => {
           <Download size={30} strokeWidth={1.8} />
         </button>
 
-        <div className={`absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md bg-[#1a1a2e] border ${theme.border} text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl`}>
+        <div className={`absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md border ${theme.border} text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl`}
+        style={{background:theme.tooltipBg}}>
           Download
           <div className={`absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-[${theme.tooltipBg}]`} />
         </div>

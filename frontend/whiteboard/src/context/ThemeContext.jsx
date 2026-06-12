@@ -10,6 +10,7 @@ const themes = {
       boxShadow: "0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)",
     },
     border: "border-white/10",
+    popupBorder:"border-white/10",
     textPrimary: "text-[#ffffff]",
     textSecondary: "text-slate-400",
     textMuted: "text-slate-500",
@@ -26,7 +27,13 @@ const themes = {
     iconButtonHover: "hover:text-white hover:bg-white/10",
     iconBg: "bg-purple-600/20",   
     hoverEmoji:"hover:bg-white/10",
-    whiteHover: "hover:text-white"
+    whiteHover: "hover:text-white",
+    ringColor: "ring-[#0d0d1a]",
+    memberHover: "hover:bg-white/5",
+    away:"bg-white/5",
+    popupLabel:"text-slate-400",
+    popupDiv:"bg-white/10",
+    copied:"bg-green-500/20 border-green-500/30 text-green-400"
   },
 
   light: {
@@ -37,6 +44,7 @@ const themes = {
       boxShadow: "0 4px 24px rgba(168,85,247,0.12), inset 0 1px 0 rgba(255,255,255,0.6)",
     },
     border: "border-purple-200/40",
+    popupBorder:"border-black/30",
     textPrimary: "text-[#3d2a5c]",
     textSecondary: "text-[#9b8aad]",
     textMuted: "text-[#b3a3c4]",
@@ -44,7 +52,7 @@ const themes = {
     activeBg: "bg-purple-400",
     activeShadow: "shadow-purple-300/50",
     hover: "hover:bg-purple-500/10 hover:text-[#3d2a5c]",
-    tooltipBg: "#2d1b4e",
+    tooltipBg: "#4a2d7f",
     divider: "bg-purple-200/40",
     backdrop: "rgba(168,85,247,0.15)",
     onlinePill: "bg-green-100 text-green-600",
@@ -53,7 +61,13 @@ const themes = {
     iconButtonHover: "hover:text-[#3d2a5c] hover:bg-purple-500/10",
     iconBg: "bg-purple-400/15",
     hoverEmoji: "hover:bg-purple-500/10",
-    whiteHover:"hover:text-[#3d2a5c]"
+    whiteHover:"hover:text-[#3d2a5c]",
+    ringColor:"ring-[#ffffff]",
+    memberHover: "hover:bg-black/5",
+    away:"bg-black/5",
+    popupLabel:"text-[#3d2a5c]",
+    popupDiv:"bg-black/10",
+    copied:"bg-green-800/20 border-green-800 text-green-800"
   },
 };
 
