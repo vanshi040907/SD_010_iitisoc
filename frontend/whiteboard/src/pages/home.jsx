@@ -1,8 +1,7 @@
 import React from 'react'
-import Ferrofluid from './Ferrofluid'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router'
-
+import Ferrofluid from "../components/Ferrofluid";
 function Home() {
     return (
 

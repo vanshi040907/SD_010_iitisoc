@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState } from "react";
 import { Link } from "react-router-dom"
-import Ferrofluid from './Ferrofluid';
+import Ferrofluid from "../components/Ferrofluid";
 import { motion } from 'framer-motion'
 
 function Login() {

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from 'framer-motion'
-import Ferrofluid from "./Ferrofluid";
+import Ferrofluid from "../components/Ferrofluid";
 import { Link } from "react-router-dom"
 
 export default function Welcome() {
@@ -137,12 +137,14 @@ export default function Welcome() {
 
                         <p className="text-violet-400 text-xs mb-5 h-4">{copyMsg}</p>
 
+                        <Link to="/Workspace">
                         <button
                             onClick={createRoom}
                             className="w-full py-3 rounded-xl text-white font-bold text-sm bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 shadow-[0_4px_20px_rgba(124,58,237,0.35)] active:scale-95 transition"
                         >
                             Create Room →
                         </button>
+                        </Link>
                     </div>
 
                     {/* Divider */}
@@ -186,12 +188,14 @@ export default function Welcome() {
 
                         <p className="text-red-400 text-xs mb-5 h-4">{joinMsg}</p>
 
+                        <Link to="/Workspace">
                         <button
                             onClick={joinRoom}
                             className="w-full py-3 rounded-xl text-white font-bold text-sm bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 shadow-[0_4px_20px_rgba(79,70,229,0.35)] active:scale-95 transition"
                         >
                             Join Room →
                         </button>
+                        </Link>
                     </div>
                 </div>
             </div>

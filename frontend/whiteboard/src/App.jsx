@@ -1,16 +1,24 @@
 import React from 'react'
-import Ferrofluid from './Ferrofluid'
-import { useState } from 'react'
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import Login from './pages/login.jsx'
+import Signup from './pages/signup.jsx'
+import Home from './pages/home.jsx'
+import Welcome from './pages/Welcome.jsx'
 import Workspace from './pages/Workspace'
-import { ThemeProvider } from './context/ThemeContext'
-
 const App = () => {
     return (
-        <div className="relative h-[100vh] w-full ">
-            {/* Background layer */}
-
-            <Workspace />
-        </div >
+        <>
+        <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/Welcome" element={<Welcome />} />
+        <Route path="/Workspace" element={<Workspace />} />
+      </Routes>
+        </BrowserRouter>
+        </>
+        
     )
 }
 
