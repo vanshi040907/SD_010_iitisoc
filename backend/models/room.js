@@ -5,7 +5,7 @@ const roomSchema = new Schema({
         type:String,
         required:true,
     },
-    admin:{
+    owner:{
         type:String,
         required:true,
     },
