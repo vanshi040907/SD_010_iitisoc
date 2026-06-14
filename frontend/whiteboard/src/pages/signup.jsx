@@ -3,6 +3,9 @@ import { useState } from "react";
 import { Link } from "react-router-dom"
 import { motion } from 'framer-motion'
 import Ferrofluid from "../components/Ferrofluid";
+import axios from "axios";
+import conf from "../conf/conf";
+import {useNavigate} from "react-router-dom"
 
 
 function Signup() {
@@ -10,6 +13,20 @@ function Signup() {
     const [myName, setMyName] = useState("");
     const [password, setPassword] = useState("");
     const [Mail, setMail] = useState("");
+    const navigate = useNavigate();
+    const handleAccountCreate = (e) => {
+        e.preventDefault();
+        console.log(import.meta.env.VITE_PATH);
+        axios.post(`${conf.path}/user/signin`,{
+            userName:myName,           
+            email:Mail,
+            password:password
+        })
+        .then((res)=> navigate("/login"))
+        .catch((err) => console.log(err))
+        
+
+    }
     return (<>
 
         <div className="relative h-[100vh] w-full ">
@@ -72,7 +89,7 @@ function Signup() {
                         </label>
                         <input type="text" value={password} onChange={(e) => setPassword(e.target.value)} className='w-full px-4 py-3 rounded-xl mb-5 text-white text-sm bg-white/[0.06] border border-white/10 outline-none ' />
 
-                        <button
+                        <button onClick={handleAccountCreate}
 
                             className="w-full py-3 rounded-xl text-white font-bold text-sm bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 shadow-[0_4px_20px_rgba(124,58,237,0.35)] active:scale-95 transition"
                         >
