@@ -85,7 +85,7 @@ const Toolbar = () => {
             className={`
                 w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 relative
                 ${activeTool === "shape"
-                  ? `${theme.activeBg} ${textPrimary} shadow-lg ${theme.activeShadow}`
+                  ? `${theme.activeBg} ${theme.textPrimary} shadow-lg ${theme.activeShadow}`
                   : `${theme.textSecondary} ${theme.hover}`
                 }
               `}
