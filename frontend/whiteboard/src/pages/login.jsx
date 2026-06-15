@@ -5,22 +5,22 @@ import Ferrofluid from "../components/Ferrofluid";
 import { motion } from "framer-motion";
 import conf from "../conf/conf";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Login() {
   const navigate = useNavigate();
-  const [myName, setMyName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Myname:", myName);
-    console.log("Password:", password);
+    
     try {
       const res = await axios.post(
         `${conf.path}/user/login`,
         {
-          myName,
-          password,
+          email:email,
+          password:password,
         },
         {
           withCredentials: true,
@@ -90,13 +90,13 @@ function Login() {
               Login
             </h2>
             <label className="text-[11px] text-violet-300 font-semibold uppercase tracking-[0.15em] mb-1 block">
-              Your Name
+              Email
             </label>
             <input
-              type="text"
-              value={myName}
-              name="myname"
-              onChange={(e) => setMyName(e.target.value)}
+              type="email"
+              value={email}
+              name="email"
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 rounded-xl mb-5 text-white text-sm bg-white/[0.06] border border-white/10 outline-none"
               required
             />
@@ -112,7 +112,7 @@ function Login() {
               required
             />
             <Link to="/Welcome">
-              <button className="w-full py-3 rounded-xl text-white font-bold text-sm bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 shadow-[0_4px_20px_rgba(124,58,237,0.35)] active:scale-95 transition">
+              <button onClick= {handleSubmit}className="w-full py-3 rounded-xl text-white font-bold text-sm bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 shadow-[0_4px_20px_rgba(124,58,237,0.35)] active:scale-95 transition">
                 Login
               </button>
             </Link>

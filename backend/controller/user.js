@@ -14,14 +14,17 @@ async function SigninUser(req,res) {
 
 }
 async function LoginUser(req,res) {
+    console.log("hi");
     const {email, password} = req.body;
-    const user = User.matchPassword(email,password);
-    if(!user) return res.json({error:"invalid email or password"});
-    return
+    const user = await User.matchPassword(email,password);
+    if(!user) return  res.status(401).json({
+    error: "Invalid email or password"
+});;
+    
     const token = CreateTokenForUser(user);
     
     
-    return res.json({Success:"true"},token);
+    return res.json({Success:"true",token});
 
 
 }
