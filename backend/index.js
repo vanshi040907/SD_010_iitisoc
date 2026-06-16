@@ -16,6 +16,7 @@ const {connectmongoose}= require("./connection");
 const cookieparser = require("cookie-parser");
 const userrouter = require("./routes/user");
 const roomrouter = require("./routes/room");
+const whiteboardrouter = require("./routes/whiteboard");
 connectmongoose("mongodb://127.0.0.1:27017/whiteboard");
 app.use((req,res,next) => {
     req.io = io;
@@ -37,6 +38,7 @@ io.on('connection',(socket) => {
     console.log("new user");
 })
 app.use('/room',roomrouter );
+app.use('/whiteboard',whiteboardrouter );
 
 
 

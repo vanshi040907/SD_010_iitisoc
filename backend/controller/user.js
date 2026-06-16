@@ -14,7 +14,7 @@ async function SigninUser(req,res) {
 
 }
 async function LoginUser(req,res) {
-    console.log("hi");
+    
     const {email, password} = req.body;
     const user = await User.matchPassword(email,password);
     if(!user) return  res.status(401).json({

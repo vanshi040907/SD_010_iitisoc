@@ -9,7 +9,8 @@ const roomSchema = new Schema({
         type:String,
         required:true,
     },
-    participants:[]
+    participants:[],
+    activeParticipants:[],
 },{timestamps: true}
 
 )

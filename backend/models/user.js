@@ -17,6 +17,11 @@ const userSchema = new Schema({
     password:{
         type:String,
         required:true,
+    },
+    ActiveRoom : {
+        type: Schema.Types.ObjectId,
+        ref:"room",
+
     }
 }
 ,

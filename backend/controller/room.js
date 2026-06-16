@@ -9,8 +9,12 @@ async function handlecreateRoomId(req,res){
     await Room.create({
         roomId:roomID,
         owner:user,
-        participants:[],
+        participants:[user],
+        activeParticipants: [user],
     })
+    const room = await Room.findOne({ roomId: roomID});
+    user.ActiveRoom = room;
+    await user.save();
     return res.json({success:"true"});
 }
 async function UserEnterRoom(req, res) {
@@ -18,7 +22,7 @@ async function UserEnterRoom(req, res) {
     const userid = req.user._id;
     const user = await User.findOne({_id : userid});
     if(!user) return res.json({error:"invalid user"});
-    const room = await Room.findOne({code : roomid});
+    const room = await Room.findOne({roomId : roomid});
     if(!room) return res.json({error:"invalid roomid"})
         req.io.to(room.owner._id). emit('userjoin', {
     user: user});
@@ -36,6 +40,9 @@ async function UserAllowed(req, res) {
     
 room.participants.push(user);
 await room.save();
+user.ActiveRoom = room;
+await user.save();
+
 return res.json({success:"true"});
 
 }
