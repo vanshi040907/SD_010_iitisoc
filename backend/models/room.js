@@ -6,11 +6,18 @@ const roomSchema = new Schema({
         required:true,
     },
     owner:{
-        type:String,
+        type: Schema.Types.ObjectId,
+        ref: "user",
         required:true,
     },
-    participants:[],
-    activeParticipants:[],
+    participants:[{
+        type: Schema.Types.ObjectId,
+        ref: "user",
+    }],
+    activeParticipants:[{
+        type: Schema.Types.ObjectId,
+        ref: "user",
+    }],
 },{timestamps: true}
 
 )

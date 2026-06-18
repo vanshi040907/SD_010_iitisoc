@@ -2,8 +2,10 @@ const User = require("../models/user");
 const Room = require("../models/room");
 
 async function handlecreateRoomId(req,res){
-    const {roomID}= req.params.roomid;
-     const user = req.user;
+    const {roomID}= req.body;
+      const userid = req.user.id;
+    const user = await User.findById(req.user.id);
+     console.log(user);
    
     
     await Room.create({
@@ -15,6 +17,8 @@ async function handlecreateRoomId(req,res){
     const room = await Room.findOne({ roomId: roomID});
     user.ActiveRoom = room;
     await user.save();
+    
+
     return res.json({success:"true"});
 }
 async function UserEnterRoom(req, res) {

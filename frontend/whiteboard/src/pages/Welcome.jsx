@@ -4,7 +4,10 @@ import { useState } from "react";
 import { motion } from 'framer-motion'
 import Ferrofluid from "../components/Ferrofluid";
 import { Link } from "react-router-dom"
-
+import { useSocket } from "../context/Socket";
+import conf from "../conf/conf";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 export default function Welcome() {
     const [myName, setMyName] = useState("");
     const [roomID, setRoomID] = useState("");
@@ -12,6 +15,8 @@ export default function Welcome() {
     const [joinRoomID, setJoinRoomID] = useState("");
     const [copyMsg, setCopyMsg] = useState("");
     const [joinMsg, setJoinMsg] = useState("");
+    const socket = useSocket();
+    const navigate = useNavigate();
 
     function generateID() {
         let part1 = Math.random().toString(36).substring(2, 6).toUpperCase();
@@ -30,10 +35,24 @@ export default function Welcome() {
         setTimeout(() => setCopyMsg(""), 2000);
     }
 
-    function createRoom() {
+    async function createRoom() {
         if (myName === "") { alert("Please enter your name"); return; }
         if (roomID === "") { alert("Please generate a room ID first"); return; }
         alert("Room " + roomID + " created!\nShare this room ID with your friends.");
+        try {
+        await axios.post(`${conf.path}/room/createroom`,{
+                       
+            roomID: roomID
+        },{
+        withCredentials: true,
+    })
+        socket.emit("joinroom", {roomID, myName});
+        navigate(`/Workspace/${roomID}`);
+    }
+        catch(error) {
+            console.log(error);
+        }
+
     }
 
     function joinRoom() {
@@ -137,14 +156,14 @@ export default function Welcome() {
 
                         <p className="text-violet-400 text-xs mb-5 h-4">{copyMsg}</p>
 
-                        <Link to="/Workspace">
+                        
                         <button
                             onClick={createRoom}
                             className="w-full py-3 rounded-xl text-white font-bold text-sm bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 shadow-[0_4px_20px_rgba(124,58,237,0.35)] active:scale-95 transition"
                         >
                             Create Room →
                         </button>
-                        </Link>
+                        
                     </div>
 
                     {/* Divider */}

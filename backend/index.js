@@ -17,6 +17,7 @@ const cookieparser = require("cookie-parser");
 const userrouter = require("./routes/user");
 const roomrouter = require("./routes/room");
 const whiteboardrouter = require("./routes/whiteboard");
+const {restrictToLoggedinUser} = require("./middleware/auth")
 connectmongoose("mongodb://127.0.0.1:27017/whiteboard");
 app.use((req,res,next) => {
     req.io = io;
@@ -35,13 +36,18 @@ app.get('/', (req, res) => {
 });
 app.use('/user',userrouter );
 io.on('connection',(socket) => {
-    console.log("new user");
+    socket.on('joinroom',(data) => {
+    const {roomID, myName} = data;
+    socket.join(roomID);
+         console.log(`${myName} joined ${roomID} ${socket.id}`);
+    socket.broadcast.to(roomID).emit("new user",myName ); 
 })
-app.use('/room',roomrouter );
-app.use('/whiteboard',whiteboardrouter );
+})
+app.use('/room',restrictToLoggedinUser,roomrouter );
+app.use('/whiteboard',restrictToLoggedinUser,whiteboardrouter );
 
 
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is live on http://localhost:${PORT}`);
 });

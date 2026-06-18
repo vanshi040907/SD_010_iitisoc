@@ -1,5 +1,6 @@
 const User = require("../models/user"); 
 const Room = require("../models/room");
+
 const {CreateTokenForUser,ValidateToken} = require("../service/auth")
 async function SigninUser(req,res) {
     const {userName,email, password} = req.body;
@@ -22,6 +23,7 @@ async function LoginUser(req,res) {
 });;
     
     const token = CreateTokenForUser(user);
+    res.cookie('uid',token);
     
     
     return res.json({Success:"true",token});
