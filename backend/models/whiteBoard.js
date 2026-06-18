@@ -2,15 +2,28 @@ const { Schema, model } = require("mongoose");
 
 const whiteBoardSchema = new Schema(
   {
-    roomCode: {
-      type: String,
-      required: true,
+    room: {
+      type: Schema.Types.ObjectId,
+      ref:"room",
+    },
+    type : {
+       type: String,
+       required: true,
+    },
+     user: {
+      type: Schema.Types.ObjectId,
+      ref:"user",
     },
     drawingOperations: [],
     lastUpdated: {
       type: Date,
       default: Date.now,
     },
+    active : {
+      type: Boolean,
+      default : true,
+    },
+    
   },
   { timestamps: true },
 );

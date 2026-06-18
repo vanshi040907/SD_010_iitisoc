@@ -16,7 +16,7 @@ function Signup() {
     const navigate = useNavigate();
     const handleAccountCreate = (e) => {
         e.preventDefault();
-        console.log(import.meta.env.VITE_PATH);
+        
         axios.post(`${conf.path}/user/signin`,{
             userName:myName,           
             email:Mail,
