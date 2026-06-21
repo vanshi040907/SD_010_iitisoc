@@ -61,7 +61,7 @@ const Toolbar = () => {
   return (
     <>
       <div
-        className={`w-18 fixed top-36 left-4 flex flex-col items-center gap-1 px-2 py-3 rounded-2xl border ${theme.border} shadow-2xl`}
+        className={`w-18 fixed top-36 left-4 flex flex-col items-center gap-1 px-2 py-3 rounded-2xl border ${theme.border} shadow-2xl z-5`}
         style={{
           ...theme.glass
         }}

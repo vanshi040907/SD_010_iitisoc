@@ -12,13 +12,16 @@ const TitleCard_download = (RoomName) => {
 
   return (
     <div className="fixed top-4 left-4 z-50 flex items-center gap-3">
-        <div className={`flex flex-col justify-center px-4 py-2.5 rounded-xl border ${theme.border}`}
+        <div className={`flex w-60 flex-col justify-center px-4 py-2.5 rounded-xl border ${theme.border}`}
         style={{
           ...theme.glass
         }}
         >
-           <span className={`${theme.textPrimary} text-2xl font-semibold leading-tight`}>Web Whiteboard</span>
-        <span className={`${theme.accent} text-m leading-tight mt-0.5`}>Room Name</span> 
+           <div>
+            <span className={`${theme.textPrimary} text-4xl font-bold leading-tight`}>Co</span>
+           <span className={`${theme.accent} text-4xl font-semibold leading-tight`}>Sketch</span>
+           </div>
+        <span className={`${theme.textPrimary} text-sm leading-tight mt-0.5`}>Room Name</span> 
         </div>
 
           <div className={`w-px h-16 ${theme.divider} rounded-full`} />

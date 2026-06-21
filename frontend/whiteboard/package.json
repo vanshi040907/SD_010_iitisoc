@@ -10,17 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "animejs": "^4.4.1",
-=======
+    "@reduxjs/toolkit": "^2.12.0",
     "@tailwindcss/vite": "^4.3.0",
+    "animejs": "^4.4.1",
     "axios": "^1.17.0",
->>>>>>> 5362c063ec1318cd64ff17b34fbe2df91a9bc317
     "lucide-react": "^1.17.0",
     "motion": "^12.40.0",
     "ogl": "^1.0.11",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "react-redux": "^9.3.0",
     "react-router": "^7.17.0",
     "react-router-dom": "^7.17.0",
     "tailwind": "^4.0.0",

@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { motion } from 'framer-motion'
-import Ferrofluid from "../components/Ferrofluid";
+import Ferrofluid from "../animations/Ferrofluid";
 import { Link } from "react-router-dom"
+import LetsCoSketh from "../animations/LetsCoSketh";
 
 export default function Welcome() {
     const [myName, setMyName] = useState("");
@@ -82,9 +83,10 @@ export default function Welcome() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1 }}
                     className="text-center mb-12">
-                    <h1 className="text-5xl font-black text-white tracking-tight font-[Clash_Display] mb-2">
+                    {/* <h1 className="text-5xl font-black text-white tracking-tight font-[Clash_Display] mb-2">
                         ✏️ Whiteboard
-                    </h1>
+                    </h1> */}
+                    <LetsCoSketh />
                     <p className="text-violet-300/70 text-base">
                         Draw together, in real time.
                     </p>

@@ -9,6 +9,7 @@ import { useContext } from 'react'
 import { ThemeContext } from '../context/ThemeContext'
 import ToggleBtn from '../components/ToggleBtn'
 import Background from '../components/Background'
+import Whiteboard from '../components/Whiteboard'
 
 const Workspace = () => {
   
@@ -22,6 +23,7 @@ const Workspace = () => {
             <SessionStatus />
             <Invite_help />
             <ToggleBtn />
+            <Whiteboard activeTool="pen" activeColor="#a855f7" strokeWidth={3} />
           </ThemeProvider>
         </>
     
