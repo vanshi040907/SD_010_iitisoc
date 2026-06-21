@@ -1,9 +1,43 @@
 import React from 'react'
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useContext, useEffect, useCallback } from "react";
+import { WhiteboardContext } from '../context/WhiteboardContext';
 
 const THROTTLE_MS = 10;
 
-const Whiteboard = ({ activeTool = "pen", activeColor = "#a855f7", strokeWidth = 3 }) => {
+const Whiteboard = () => {
+
+  const { activeTool, activeColor, strokeWidth, registerEngine } = useContext(WhiteboardContext);
+
+  const activeToolRef = useRef(activeTool);
+  const activeColorRef = useRef(activeColor);
+  const strokeWidthRef = useRef(strokeWidth);
+
+  useEffect(() => { activeToolRef.current = activeTool; }, [activeTool]);
+  useEffect(() => { activeColorRef.current = activeColor; }, [activeColor]);
+  useEffect(() => { strokeWidthRef.current = strokeWidth; }, [strokeWidth]);
+
+  const undo = ()=>{
+    if (historyStackRef.current.length === 0) return;
+    const last = historyStackRef.current.pop();
+    redoStackRef.current.push(last);
+    redrawAll();
+  }
+
+  const redo = ()=>{
+    if (redoStackRef.current.length === 0) return;
+    const restored = redoStackRef.current.pop();
+    historyStackRef.current.push(restored);
+    redrawAll();
+  }
+
+  useEffect(() => {
+  registerEngine({
+    undo,
+    redo,
+    canUndo: () => historyStackRef.current.length > 0,
+    canRedo: () => redoStackRef.current.length > 0,
+  });
+}, []);
 
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
@@ -97,8 +131,8 @@ const Whiteboard = ({ activeTool = "pen", activeColor = "#a855f7", strokeWidth =
       id: crypto.randomUUID(),
       type: "stroke",
       points: [point],
-      color: activeColor,
-      width: strokeWidth,
+      color: activeColorRef.current,
+      width: strokeWidthRef.current,
     };
   }
 
@@ -111,7 +145,7 @@ const Whiteboard = ({ activeTool = "pen", activeColor = "#a855f7", strokeWidth =
     const point = getMousePos(e);
     const ctx = ctxRef.current;
 
-    drawSegment(ctx, lastPointRef.current, point, activeColor, strokeWidth);
+    drawSegment(ctx, lastPointRef.current, point, activeColorRef.current, strokeWidthRef.current);
 
     currentStrokeRef.current.points.push(point);
     lastPointRef.current = point;
@@ -131,19 +165,6 @@ const Whiteboard = ({ activeTool = "pen", activeColor = "#a855f7", strokeWidth =
      currentStrokeRef.current = null
   }
 
-  const undo = ()=>{
-    if (historyStackRef.current.length === 0) return;
-    const last = historyStackRef.current.pop();
-    redoStackRef.current.push(last);
-    redrawAll();
-  }
-
-  const redo = ()=>{
-    if (redoStackRef.current.length === 0) return;
-    const restored = redoStackRef.current.pop();
-    historyStackRef.current.push(restored);
-    redrawAll();
-  }
 
   return (
      <canvas
