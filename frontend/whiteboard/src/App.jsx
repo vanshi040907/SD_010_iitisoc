@@ -6,6 +6,8 @@ import Home from './pages/home.jsx'
 import Welcome from './pages/Welcome.jsx'
 import Workspace from './pages/Workspace'
 import { SocketProvider } from './context/Socket.jsx'
+
+
 const App = () => {
     return (
         <SocketProvider>

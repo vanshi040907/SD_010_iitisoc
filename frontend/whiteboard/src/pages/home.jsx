@@ -1,7 +1,9 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router'
-import Ferrofluid from "../components/Ferrofluid";
+import Ferrofluid from "../animations/Ferrofluid";
+import LetsCoSketh from '../animations/LetsCoSketh';
+
 function Home() {
     return (
 
@@ -41,9 +43,12 @@ function Home() {
                     transition={{ duration: 1 }}
                     className="text-center mb-12"
                 >
-                    <h1 className="text-5xl font-black text-white tracking-tight font-[Clash_Display] mb-2">
+                    {/* <h1 className="text-5xl font-black text-white tracking-tight font-[Clash_Display] mb-2">
                         ✏️ Whiteboard
-                    </h1>
+                    </h1> */}
+
+                    <LetsCoSketh />
+
                     <p className="text-violet-300/70 text-base">
                         Draw together, in real time.
                     </p>

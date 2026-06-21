@@ -5,23 +5,26 @@ import MemberList from '../components/MemberList'
 import SessionStatus from '../components/SessionStatus'
 import Invite_help from '../components/Invite_help'
 import { ThemeProvider } from '../context/ThemeContext'
-import { useContext } from 'react'
-import { ThemeContext } from '../context/ThemeContext'
 import ToggleBtn from '../components/ToggleBtn'
 import Background from '../components/Background'
+import Whiteboard from '../components/Whiteboard'
+import { WhiteboardProvider } from '../context/WhiteboardContext'
 
 const Workspace = () => {
   
   return (
      <>         
           <ThemeProvider>
-            <Background />
-            <TitleCard_download/>
-            <Toolbar/>
-            <MemberList />
-            <SessionStatus />
-            <Invite_help />
-            <ToggleBtn />
+            <WhiteboardProvider>
+              <Background />
+              <TitleCard_download/>
+              <Toolbar/>
+              <MemberList />
+              <SessionStatus />
+              <Invite_help />
+              <ToggleBtn />
+              <Whiteboard />
+            </WhiteboardProvider>
           </ThemeProvider>
         </>
     
