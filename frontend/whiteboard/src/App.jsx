@@ -4,7 +4,7 @@ import Login from './pages/login.jsx'
 import Signup from './pages/signup.jsx'
 import Home from './pages/home.jsx'
 import Welcome from './pages/Welcome.jsx'
-import Workspace from './pages/Workspace'
+import Workspace from './pages/Workspace.jsx'
 import { SocketProvider } from './context/Socket.jsx'
 
 
