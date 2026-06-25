@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useRef, useContext, useEffect, useCallback } from "react";
 import { WhiteboardContext } from '../context/WhiteboardContext';
+import axios from 'axios';
+import conf from '../conf/conf';
 
 const THROTTLE_MS = 10;
 
 const Whiteboard = () => {
 
   const { activeTool, activeColor, strokeWidth, registerEngine } = useContext(WhiteboardContext);
+  const [add,setAdd] = useState(0);
 
   const activeToolRef = useRef(activeTool);
   const activeColorRef = useRef(activeColor);
@@ -16,28 +19,54 @@ const Whiteboard = () => {
   useEffect(() => { activeColorRef.current = activeColor; }, [activeColor]);
   useEffect(() => { strokeWidthRef.current = strokeWidth; }, [strokeWidth]);
 
-  const undo = ()=>{
+  const undo = async()=>{
+    
     if (historyStackRef.current.length === 0) return;
     const last = historyStackRef.current.pop();
     redoStackRef.current.push(last);
+    setAdd((prev) => prev+=1)
+    
+      
+    try {
+      await axios.get(
+        `${conf.path}/whiteboard/undo`,  {
+    withCredentials: true,
+  }
+      );
+      
+      
+    } catch (error) {
+      console.log(error);
+    }
+
+
     redrawAll();
   }
 
-  const redo = ()=>{
+  const redo = async()=>{
     if (redoStackRef.current.length === 0) return;
     const restored = redoStackRef.current.pop();
     historyStackRef.current.push(restored);
+    setAdd((prev) => prev+=1);
+       
+    try {
+      await axios.post(
+        `${conf.path}/whiteboard/redo`,{
+           drawingOperations: restored,
+        },  {
+    withCredentials: true,
+  }
+      );
+      
+      
+    } catch (error) {
+      console.log(error);
+    }
+
     redrawAll();
   }
 
-  useEffect(() => {
-  registerEngine({
-    undo,
-    redo,
-    canUndo: () => historyStackRef.current.length > 0,
-    canRedo: () => redoStackRef.current.length > 0,
-  });
-}, []);
+ 
 
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
@@ -45,6 +74,16 @@ const Whiteboard = () => {
   //operation storage for undo and redo
   const historyStackRef = useRef([]);
   const redoStackRef = useRef([]);
+
+   useEffect(() => {
+  registerEngine({
+    undo,
+    redo,
+    canUndo: () => historyStackRef.current.length > 0,
+    canRedo: () => redoStackRef.current.length > 0,
+  });
+  
+}, [add]);
    
   //live state management
   const isDrawingRef = useRef(false);
@@ -139,7 +178,7 @@ const Whiteboard = () => {
   const handleMouseMove = (e)=>{
     if (!isDrawingRef.current) return;
 
-    const now = performance.now;
+    const now = performance.now();
     if(now-lastEmitTimeRef.current <THROTTLE_MS) return;
     lastEmitTimeRef.current = now;
     const point = getMousePos(e);
@@ -152,17 +191,33 @@ const Whiteboard = () => {
     
   }
 
-  const handleMouseUp = ()=> {
+   const handleMouseUp =async ()=> {
     if(!isDrawingRef.current) return;
     isDrawingRef.current = false;
     
     if(currentStrokeRef.current && currentStrokeRef.current.points.length > 1){
       historyStackRef.current.push(currentStrokeRef.current);
+      
+       try {
+      await axios.post(
+        `${conf.path}/whiteboard/event`,{
+        drawingOperations:currentStrokeRef.current ,
+        },{
+          withCredentials: true,
+        },
+      );
+      
+      
+    } catch (error) {
+      console.log(error);
+    }
+
       redoStackRef.current = []; 
 
       redrawAll();
     }
      currentStrokeRef.current = null
+     setAdd((prev) => prev+=1)
   }
 
 

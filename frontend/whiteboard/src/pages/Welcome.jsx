@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from 'framer-motion'
-import Ferrofluid from "../components/Ferrofluid";
+import Ferrofluid from "../animations/Ferrofluid";
 import { Link } from "react-router-dom"
 import { useSocket } from "../context/Socket";
 import conf from "../conf/conf";

@@ -6,23 +6,17 @@ const whiteBoardSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref:"room",
     },
-    type : {
-       type: String,
-       required: true,
-    },
+    
      user: {
       type: Schema.Types.ObjectId,
       ref:"user",
     },
-    drawingOperations: [],
+     drawingOperations: [{}],
     lastUpdated: {
       type: Date,
       default: Date.now,
     },
-    active : {
-      type: Boolean,
-      default : true,
-    },
+    
     
   },
   { timestamps: true },

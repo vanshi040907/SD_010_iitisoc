@@ -4,6 +4,6 @@ const  {EventHandling, Undo , Redo} = require("../controller/whiteboard");
 
 router.post("/event", EventHandling);
 router.get("/undo",Undo );
-router.get("/redo",Redo);
+router.post("/redo",Redo);
 
 module.exports = router;
