@@ -44,11 +44,14 @@ async function UserEnterRoom(req, res) {
 
   const user = await User.findOne({ _id: userid });
   const room = await Room.findOne({ roomId: roomid });
+   
   if (!user || !room) {
     return res.status(404).json({
       success: false,
     });
   }
+   user.ActiveRoom = room;
+     await user.save();
 
   
   return res.json({

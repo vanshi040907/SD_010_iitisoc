@@ -81,7 +81,15 @@ export default function Welcome() {
       );
 
       if (response.data.success){
+        if (!socket.connected) {
+      socket.connect();
+    }
+         socket.emit("joinroom", {
+  roomID: joinRoomID.trim().toUpperCase(),
+  myName: joinName.trim()
+});
         navigate(`/Workspace/${joinRoomID}`);
+
       } else {
         alert("username or roomid not found");
       }
