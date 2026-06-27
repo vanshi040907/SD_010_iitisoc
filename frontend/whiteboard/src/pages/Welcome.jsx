@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from 'framer-motion'
-import Ferrofluid from "../components/Ferrofluid";
+import Ferrofluid from "../animations/Ferrofluid";
 import { Link } from "react-router-dom"
 import { useSocket } from "../context/Socket";
 import conf from "../conf/conf";
@@ -80,7 +80,7 @@ export default function Welcome() {
         },
       );
 
-      if (response.data.success){
+      if (response.data.success) {
         navigate(`/Workspace/${joinRoomID}`);
       } else {
         alert("username or roomid not found");
@@ -120,19 +120,19 @@ export default function Welcome() {
 
         <div className="fixed bottom-0 right-0 w-[500px] h-[500px] rounded-full bg-violet-900/20 blur-[200px] translate-x-1/2 translate-y-1/2 " />
 
-                {/* Header */}
-                <motion.div 
-                initial={{ opacity: 0, y: -50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1 }}
-                    className="text-center mb-12">
-                    <h1 className="text-5xl font-black text-white tracking-tight font-[Clash_Display] mb-2">
-                        ✏️ Whiteboard
-                    </h1>
-                    <p className="text-violet-300/70 text-base">
-                        Draw together, in real time.
-                    </p>
-                </motion.div>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="text-center mb-12">
+          <h1 className="text-5xl font-black text-white tracking-tight font-[Clash_Display] mb-2">
+            ✏️ Whiteboard
+          </h1>
+          <p className="text-violet-300/70 text-base">
+            Draw together, in real time.
+          </p>
+        </motion.div>
 
         {/* Cards row */}
         <div className="w-full max-w-3xl flex flex-col md:flex-row gap-5 z-10">
@@ -229,14 +229,14 @@ export default function Welcome() {
 
             <p className="text-red-400 text-xs mb-5 h-4">{joinMsg}</p>
 
-            
-              <button
-                onClick={joinRoom}
-                className="w-full py-3 rounded-xl text-white font-bold text-sm bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 shadow-[0_4px_20px_rgba(79,70,229,0.35)] active:scale-95 transition"
-              >
-                Join Room →
-              </button>
-            
+
+            <button
+              onClick={joinRoom}
+              className="w-full py-3 rounded-xl text-white font-bold text-sm bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 shadow-[0_4px_20px_rgba(79,70,229,0.35)] active:scale-95 transition"
+            >
+              Join Room →
+            </button>
+
           </div>
         </div>
       </div>
