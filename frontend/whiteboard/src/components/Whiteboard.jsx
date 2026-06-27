@@ -6,24 +6,24 @@ const THROTTLE_MS = 10;
 
 const Whiteboard = () => {
 
-  const [editingText, setEditingText] = useState(null);
+  // state for the floating text input box position, value, and id of item being edited
+  const [textInput, setTextInput] = useState(null);
 
   const { activeTool, activeShape, activeColor, strokeWidth, registerEngine } = useContext(WhiteboardContext);
 
-
-
-  const activeToolRef = useRef(activeTool);
   const activeColorRef = useRef(activeColor);
   const strokeWidthRef = useRef(strokeWidth);
   const shapeStartRef = useRef(null);
   const previewShapeRef = useRef(null);
   const activeToolRefLocal = useRef(activeTool); //  ref mirror for activeTool, needed inside mouse handlers
 
-  useEffect(() => { activeToolRef.current = activeTool; }, [activeTool]);
   useEffect(() => { activeColorRef.current = activeColor; }, [activeColor]);
   useEffect(() => { strokeWidthRef.current = strokeWidth; }, [strokeWidth]);
   useEffect(() => { activeToolRefLocal.current = activeTool; }, [activeTool]); //  keep local tool ref in sync
 
+  //  ref mirrors for color and font size needed inside text commit handler
+  const activeColorRefText = useRef(activeColor);
+  useEffect(() => { activeColorRefText.current = activeColor; }, [activeColor]);
 
   const undo = () => {
     if (historyStackRef.current.length === 0) return;
@@ -216,8 +216,6 @@ const Whiteboard = () => {
     ctx.stroke();
   };
 
-
-
   const drawTriangle = (ctx, shape) => {
     const start = shape.start;
     const end = shape.end;
@@ -269,6 +267,7 @@ const Whiteboard = () => {
         break;
     }
   };
+
   const drawSegment = (
     ctx,
     from,
@@ -320,6 +319,37 @@ const Whiteboard = () => {
     ctx.restore();
   };
 
+  // commits the floating input box text onto the canvas as a history item
+  // called on Enter key or when the input loses focus
+  const commitText = useCallback((inputState) => {
+    if (!inputState || !inputState.value.trim()) {
+
+      setTextInput((prev) => (prev?.value.trim() ? prev : null));
+      return;
+    }
+
+    // if editing an existing text item, remove the old one first
+    if (inputState.editingId) {
+      historyStackRef.current = historyStackRef.current.filter(
+        (item) => item.id !== inputState.editingId
+      );
+    }
+
+    const newTextItem = {
+      id: inputState.editingId || crypto.randomUUID(),
+      type: "text",
+      text: inputState.value,
+      x: inputState.x,
+      y: inputState.y,
+      color: inputState.color,
+      fontSize: inputState.fontSize,
+    };
+
+    historyStackRef.current.push(newTextItem);
+    redoStackRef.current = [];
+    redrawAll();
+    setTextInput(null);
+  }, [redrawAll]);
 
   //Mouse Handlers
 
@@ -373,8 +403,69 @@ const Whiteboard = () => {
         width: strokeWidthRef.current,
       };
     }
+
+    // text tool — single click opens floating input at click position
+    else if (activeToolRefLocal.current === "text") {
+
+      //  if a text input is already open, commit it before opening a new one
+      if (textInput) {
+        commitText(textInput);
+        return;
+      }
+
+      setTextInput({
+        x: point.x,
+        y: point.y,
+        value: "",
+        color: activeColorRefText.current,
+        fontSize: 20,
+        editingId: null,
+      });
+    }
   };
 
+  // double click handler — if text tool is active and user double-clicks
+  // an existing text item, re-opens it in the floating input for editing
+  const handleDoubleClick = (e) => {
+    if (activeToolRefLocal.current !== "text") return;
+
+    const point = getMousePos(e);
+    const ctx = ctxRef.current;
+
+    // find the topmost text item whose bounding box contains the click point
+    const clicked = [...historyStackRef.current].reverse().find((item) => {
+      if (item.type !== "text") return false;
+
+      ctx.font = `${item.fontSize}px Arial`;
+      const measured = ctx.measureText(item.text);
+      const w = measured.width;
+      const h = item.fontSize;
+
+      return (
+        point.x >= item.x &&
+        point.x <= item.x + w &&
+        point.y >= item.y - h &&
+        point.y <= item.y
+      );
+    });
+
+    if (!clicked) return;
+
+    // remove it from canvas visually and open it in the input box
+    historyStackRef.current = historyStackRef.current.filter(
+      (item) => item.id !== clicked.id
+    );
+    redrawAll();
+
+    setTextInput({
+      x: clicked.x,
+      y: clicked.y,
+      value: clicked.text,
+      color: clicked.color,
+      fontSize: clicked.fontSize,
+      editingId: clicked.id,
+    });
+  };
 
   const handleMouseMove = (e) => {
     if (!isDrawingRef.current) return;
@@ -459,14 +550,59 @@ const Whiteboard = () => {
   };
 
   return (
-    <canvas
-      ref={canvasRef}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-      className="absolute inset-0 touch-none "
-    />
+    //  wrapper div so the floating input can be positioned relative to the canvas
+    <div className="absolute inset-0">
+      <canvas
+        ref={canvasRef}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onDoubleClick={handleDoubleClick} // for re-editing placed text
+        className="absolute inset-0 touch-none"
+      />
+
+      {/* ADDED: floating input box — rendered when text tool is active and canvas is clicked */}
+      {textInput && (
+        <textarea
+          autoFocus
+          value={textInput.value}
+          onChange={(e) =>
+            setTextInput((prev) => ({ ...prev, value: e.target.value }))
+          }
+          onKeyDown={(e) => {
+            // Enter commits, Shift+Enter allows newline, Escape cancels
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              commitText(textInput);
+            }
+            if (e.key === "Escape") {
+              setTextInput(null);
+            }
+          }}
+          onMouseDown={(e) => e.stopPropagation()} // prevent canvas mousedown from firing when clicking inside textarea
+          style={{
+            position: "absolute",
+            left: textInput.x,
+            top: textInput.y - textInput.fontSize,
+            fontSize: `${textInput.fontSize}px`,
+            color: textInput.color,
+            fontFamily: "Arial",
+            background: "transparent",
+            border: "1px dashed rgba(255,255,255,0.4)",
+            outline: "none",
+            resize: "none",
+            minWidth: "120px",
+            minHeight: `${textInput.fontSize + 8}px`,
+            lineHeight: 1.2,
+            padding: "2px 4px",
+            caretColor: textInput.color,
+            overflow: "hidden",
+          }}
+          rows={1}
+        />
+      )}
+    </div>
   );
 }
 
