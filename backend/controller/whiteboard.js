@@ -1,60 +1,52 @@
 const User = require("../models/user"); 
 const Room = require("../models/room");
 const Whiteboard = require("../models/whiteBoard");
-async function EventHandling (res, req) {
-    const user = req.user;
-    const  {type , event}    = req.body;
+async function EventHandling (req, res) {
+    const userid = req.user.id;
+     const user = await User.findById(req.user.id);
+
+    const  { drawingOperations}    = req.body;
     const room = user.ActiveRoom;
     const whiteboard = await Whiteboard.create({
         room: room,
-        type: type,
+        
         user: user,
-        drawingOperations: [event],
+         drawingOperations: drawingOperations,
     
     });
      req.io.to(room._id). emit('event', {
     whiteboard: whiteboard});
+    
      return res.json({Success:"true"});
 
 }
 async function Undo (req, res) {
-    const user = req.user;
+        
+    
+    const userid = req.user.id;
+     const user = await User.findById(req.user.id);
     
     const room = user.ActiveRoom;
-     const whiteboard = await Whiteboard.find({room : room}).sort({ createdAt: 1 });
-     const n = whiteboard.length;
-     for (let i = n-1; i>=0; i-- ) {
-        if(whiteboard[i].active ) {
-         whiteboard[i].active = false
-         await whiteboard[i].save();
-         break;
-        }
-
-     } 
-
-    
-
-    
-     req.io.to(room._id). emit('event', {
-    whiteboard: whiteboard});
-     return res.json({Success:"true"});
-
-}
-async function Redo (res, req) {
-    const user = req.user;
-    
-    const room = user.ActiveRoom;
-     const whiteboard = await Whiteboard.find({room : room}).sort({ createdAt: 1 });
-     const n = whiteboard.length;
+     const whiteboard = await Whiteboard.find({room : room}).sort({ createdAt:- 1 });
+       const n = whiteboard.length;
      for (let i = 0; i< n; i++ ) {
-        if(!whiteboard[i].active ) {
-         whiteboard[i].active = true
-         await whiteboard[i].save();
+        
+       
+        if(whiteboard[i].user.toString()===user._id.toString()) {
+             
+        
+         
+         await whiteboard[i].deleteOne();
          break;
+         
         }
 
      } 
 
+     
+
+
+    
 
     
      req.io.to(room._id). emit('event', {
@@ -62,4 +54,35 @@ async function Redo (res, req) {
      return res.json({Success:"true"});
 
 }
-module.exports = {EventHandling, Undo , Redo};
+async function Redo (req, res) {
+     const userid = req.user.id;
+     const user = await User.findById(req.user.id);
+       const  { drawingOperations}    = req.body;
+    
+    const room = user.ActiveRoom;
+     const whiteboard = await Whiteboard.create({
+        room: room,
+        
+        user: user,
+         drawingOperations: drawingOperations,
+    
+    });
+     req.io.to(room._id). emit('event', {
+    whiteboard: whiteboard});
+    console.log("hi")
+     return res.json({Success:"true"});
+
+}
+async function Get(req,res) {
+      const userid = req.user.id;
+     const user = await User.findById(req.user.id);
+       const room = user.ActiveRoom;
+       const whiteboard = await Whiteboard.find({room:room});
+       
+
+               return res.json({data:whiteboard||[]});
+     
+}
+
+
+module.exports = {EventHandling, Undo , Redo, Get};

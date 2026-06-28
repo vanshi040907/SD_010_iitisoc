@@ -57,6 +57,9 @@ export default function Welcome() {
           withCredentials: true,
         },
       );
+        if (!socket.connected) {
+      socket.connect();
+    }
       socket.emit("joinroom", { roomID, myName });
       navigate(`/Workspace/${roomID}`);
     } catch (error) {
@@ -80,15 +83,23 @@ export default function Welcome() {
         },
       );
 
-      if (response.data.success) {
+      if (response.data.success){
+        if (!socket.connected) {
+      socket.connect();
+    }
+         socket.emit("joinroom", {
+  roomID: joinRoomID.trim().toUpperCase(),
+  myName: joinName.trim()
+});
         navigate(`/Workspace/${joinRoomID}`);
-      } else {
+  }
+else {
         alert("username or roomid not found");
       }
     } catch (err) {
       console.log(err);
     }
-  }
+}
 
   return (
     <div className="relative h-[100vh] w-full ">

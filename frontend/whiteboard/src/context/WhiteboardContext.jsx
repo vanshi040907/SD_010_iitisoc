@@ -23,6 +23,8 @@ export function WhiteboardProvider({ children }) {
   }, []);
 
   const undo = useCallback(() => {
+    
+
     engineRef.current?.undo();
     bump();
   }, [bump]);

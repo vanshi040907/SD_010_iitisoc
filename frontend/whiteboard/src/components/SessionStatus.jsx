@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState, useContext} from "react";
 import { LogOut, Smile } from "lucide-react";
 import { ThemeContext } from '../context/ThemeContext';
+import { useSocket } from '../context/Socket';
+import { useCallback } from 'react';
 
 const EMOJIS = ["👍", "❤️", "😂", "😮", "🔥", "🎉", "👏", "💡", "✅", "🚀"];
  
@@ -14,16 +16,47 @@ const SessionStatus = () => {
 
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [reactions, setReactions] = useState([]);
-
-  const LaunchReaction = (emoji) => {
+  const [emojiCurrent, setEmojiCurrent]  = useState(null);
+  const socket = useSocket();
+  
+  const LaunchReaction =useCallback( (data) => {
+    const {emoji, user} = data;
     const id= ++reactionIdCounter;
     const left= 30+ Math.floor(Math.random()*40);
-    setReactions((prev) => [...prev, { id, emoji, name: CURRENT_USER, left }]);
+    setReactions((prev) => [...prev, { id, emoji, name: user.userName, left }]);
     setTimeout(() =>{
       setReactions((prev)=> prev.filter((r)=> r.id !== id));
     }, 2800);
     setEmojiOpen(false);
-  };
+    
+  },[]);
+  useEffect(() => {
+
+    if(emojiCurrent) {
+      
+      socket.emit('emojisend', {emoji:emojiCurrent});
+    }
+      
+  
+
+    
+    }
+
+  ,[emojiCurrent])
+  useEffect(() => {
+
+    
+      socket.on("emojireceived", LaunchReaction);
+       console.log("-------");
+     return () => {
+      socket.off("emojireceived", LaunchReaction);
+     }
+  
+
+    
+    }
+
+  ,[socket,LaunchReaction])
 
   const glassStyle = {
     ...theme.glass
@@ -65,7 +98,7 @@ const SessionStatus = () => {
           { EMOJIS.map((emoji) => (
             <button
              key={emoji}
-             onClick={() => LaunchReaction(emoji)}
+             onClick={(e) =>setEmojiCurrent(emoji)}
              className={`text-xl w-9 h-9 rounded-xl flex items-center justify-center ${theme.hoverEmoji} transition-all duration-150 hover:scale-125`}
              >
               {emoji}

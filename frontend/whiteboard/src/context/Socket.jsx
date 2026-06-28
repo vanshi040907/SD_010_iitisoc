@@ -10,7 +10,9 @@ export const useSocket = () => {
 export const SocketProvider = (props) => {
     const socket = useMemo(
         () => 
-            io(`${conf.path}`), 
+            io(`${conf.path}`, {
+          withCredentials: true,
+        }), 
             []
     );
     return (

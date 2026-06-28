@@ -1,13 +1,18 @@
 import React from 'react'
 import { useRef, useContext, useEffect, useCallback, useState } from "react";
 import { WhiteboardContext } from '../context/WhiteboardContext';
+import conf from '../conf/conf';
+import axios from 'axios';
+import { useSocket } from '../context/Socket';
 
 const THROTTLE_MS = 10;
 
 const Whiteboard = () => {
+  const socket = useSocket();
 
   // state for the floating text input box position, value, and id of item being edited
   const [textInput, setTextInput] = useState(null);
+    const [add,setAdd] = useState(0);
 
   const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump } = useContext(WhiteboardContext);
 
@@ -25,18 +30,76 @@ const Whiteboard = () => {
   const activeColorRefText = useRef(activeColor);
   useEffect(() => { activeColorRefText.current = activeColor; }, [activeColor]);
 
-  const undo = () => {
+  useEffect (() => {
+    const fetchData = async () => {
+    try {
+      const res = await axios.get(
+        `${conf.path}/whiteboard/getdata`,
+
+        {
+          withCredentials: true,
+        },
+      );
+      const whiteboard = res.data.data;
+      const size = whiteboard.length;
+        if(size>0) {
+        const historyflatted= whiteboard
+        .map((item) => item. drawingOperations)
+        .flat();
+        historyStackRef.current = historyflatted
+
+        console.log(historyStackRef.current)
+          redrawAll();
+        }
+      
+        
+    } catch (error) {
+      console.log(error);
+    }
+  } 
+  fetchData();
+  
+
+  },[])
+
+  const undo = async () => {
     if (historyStackRef.current.length === 0) return;
     const last = historyStackRef.current.pop();
     redoStackRef.current.push(last);
+     try {
+      await axios.get(
+       ` ${conf.path}/whiteboard/undo`,  {
+    withCredentials: true,
+  }
+      );
+      
+      
+    } catch (error) {
+      console.log(error);
+    }
     redrawAll();
+    redraw();
   }
 
-  const redo = () => {
+  const redo = async() => {
     if (redoStackRef.current.length === 0) return;
     const restored = redoStackRef.current.pop();
     historyStackRef.current.push(restored);
+     try {
+      await axios.post(
+        `${conf.path}/whiteboard/redo`,{
+           drawingOperations: restored,
+        },  {
+    withCredentials: true,
+  }
+      );
+      
+      
+    } catch (error) {
+      console.log(error);
+    }
     redrawAll();
+    redraw();
   }
 
   useEffect(() => {
@@ -46,7 +109,7 @@ const Whiteboard = () => {
       canUndo: () => historyStackRef.current.length > 0,
       canRedo: () => redoStackRef.current.length > 0,
     });
-  }, []);
+  }, [add]);
 
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
@@ -79,6 +142,22 @@ const Whiteboard = () => {
     return () => window.removeEventListener("resize", resize);
 
   }, []);
+  
+  const redraw = () => {
+    socket.emit('historysend' ,{history:historyStackRef.current});
+  }
+  useEffect (() => {
+    const handlesocket = (data) => {
+      const {history} = data;
+      historyStackRef.current = history;
+      redrawAll();
+    }
+    socket.on("historyreceived",handlesocket)
+      return () => {
+        socket.off("historyreceived",handlesocket);
+      }
+    
+  },[socket])
 
 
   //function for undo/redo/ first initialisation of the canvas- complete redraw through object array saved
@@ -87,7 +166,10 @@ const Whiteboard = () => {
     const canvas = canvasRef.current;
     if (!ctx || !canvas) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    
     historyStackRef.current.forEach((item) => {
+
 
       if (item.type === "stroke") {
         drawStroke(ctx, item);
@@ -267,6 +349,7 @@ const Whiteboard = () => {
         break;
     }
   };
+  
 
   const drawSegment = (
     ctx,
@@ -467,7 +550,25 @@ const Whiteboard = () => {
       editingId: clicked.id,
     });
   };
+useEffect(() => {
+   const handlesocket = (data) => {
+      drawSegment(ctxRef.current,
+        data.previousPoint,
+      data.point,
+      data.color,
+      data.width,
+      data.isEraser,
+      data.opacity
 
+      )
+    }
+    socket.on("currentreceived",handlesocket)
+      return () => {
+        socket.off("currentreceived",handlesocket);
+      }
+    
+
+},[socket])
   const handleMouseMove = (e) => {
     if (!isDrawingRef.current) return;
 
@@ -494,6 +595,13 @@ const Whiteboard = () => {
     }
 
     const previousPoint = lastPointRef.current;
+     socket.emit('currentsend' ,{
+      previousPoint,
+      point,
+      color:currentStrokeRef.current.color,
+      width:currentStrokeRef.current.width,
+      isEraser:currentStrokeRef.current.isEraser,
+      opacity:currentStrokeRef.current.opacity});
 
     drawSegment(
       ctx,
@@ -511,7 +619,7 @@ const Whiteboard = () => {
   };
 
 
-  const handleMouseUp = () => {
+  const handleMouseUp = async() => {
     if (!isDrawingRef.current) return;
 
     isDrawingRef.current = false;
@@ -526,10 +634,23 @@ const Whiteboard = () => {
       historyStackRef.current.push(
         currentStrokeRef.current
       );
+ try {
+      await axios.post(
+       `${conf.path}/whiteboard/event`,{
+        drawingOperations:currentStrokeRef.current ,
+        },{
+          withCredentials: true,
+        },
+      );
+      
+      
+    } catch (error) {
+      console.log(error);
+    }
 
       redoStackRef.current = [];
-
       redrawAll();
+      redraw();
 
       currentStrokeRef.current = null;
       bump();
