@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
     res.send('Backend is running successfully!');
 });
 app.use('/user',userrouter );
-io.use((socket,next) => {
+io.use((socket,next) => { 
     const cookies = cookie.parseCookie(socket.handshake.headers.cookie || " ");
     const useruid = cookies.uid;
     if(!useruid) return next(new Error("login required")); 
