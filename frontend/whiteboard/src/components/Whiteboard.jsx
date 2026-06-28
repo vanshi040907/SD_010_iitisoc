@@ -9,7 +9,7 @@ const Whiteboard = () => {
   // state for the floating text input box position, value, and id of item being edited
   const [textInput, setTextInput] = useState(null);
 
-  const { activeTool, activeShape, activeColor, strokeWidth, registerEngine } = useContext(WhiteboardContext);
+  const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump } = useContext(WhiteboardContext);
 
   const activeColorRef = useRef(activeColor);
   const strokeWidthRef = useRef(strokeWidth);
@@ -349,6 +349,7 @@ const Whiteboard = () => {
     redoStackRef.current = [];
     redrawAll();
     setTextInput(null);
+    bump();
   }, [redrawAll]);
 
   //Mouse Handlers
@@ -531,6 +532,7 @@ const Whiteboard = () => {
       redrawAll();
 
       currentStrokeRef.current = null;
+      bump();
     }
 
     if (
@@ -546,6 +548,7 @@ const Whiteboard = () => {
       previewShapeRef.current = null;
 
       redrawAll();
+      bump();
     }
   };
 

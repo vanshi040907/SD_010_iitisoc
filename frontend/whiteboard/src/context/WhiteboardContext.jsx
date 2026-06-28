@@ -45,7 +45,7 @@ export function WhiteboardProvider({ children }) {
         undo, redo,
         canUndo, canRedo,
         activeShape,
-        setActiveShape,
+        setActiveShape, bump
       }}
     >
       {children}
