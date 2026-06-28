@@ -109,6 +109,15 @@ socket.on("currentshapesend",async(data) => {
     
 })
 
+socket.on("text" , async(data)=>{
+    const userId = socket.user.id;
+    const user = User.findById(userId);
+    const roomId = user.ActiveRoom;
+
+    io.to(roomId).emit("showtext",data);
+    
+})
+
 })
 app.use('/room',restrictToLoggedinUser,roomrouter );
 app.use('/whiteboard',restrictToLoggedinUser,whiteboardrouter );

@@ -16,7 +16,7 @@ async function EventHandling (req, res) {
     });
      req.io.to(room._id). emit('event', {
     whiteboard: whiteboard});
-    
+     console.log(whiteboard);
      return res.json({Success:"true"});
 
 }
@@ -83,6 +83,7 @@ async function Get(req,res) {
                return res.json({data:whiteboard||[]});
      
 }
+
 
 
 module.exports = {EventHandling, Undo , Redo, Get};
