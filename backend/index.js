@@ -67,9 +67,33 @@ socket.on("emojisend",async(data) => {
     const roomid= user.ActiveRoom;
      const room = await Room.findById(roomid);
     
-    console.log(room.roomId);
+    
     
     io.to(room.roomId).emit("emojireceived", {emoji:emoji, user:user});
+    
+})
+socket.on("historysend",async(data) => {
+    const {history} = data;
+    const userid = socket.user.id;
+    const user = await User.findById(userid);
+    const roomid= user.ActiveRoom;
+     const room = await Room.findById(roomid);
+    
+    
+    
+    io.to(room.roomId).emit("historyreceived", {history:history});
+    
+})
+socket.on("currentsend",async(data) => {
+    
+    const userid = socket.user.id;
+    const user = await User.findById(userid);
+    const roomid= user.ActiveRoom;
+     const room = await Room.findById(roomid);
+    
+    
+    
+    io.to(room.roomId).emit("currentreceived", data);
     
 })
 

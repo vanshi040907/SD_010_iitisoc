@@ -11,7 +11,11 @@ const whiteBoardSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref:"user",
     },
-     drawingOperations: [{}],
+     drawingOperations: {
+       type: [Schema.Types.Mixed],
+      default: [],
+
+     },
     lastUpdated: {
       type: Date,
       default: Date.now,

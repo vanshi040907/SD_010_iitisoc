@@ -73,6 +73,16 @@ async function Redo (req, res) {
      return res.json({Success:"true"});
 
 }
+async function Get(req,res) {
+      const userid = req.user.id;
+     const user = await User.findById(req.user.id);
+       const room = user.ActiveRoom;
+       const whiteboard = await Whiteboard.find({room:room});
+       
+
+               return res.json({data:whiteboard||[]});
+     
+}
 
 
-module.exports = {EventHandling, Undo , Redo};
+module.exports = {EventHandling, Undo , Redo, Get};
