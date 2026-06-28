@@ -48,7 +48,7 @@ const Whiteboard = () => {
         .flat();
         historyStackRef.current = historyflatted
 
-        console.log(historyStackRef.current)
+        
           redrawAll();
         }
       
@@ -563,8 +563,16 @@ useEffect(() => {
       )
     }
     socket.on("currentreceived",handlesocket)
+     const handleshape = (data) => {
+      redrawAll();
+      drawShape(ctxRef.current,
+        data.shape)
+      
+    }
+    socket.on("currentshapereceived",handleshape)
       return () => {
         socket.off("currentreceived",handlesocket);
+        socket.off("currentshapereceived",handleshape);
       }
     
 
@@ -585,6 +593,7 @@ useEffect(() => {
       previewShapeRef.current.end = point;
 
       redrawAll();
+      socket.emit('currentshapesend',{shape:previewShapeRef.current});
 
       drawShape(
         ctx,
@@ -663,12 +672,25 @@ useEffect(() => {
       historyStackRef.current.push(
         previewShapeRef.current
       );
-
+ try {
+      await axios.post(
+       `${conf.path}/whiteboard/event`,{
+        drawingOperations:previewShapeRef.current ,
+        },{
+          withCredentials: true,
+        },
+      );
+      
+      
+    } catch (error) {
+      console.log(error);
+    }
       redoStackRef.current = [];
 
       previewShapeRef.current = null;
 
       redrawAll();
+      redraw();
       bump();
     }
   };

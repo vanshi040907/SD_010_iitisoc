@@ -53,8 +53,7 @@ io.on('connection',(socket) => {
     socket.on('joinroom',(data) => {
     const {roomID, myName} = data;
     socket.join(roomID);
-    console.log(roomID)
-         console.log(`${myName} joined ${roomID} ${socket.id}`);
+    
 
     
     socket.broadcast.to(roomID).emit("new user",myName ); 
@@ -94,6 +93,19 @@ socket.on("currentsend",async(data) => {
     
     
     io.to(room.roomId).emit("currentreceived", data);
+    
+})
+
+socket.on("currentshapesend",async(data) => {
+    
+    const userid = socket.user.id;
+    const user = await User.findById(userid);
+    const roomid= user.ActiveRoom;
+     const room = await Room.findById(roomid);
+    
+    
+    
+    io.to(room.roomId).emit("currentshapereceived", data);
     
 })
 
