@@ -327,7 +327,7 @@ const Whiteboard = () => {
   };
 
   const drawShape = (ctx, shape) => {
-    console.log("Drawing:", shape.type);
+    
     switch (shape.type) {
       case "rect":
         drawRect(ctx, shape);
@@ -564,7 +564,7 @@ const Whiteboard = () => {
       editingId: clicked.id,
     });
 
-    console.log(textInput);
+    
 
    
   };
