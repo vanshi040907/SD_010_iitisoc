@@ -4,9 +4,13 @@ const http = require("http");
 const {Server} = require("socket.io");
 const server = http.createServer(app);
 const cors = require("cors");
+const User = require("./models/user"); 
+const Room = require("./models/room"); 
+const { ValidateToken } = require("./service/auth");
+const cookie = require("cookie");
 const io = new Server(server,{
      cors: {
-        origin: "*", 
+        origin: "http://localhost:5173", 
         methods: ["GET", "POST"],
         credentials: true
     } }    
@@ -35,13 +39,64 @@ app.get('/', (req, res) => {
     res.send('Backend is running successfully!');
 });
 app.use('/user',userrouter );
+io.use((socket,next) => { 
+    const cookies = cookie.parseCookie(socket.handshake.headers.cookie || " ");
+    const useruid = cookies.uid;
+    if(!useruid) return next(new Error("login required")); 
+    const user = ValidateToken(useruid);
+    if(!user) return next(new Error("login required")); 
+    socket.user=user;
+    next();
+    
+})
 io.on('connection',(socket) => {
     socket.on('joinroom',(data) => {
     const {roomID, myName} = data;
     socket.join(roomID);
+    console.log(roomID)
          console.log(`${myName} joined ${roomID} ${socket.id}`);
+
+    
     socket.broadcast.to(roomID).emit("new user",myName ); 
+    
 })
+socket.on("emojisend",async(data) => {
+    const {emoji} = data;
+    const userid = socket.user.id;
+    const user = await User.findById(userid);
+    const roomid= user.ActiveRoom;
+     const room = await Room.findById(roomid);
+    
+    
+    
+    io.to(room.roomId).emit("emojireceived", {emoji:emoji, user:user});
+    
+})
+socket.on("historysend",async(data) => {
+    const {history} = data;
+    const userid = socket.user.id;
+    const user = await User.findById(userid);
+    const roomid= user.ActiveRoom;
+     const room = await Room.findById(roomid);
+    
+    
+    
+    io.to(room.roomId).emit("historyreceived", {history:history});
+    
+})
+socket.on("currentsend",async(data) => {
+    
+    const userid = socket.user.id;
+    const user = await User.findById(userid);
+    const roomid= user.ActiveRoom;
+     const room = await Room.findById(roomid);
+    
+    
+    
+    io.to(room.roomId).emit("currentreceived", data);
+    
+})
+
 })
 app.use('/room',restrictToLoggedinUser,roomrouter );
 app.use('/whiteboard',restrictToLoggedinUser,whiteboardrouter );
