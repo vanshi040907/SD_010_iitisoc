@@ -31,6 +31,10 @@ export function WhiteboardProvider({children}){
     bump();
   }, [bump]);
 
+  const notifyHistoryChange = useCallback(() => {
+  bump();
+  }, [bump]);
+
   const canUndo = engineRef.current?.canUndo?.() ?? false;
   const canRedo = engineRef.current?.canRedo?.() ?? false;
 
@@ -43,6 +47,7 @@ export function WhiteboardProvider({children}){
         registerEngine,
         undo, redo,
         canUndo, canRedo,
+        notifyHistoryChange,
       }}
     >
       {children}

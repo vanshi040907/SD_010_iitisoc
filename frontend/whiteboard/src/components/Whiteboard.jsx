@@ -6,7 +6,7 @@ const THROTTLE_MS = 10;
 
 const Whiteboard = () => {
 
-  const { activeTool, activeColor, strokeWidth, registerEngine } = useContext(WhiteboardContext);
+  const { activeTool, activeColor, strokeWidth, registerEngine, notifyHistoryChange } = useContext(WhiteboardContext);
 
   const activeToolRef = useRef(activeTool);
   const activeColorRef = useRef(activeColor);
@@ -16,19 +16,28 @@ const Whiteboard = () => {
   useEffect(() => { activeColorRef.current = activeColor; }, [activeColor]);
   useEffect(() => { strokeWidthRef.current = strokeWidth; }, [strokeWidth]);
 
-  const undo = ()=>{
+  //function for undo/redo/ first initialisation of the canvas- complete redraw through object array saved
+  const redrawAll = useCallback(()=>{
+    const ctx = ctxRef.current;
+    const canvas = canvasRef.current;
+    if(!ctx || !canvas) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    historyStackRef.current.forEach((stroke) => drawStroke(ctx, stroke));
+  }, []);
+  
+  const undo = useCallback(()=>{
     if (historyStackRef.current.length === 0) return;
     const last = historyStackRef.current.pop();
     redoStackRef.current.push(last);
     redrawAll();
-  }
+  }, [redrawAll])
 
-  const redo = ()=>{
+  const redo = useCallback(()=>{
     if (redoStackRef.current.length === 0) return;
     const restored = redoStackRef.current.pop();
     historyStackRef.current.push(restored);
     redrawAll();
-  }
+  }, [redrawAll])
 
   useEffect(() => {
   registerEngine({
@@ -69,16 +78,6 @@ const Whiteboard = () => {
 
     return ()=>window.removeEventListener("resize", resize);
 
-  }, []);
-
-
-  //function for undo/redo/ first initialisation of the canvas- complete redraw through object array saved
-  const redrawAll = useCallback(()=>{
-    const ctx = ctxRef.current;
-    const canvas = canvasRef.current;
-    if(!ctx || !canvas) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    historyStackRef.current.forEach((stroke) => drawStroke(ctx, stroke));
   }, []);
 
   //single stroke drawing
@@ -161,6 +160,7 @@ const Whiteboard = () => {
       redoStackRef.current = []; 
 
       redrawAll();
+      notifyHistoryChange();
     }
      currentStrokeRef.current = null
   }
