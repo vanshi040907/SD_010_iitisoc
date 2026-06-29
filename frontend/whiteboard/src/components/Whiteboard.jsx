@@ -158,6 +158,53 @@ const Whiteboard = () => {
       }
     
   },[socket])
+  useEffect(() => {
+   const handlesocket = (data) => {
+      drawSegment(ctxRef.current,
+        data.previousPoint,
+      data.point,
+      data.color,
+      data.width,
+      data.isEraser,
+      data.opacity
+
+      )
+    }
+     const handleshape = (data) => {
+      redrawAll();
+      drawShape(ctxRef.current,
+        data.shape)
+      
+    }
+     const handletext = (data) => {
+      
+      
+      
+        
+      drawText(ctxRef.current, {
+          x: data.newTextItem.x,
+        y: data.newTextItem.y,
+        text: data.newTextItem.value,
+        color:data.newTextItem.color ,
+        fontSize: data.newTextItem.fontSize,
+
+      }  );
+      
+    }
+    socket.on("currentreceived",handlesocket);
+    
+    socket.on("currentshapereceived",handleshape);
+   
+    socket.on("showtext",handletext);
+      return () => {
+        socket.off("currentreceived",handlesocket);
+        socket.off("currentshapereceived",handleshape);
+         socket.off("showtext",handletext);
+      }
+
+    
+
+},[socket])
 
 
   //function for undo/redo/ first initialisation of the canvas- complete redraw through object array saved
@@ -406,10 +453,11 @@ const Whiteboard = () => {
   // called on Enter key or when the input loses focus
   const commitText = useCallback(async(inputState) => {
     if (!inputState || !inputState.value.trim()) {
-
+       
       setTextInput((prev) => (prev?.value.trim() ? prev : null));
       return;
     }
+    
 
     // if editing an existing text item, remove the old one first
     if (inputState.editingId) {
@@ -431,9 +479,10 @@ const Whiteboard = () => {
     historyStackRef.current.push(newTextItem);
     redoStackRef.current = [];
 
-    socket.emit("text",{newTextItem:newTextItem});
+   
 
       try{
+         console.log("yes");
       await axios.post(`${conf.path}/whiteboard/event`,{
        drawingOperations:newTextItem,
       },{
@@ -507,6 +556,7 @@ const Whiteboard = () => {
 
       //  if a text input is already open, commit it before opening a new one
       if (textInput) {
+        
         commitText(textInput);
         return;
       }
@@ -568,40 +618,7 @@ const Whiteboard = () => {
 
    
   };
-useEffect(() => {
-   const handlesocket = (data) => {
-      drawSegment(ctxRef.current,
-        data.previousPoint,
-      data.point,
-      data.color,
-      data.width,
-      data.isEraser,
-      data.opacity
 
-      )
-    }
-    socket.on("currentreceived",handlesocket)
-     const handleshape = (data) => {
-      redrawAll();
-      drawShape(ctxRef.current,
-        data.shape)
-      
-    }
-    socket.on("currentshapereceived",handleshape)
-      return () => {
-        socket.off("currentreceived",handlesocket);
-        socket.off("currentshapereceived",handleshape);
-      }
-
-      socket.on("showtext",commitText);
-
-      return () => {
-        socket.off("showtext",commitText);
-      }
-
-    
-
-},[socket])
   const handleMouseMove = (e) => {
     if (!isDrawingRef.current) return;
 
@@ -738,8 +755,19 @@ useEffect(() => {
         <textarea
           autoFocus
           value={textInput.value}
-          onChange={(e) =>
-            setTextInput((prev) => ({ ...prev, value: e.target.value }))
+          onChange={(e) => {
+            let value = e.target.value;
+            setTextInput((prev) => ({ ...prev, value: e.target.value }));
+          socket.emit("text",{newTextItem:{
+             x: textInput.x,
+        y:textInput.y,
+        value: value,
+        color: activeColorRefText.current,
+        fontSize: 20,
+        editingId: textInput.editingId,
+
+          }});
+        }
           }
           onKeyDown={(e) => {
             // Enter commits, Shift+Enter allows newline, Escape cancels

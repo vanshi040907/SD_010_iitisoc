@@ -81,7 +81,7 @@ socket.on("historysend",async(data) => {
     
     
     
-    io.to(room.roomId).emit("historyreceived", {history:history});
+    socket.to(room.roomId).emit("historyreceived", {history:history});
     
 })
 socket.on("currentsend",async(data) => {
@@ -93,7 +93,7 @@ socket.on("currentsend",async(data) => {
     
     
     
-    io.to(room.roomId).emit("currentreceived", data);
+    socket.to(room.roomId).emit("currentreceived", data);
     
 })
 
@@ -112,10 +112,13 @@ socket.on("currentshapesend",async(data) => {
 
 socket.on("text" , async(data)=>{
     const userId = socket.user.id;
-    const user = User.findById(userId);
-    const roomId = user.ActiveRoom;
+    const user = await User.findById(userId);
+    const roomid= user.ActiveRoom;
+     const room = await Room.findById(roomid);
+    
 
-    io.to(roomId).emit("showtext",data);
+
+    socket.to(room.roomId).emit("showtext",data);
     
 })
 
