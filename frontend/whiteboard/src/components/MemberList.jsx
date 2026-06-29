@@ -2,16 +2,14 @@ import React from 'react'
 import { useState, useContext } from "react";
 import { Users, ChevronDown, Circle, TheaterIcon } from "lucide-react";
 import { ThemeContext } from '../context/ThemeContext';
+import { useEffect } from 'react';
+import { useSocket } from '../context/Socket';
+import axios from 'axios';
+import conf from '../conf/conf';
 
 // Right now i have taken a random array for the members. later we will fetch these details from the Database.
 
-const MEMBERS = [
-  { id: 1, name: "Vishruthi", role: "Host", online: true },
-  { id: 2, name: "Vanshika", role: "Editor", online: true },
-  { id: 3, name: "Saumya", role: "Editor", online: true },
-  { id: 4, name: "Pranjali", role: "Viewer", online: false },
-  { id: 5, name: "Hello XYZ", role: "Viewer", online: false },
-];
+
 
 const Avatar = ({member, size = "md"}) => {
 
@@ -29,6 +27,56 @@ const Avatar = ({member, size = "md"}) => {
 
 
 const MemberList = () => {
+  const socket = useSocket();
+  const [MEMBERS, setMEMBERS] = useState([]);
+  
+  useEffect(() => {
+    const fetchMember = async () => {
+    try {
+      const res = await axios.get(
+        `${conf.path}/room/getmember`,
+
+        {
+          withCredentials: true,
+        },
+      );
+      const list = res.data;
+      const host = list.owner;
+      const participants = list.mem;
+      setMEMBERS(  [{ id: 1, name:host , role: "Host", online: true },
+        ...participants.slice(1).map((x,index) => ( {
+          id: index+2, name:x , role: "Editor", online: true
+        }))
+      ]
+      )
+      
+      
+      
+        
+    } catch (error) {
+      console.log(error);
+    }
+  }; 
+  fetchMember();
+},[])
+useEffect (() => {
+    const handlesocket = (data) => {
+      const name = data;
+       
+       setMEMBERS((prev) =>[ ...prev,{ id:prev.length+1, name:name , role: "Editor", online: true }])
+      
+    }
+     
+    socket.on("new user",handlesocket)
+
+      return () => {
+        socket.off("new user",handlesocket);
+      }
+
+    
+  },[socket,])
+
+
 
   const [open, setOpen] = useState(false);
   const onlineCount = MEMBERS.filter((m) => m.online).length;

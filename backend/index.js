@@ -63,9 +63,11 @@ io.on('connection',(socket) => {
 socket.on("emojisend",async(data) => {
     const {emoji} = data;
     const userid = socket.user.id;
-    const user = await User.findById(userid);
-    const roomid= user.ActiveRoom;
-     const room = await Room.findById(roomid);
+    const user = await User.findById(userid)
+                  .populate("ActiveRoom");
+                 
+    const room= user.ActiveRoom;
+    
     
     
     
@@ -75,9 +77,10 @@ socket.on("emojisend",async(data) => {
 socket.on("historysend",async(data) => {
     const {history} = data;
     const userid = socket.user.id;
-    const user = await User.findById(userid);
-    const roomid= user.ActiveRoom;
-     const room = await Room.findById(roomid);
+    const user = await User.findById(userid)
+                  .populate("ActiveRoom");
+                 
+    const room= user.ActiveRoom;;
     
     
     
@@ -87,9 +90,11 @@ socket.on("historysend",async(data) => {
 socket.on("currentsend",async(data) => {
     
     const userid = socket.user.id;
-    const user = await User.findById(userid);
-    const roomid= user.ActiveRoom;
-     const room = await Room.findById(roomid);
+    const user = await User.findById(userid)
+                  .populate("ActiveRoom");
+                 
+    const room= user.ActiveRoom;
+    
     
     
     
@@ -100,10 +105,10 @@ socket.on("currentsend",async(data) => {
 socket.on("currentshapesend",async(data) => {
     
     const userid = socket.user.id;
-    const user = await User.findById(userid);
-    const roomid= user.ActiveRoom;
-     const room = await Room.findById(roomid);
-    
+   const user = await User.findById(userid)
+                  .populate("ActiveRoom");
+                 
+    const room= user.ActiveRoom;
     
     
     io.to(room.roomId).emit("currentshapereceived", data);
@@ -111,10 +116,11 @@ socket.on("currentshapesend",async(data) => {
 })
 
 socket.on("text" , async(data)=>{
-    const userId = socket.user.id;
-    const user = await User.findById(userId);
-    const roomid= user.ActiveRoom;
-     const room = await Room.findById(roomid);
+    const userid = socket.user.id;
+     const user = await User.findById(userid)
+                  .populate("ActiveRoom");
+                 
+    const room= user.ActiveRoom; 
     
 
 

@@ -10,7 +10,7 @@ async function EventHandling (req, res) {
     const whiteboard = await Whiteboard.create({
         room: room,
         
-        user: user,
+        user: userid,
          drawingOperations: drawingOperations,
     
     });
@@ -61,7 +61,7 @@ async function Redo (req, res) {
      const whiteboard = await Whiteboard.create({
         room: room,
         
-        user: user,
+        user: userid,
          drawingOperations: drawingOperations,
     
     });
