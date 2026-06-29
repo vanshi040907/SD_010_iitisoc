@@ -1,5 +1,5 @@
 // Welcome.jsx
-
+import TextPressure from "../animations/TextPressure";
 import { useState } from "react";
 import { motion } from 'framer-motion'
 import Ferrofluid from "../animations/Ferrofluid";
@@ -8,6 +8,8 @@ import { useSocket } from "../context/Socket";
 import conf from "../conf/conf";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import LetsCoSketh from "../animations/LetsCoSketh";
+
 export default function Welcome() {
   const [myName, setMyName] = useState("");
   const [roomID, setRoomID] = useState("");
@@ -137,12 +139,28 @@ else {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
           className="text-center mb-12">
-          <h1 className="text-5xl font-black text-white tracking-tight font-[Clash_Display] mb-2">
+          {/* <h1 className="text-5xl font-black text-white tracking-tight font-[Clash_Display] mb-2">
             ✏️ Whiteboard
-          </h1>
-          <p className="text-violet-300/70 text-base">
+          </h1> */}
+          {/* <p className="text-violet-300/70 text-base">
             Draw together, in real time.
-          </p>
+          </p> */}
+          <LetsCoSketh />
+          <div style={{position: 'relative'}}>
+                      <TextPressure
+                        text="Draw  Together  in  Real  Time!"
+                        flex
+                        alpha={false}
+                        stroke={false}
+                        width
+                        weight
+                        italic
+                        textColor="#c4b4ff"
+                        strokeColor="#5227FF"
+                        minFontSize={0.5}
+                     />
+                    </div>
+                    
         </motion.div>
 
         {/* Cards row */}

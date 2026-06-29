@@ -2,13 +2,17 @@ import React from 'react'
 import {Download} from "lucide-react";
 import { useContext } from 'react';
 import { ThemeContext } from '../context/ThemeContext';
+import { WhiteboardContext } from '../context/WhiteboardContext';
 
-const TitleCard_download = (RoomName) => {
+const TitleCard_download = () => {
+  
+  const {theme} = useContext(ThemeContext);
+  const {downloadCanvas} = useContext(WhiteboardContext);
+
   const handleDownload = () => {
     alert("Download triggered");
+    downloadCanvas();
   };
-
-  const {theme} = useContext(ThemeContext);
 
   return (
     <div className="fixed top-4 left-4 z-50 flex items-center gap-3">

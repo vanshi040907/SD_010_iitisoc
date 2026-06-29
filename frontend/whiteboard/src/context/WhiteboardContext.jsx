@@ -22,9 +22,11 @@ export function WhiteboardProvider({ children }) {
     bump();
   }, []);
 
-  const undo = useCallback(() => {
-    
+  const downloadCanvas = useCallback(()=>{
+    engineRef.current?.downloadCanvas?.();
+  }, []);
 
+  const undo = useCallback(() => {
     engineRef.current?.undo();
     bump();
   }, [bump]);
@@ -52,7 +54,8 @@ export function WhiteboardProvider({ children }) {
         canUndo, canRedo,
         notifyHistoryChange,
         activeShape,
-        setActiveShape, bump
+        setActiveShape, bump,
+        downloadCanvas,
 
       }}
     >

@@ -102,12 +102,37 @@ const Whiteboard = () => {
     redraw();
   }
   
+  const downloadCanvas = useCallback(()=>{
+    const canvas = canvasRef.current;
+    if(!canvas) return ;
+
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const tempCtx = tempCanvas.getContext("2d");
+
+    tempCtx.fillStyle = "#000000";
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+    historyStackRef.current.forEach((stroke) => drawStroke(tempCtx, stroke));
+
+    const dataURL = tempCanvas.toDataURL("image/jpeg", 0.95);
+
+    const link = document.createElement("a");
+    link.href = dataURL;
+    link.download = `whiteboard-${Date.now()}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    }, []);
+
   useEffect(() => {
     registerEngine({
       undo,
       redo,
       canUndo: () => historyStackRef.current.length > 0,
       canRedo: () => redoStackRef.current.length > 0,
+      downloadCanvas,
     });
   }, [add]);
 
