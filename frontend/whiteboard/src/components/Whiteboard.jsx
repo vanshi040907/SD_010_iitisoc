@@ -48,7 +48,7 @@ const Whiteboard = () => {
         .flat();
         historyStackRef.current = historyflatted
 
-        console.log(historyStackRef.current)
+        
           redrawAll();
         }
       
@@ -56,7 +56,7 @@ const Whiteboard = () => {
     } catch (error) {
       console.log(error);
     }
-  } 
+  }; 
   fetchData();
   
 
@@ -404,7 +404,7 @@ const Whiteboard = () => {
 
   // commits the floating input box text onto the canvas as a history item
   // called on Enter key or when the input loses focus
-  const commitText = useCallback((inputState) => {
+  const commitText = useCallback(async(inputState) => {
     if (!inputState || !inputState.value.trim()) {
 
       setTextInput((prev) => (prev?.value.trim() ? prev : null));
@@ -430,8 +430,22 @@ const Whiteboard = () => {
 
     historyStackRef.current.push(newTextItem);
     redoStackRef.current = [];
+
+    socket.emit("text",{newTextItem:newTextItem});
+
+      try{
+      await axios.post(`${conf.path}/whiteboard/event`,{
+       drawingOperations:newTextItem,
+      },{
+        withCredentials:true,
+      })
+
+    }catch(error){
+      console.log(error)
+    }
     redrawAll();
     setTextInput(null);
+    redraw();
     bump();
   }, [redrawAll]);
 
@@ -510,7 +524,7 @@ const Whiteboard = () => {
 
   // double click handler — if text tool is active and user double-clicks
   // an existing text item, re-opens it in the floating input for editing
-  const handleDoubleClick = (e) => {
+  const handleDoubleClick = async(e) => {
     if (activeToolRefLocal.current !== "text") return;
 
     const point = getMousePos(e);
@@ -549,6 +563,10 @@ const Whiteboard = () => {
       fontSize: clicked.fontSize,
       editingId: clicked.id,
     });
+
+    console.log(textInput);
+
+   
   };
 useEffect(() => {
    const handlesocket = (data) => {
@@ -563,9 +581,24 @@ useEffect(() => {
       )
     }
     socket.on("currentreceived",handlesocket)
+     const handleshape = (data) => {
+      redrawAll();
+      drawShape(ctxRef.current,
+        data.shape)
+      
+    }
+    socket.on("currentshapereceived",handleshape)
       return () => {
         socket.off("currentreceived",handlesocket);
+        socket.off("currentshapereceived",handleshape);
       }
+
+      socket.on("showtext",commitText);
+
+      return () => {
+        socket.off("showtext",commitText);
+      }
+
     
 
 },[socket])
@@ -585,6 +618,7 @@ useEffect(() => {
       previewShapeRef.current.end = point;
 
       redrawAll();
+      socket.emit('currentshapesend',{shape:previewShapeRef.current});
 
       drawShape(
         ctx,
@@ -663,12 +697,26 @@ useEffect(() => {
       historyStackRef.current.push(
         previewShapeRef.current
       );
-
+ try {
+      await axios.post(
+       `${conf.path}/whiteboard/event`,{
+        drawingOperations:previewShapeRef.current ,
+        },{
+          withCredentials: true,
+        },
+      );
+      
+      
+    } catch (error) {
+      console.log(error);
+    }
       redoStackRef.current = [];
 
       previewShapeRef.current = null;
 
       redrawAll();
+      redraw();
+      bump();
     }
   };
 

@@ -47,7 +47,7 @@ const SessionStatus = () => {
 
     
       socket.on("emojireceived", LaunchReaction);
-       console.log("-------");
+       
      return () => {
       socket.off("emojireceived", LaunchReaction);
      }

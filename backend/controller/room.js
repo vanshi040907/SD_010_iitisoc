@@ -21,7 +21,7 @@ async function handlecreateRoomId(req, res) {
   const { roomID } = req.body;
   const userid = req.user.id;
   const user = await User.findById(req.user.id);
-  console.log(user);
+  
 
   await Room.create({
     roomId: roomID,
