@@ -538,7 +538,12 @@ Used Socket.IO middleware with cookies and socket handshake authentication.
 
 # 📸 Screenshots
 
-(Add project screenshots here)
+<img width="1912" height="948" alt="Screenshot 2026-06-30 103656" src="https://github.com/user-attachments/assets/8da6a1e6-cf50-4840-a570-096ea6f2f06c" />
+<img width="980" height="960" alt="Screenshot 2026-06-30 140306" src="https://github.com/user-attachments/assets/ad3109e4-0c54-478f-bf9f-94c35c8d381e" />
+<img width="977" height="937" alt="Screenshot 2026-06-30 140712" src="https://github.com/user-attachments/assets/dffb7e27-a6c7-4fcc-89af-6c7c965c34ed" />
+<img width="1895" height="952" alt="Screenshot 2026-06-30 141133" src="https://github.com/user-attachments/assets/63b144f7-0f1f-4ebb-9fd5-091ffcca28d3" />
+<img width="1895" height="945" alt="Screenshot 2026-06-30 162405" src="https://github.com/user-attachments/assets/94df3651-0c65-4a02-abf9-d0dbcd2d03dd" />
+
 
 
 ---
