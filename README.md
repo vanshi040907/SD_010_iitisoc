@@ -146,21 +146,33 @@ SD_010_iitisoc
 │── src
 │
 │   ├── animations
+│   │   ├── Ferrofluid.jsx
+│   │   ├── LetsCoSketh.jsx
+│   │   └── TextPressure.jsx
 │   │
 │   ├── components
 │   │   ├── Whiteboard.jsx
-│   │   ├── Toolbar.jsx
-│   │   └── Canvas.jsx
+│   │   ├── Background.jsx
+│   │   ├── FeatureCard.jsx
+│   │   ├── Invite_help.jsx
+│   │   ├── MemberList.jsx
+│   │   ├── SessionStatus.jsx
+│   │   ├── TitleCard_download.jsx
+│   │   ├── ToggleBtn.jsx
+│   │   └── Toolbar.jsx
 │   │
 │   ├── context
 │   │   ├── RoomContext.jsx
+│   │   ├── ThemeContext.jsx
+│   │   ├── Socket.jsx
 │   │   └── WhiteboardContext.jsx
 │   │
 │   ├── pages
 │   │   ├── Login.jsx
 │   │   ├── Signup.jsx
 │   │   ├── Home.jsx
-│   │   └── JoinRoom.jsx
+│   │   ├── Welcome.jsx
+│   │   └── Workspace.jsx
 │   │
 │   ├── App.jsx
 │   ├── main.jsx
