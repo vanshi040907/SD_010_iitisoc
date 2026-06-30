@@ -31,9 +31,12 @@ async function LoginUser(req,res) {
 
 }
 
+async function LogoutUser (req,res){
+    res.clearCookie("uid");
+}
 
     
 
 
 
-module.exports = {SigninUser,LoginUser};
+module.exports = {SigninUser,LoginUser,LogoutUser};

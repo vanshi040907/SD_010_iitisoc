@@ -6,12 +6,15 @@ import { useEffect } from 'react';
 import { useSocket } from '../context/Socket';
 import axios from 'axios';
 import conf from '../conf/conf';
+import { useNavigate } from "react-router-dom";
 
 // Right now i have taken a random array for the members. later we will fetch these details from the Database.
 
 
 
 const Avatar = ({member, size = "md"}) => {
+
+  const navigate = useNavigate();
 
   const {theme, isDark} = useContext(ThemeContext);
   const dim = member.role === "Host" ? "w-12 h-12 text-2xl" : "w-9 h-9 text-m";
@@ -81,6 +84,21 @@ useEffect (() => {
   const [open, setOpen] = useState(false);
   const onlineCount = MEMBERS.filter((m) => m.online).length;
   const {theme} = useContext(ThemeContext);
+
+  const logout = async(e)=>{
+    try{
+      await axios.get(`${conf.path}/user/logout`,
+        {
+          withCredentials:true
+        }
+      ) 
+      navigate("/login");
+
+
+    }catch(error){
+      console.log(error);
+    }
+  }
 
   return (
     <div className="fixed top-4 right-4 z-50 flex flex-col items-end">
@@ -175,6 +193,7 @@ useEffect (() => {
            <span className={`${theme.textMuted} text-xs`}>{onlineCount} of {MEMBERS.length} currently active</span>
           </div>
         </div>
+        <button onClick={logout}>logout</button>
     </div>
   );
 }
