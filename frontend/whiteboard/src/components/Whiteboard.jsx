@@ -114,7 +114,19 @@ const Whiteboard = () => {
     tempCtx.fillStyle = "#000000";
     tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
-    historyStackRef.current.forEach((stroke)=> drawStroke(tempCtx, stroke));
+    historyStackRef.current.forEach((item)=>{
+       if(item.type === "stroke"){
+    drawStroke(tempCtx,item);
+  }
+
+  else if(item.type === "text"){
+    drawText(tempCtx,item);
+  }
+
+  else{
+    drawShape(tempCtx,item);
+  }
+    });
 
     const dataUrl = tempCanvas.toDataURL("image/jpeg", 0.95);
 
@@ -269,7 +281,7 @@ const Whiteboard = () => {
       opacity = 1
     } = stroke;
 
-    if (points.length < 2) return;
+    if (!points || points.length < 2) return;
 
     ctx.save();
 
