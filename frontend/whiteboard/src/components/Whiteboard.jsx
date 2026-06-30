@@ -12,9 +12,9 @@ const Whiteboard = () => {
 
   // state for the floating text input box position, value, and id of item being edited
   const [textInput, setTextInput] = useState(null);
-  const [add, setAdd] = useState(0);
+    const [add,setAdd] = useState(0);
 
-  const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump, notifyHistoryChange } = useContext(WhiteboardContext);
+  const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump } = useContext(WhiteboardContext);
 
   const activeColorRef = useRef(activeColor);
   const strokeWidthRef = useRef(strokeWidth);
@@ -30,50 +30,50 @@ const Whiteboard = () => {
   const activeColorRefText = useRef(activeColor);
   useEffect(() => { activeColorRefText.current = activeColor; }, [activeColor]);
 
-  useEffect(() => {
+  useEffect (() => {
     const fetchData = async () => {
-      try {
-        const res = await axios.get(
-          `${conf.path}/whiteboard/getdata`,
+    try {
+      const res = await axios.get(
+        `${conf.path}/whiteboard/getdata`,
 
-          {
-            withCredentials: true,
-          },
-        );
-        const whiteboard = res.data.data;
-        const size = whiteboard.length;
-        if (size > 0) {
-          const historyflatted = whiteboard
-            .map((item) => item.drawingOperations)
-            .flat();
-          historyStackRef.current = historyflatted
+        {
+          withCredentials: true,
+        },
+      );
+      const whiteboard = res.data.data;
+      const size = whiteboard.length;
+        if(size>0) {
+        const historyflatted= whiteboard
+        .map((item) => item. drawingOperations)
+        .flat();
+        historyStackRef.current = historyflatted
 
-
+        
           redrawAll();
         }
+      
+        
+    } catch (error) {
+      console.log(error);
+    }
+  }; 
+  fetchData();
+  
 
-
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-
-
-  }, [])
+  },[])
 
   const undo = async () => {
     if (historyStackRef.current.length === 0) return;
     const last = historyStackRef.current.pop();
     redoStackRef.current.push(last);
-    try {
+     try {
       await axios.get(
-        ` ${conf.path}/whiteboard/undo`, {
-        withCredentials: true,
-      }
+       ` ${conf.path}/whiteboard/undo`,  {
+    withCredentials: true,
+  }
       );
-
-
+      
+      
     } catch (error) {
       console.log(error);
     }
@@ -81,50 +81,26 @@ const Whiteboard = () => {
     redraw();
   }
 
-  const redo = async () => {
+  const redo = async() => {
     if (redoStackRef.current.length === 0) return;
     const restored = redoStackRef.current.pop();
     historyStackRef.current.push(restored);
-    try {
+     try {
       await axios.post(
-        `${conf.path}/whiteboard/redo`, {
-        drawingOperations: restored,
-      }, {
-        withCredentials: true,
-      }
+        `${conf.path}/whiteboard/redo`,{
+           drawingOperations: restored,
+        },  {
+    withCredentials: true,
+  }
       );
-
-
+      
+      
     } catch (error) {
       console.log(error);
     }
     redrawAll();
     redraw();
   }
-  
-  const downloadCanvas = useCallback(()=>{
-    const canvas = canvasRef.current;
-    if(!canvas) return ;
-
-    const tempCanvas = document.createElement("canvas");
-    tempCanvas.width = canvas.width;
-    tempCanvas.height = canvas.height;
-    const tempCtx = tempCanvas.getContext("2d");
-
-    tempCtx.fillStyle = "#000000";
-    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-
-    historyStackRef.current.forEach((stroke) => drawStroke(tempCtx, stroke));
-
-    const dataURL = tempCanvas.toDataURL("image/jpeg", 0.95);
-
-    const link = document.createElement("a");
-    link.href = dataURL;
-    link.download = `whiteboard-${Date.now()}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    }, []);
 
   useEffect(() => {
     registerEngine({
@@ -132,7 +108,6 @@ const Whiteboard = () => {
       redo,
       canUndo: () => historyStackRef.current.length > 0,
       canRedo: () => redoStackRef.current.length > 0,
-      downloadCanvas,
     });
   }, [add]);
 
@@ -167,22 +142,69 @@ const Whiteboard = () => {
     return () => window.removeEventListener("resize", resize);
 
   }, []);
-
+  
   const redraw = () => {
-    socket.emit('historysend', { history: historyStackRef.current });
+    socket.emit('historysend' ,{history:historyStackRef.current});
   }
-  useEffect(() => {
+  useEffect (() => {
     const handlesocket = (data) => {
-      const { history } = data;
+      const {history} = data;
       historyStackRef.current = history;
       redrawAll();
     }
-    socket.on("historyreceived", handlesocket)
-    return () => {
-      socket.off("historyreceived", handlesocket);
-    }
+    socket.on("historyreceived",handlesocket)
+      return () => {
+        socket.off("historyreceived",handlesocket);
+      }
+    
+  },[socket])
+  useEffect(() => {
+   const handlesocket = (data) => {
+      drawSegment(ctxRef.current,
+        data.previousPoint,
+      data.point,
+      data.color,
+      data.width,
+      data.isEraser,
+      data.opacity
 
-  }, [socket])
+      )
+    }
+     const handleshape = (data) => {
+      redrawAll();
+      drawShape(ctxRef.current,
+        data.shape)
+      
+    }
+     const handletext = (data) => {
+      
+      
+      
+        
+      drawText(ctxRef.current, {
+          x: data.newTextItem.x,
+        y: data.newTextItem.y,
+        text: data.newTextItem.value,
+        color:data.newTextItem.color ,
+        fontSize: data.newTextItem.fontSize,
+
+      }  );
+      
+    }
+    socket.on("currentreceived",handlesocket);
+    
+    socket.on("currentshapereceived",handleshape);
+   
+    socket.on("showtext",handletext);
+      return () => {
+        socket.off("currentreceived",handlesocket);
+        socket.off("currentshapereceived",handleshape);
+         socket.off("showtext",handletext);
+      }
+
+    
+
+},[socket])
 
 
   //function for undo/redo/ first initialisation of the canvas- complete redraw through object array saved
@@ -191,8 +213,8 @@ const Whiteboard = () => {
     const canvas = canvasRef.current;
     if (!ctx || !canvas) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-
+    
+    
     historyStackRef.current.forEach((item) => {
 
 
@@ -352,7 +374,7 @@ const Whiteboard = () => {
   };
 
   const drawShape = (ctx, shape) => {
-
+    
     switch (shape.type) {
       case "rect":
         drawRect(ctx, shape);
@@ -374,7 +396,7 @@ const Whiteboard = () => {
         break;
     }
   };
-
+  
 
   const drawSegment = (
     ctx,
@@ -429,12 +451,13 @@ const Whiteboard = () => {
 
   // commits the floating input box text onto the canvas as a history item
   // called on Enter key or when the input loses focus
-  const commitText = useCallback(async (inputState) => {
+  const commitText = useCallback(async(inputState) => {
     if (!inputState || !inputState.value.trim()) {
-
+       
       setTextInput((prev) => (prev?.value.trim() ? prev : null));
       return;
     }
+    
 
     // if editing an existing text item, remove the old one first
     if (inputState.editingId) {
@@ -456,16 +479,17 @@ const Whiteboard = () => {
     historyStackRef.current.push(newTextItem);
     redoStackRef.current = [];
 
-    socket.emit("text", { newTextItem: newTextItem });
+   
 
-    try {
-      await axios.post(`${conf.path}/whiteboard/event`, {
-        drawingOperations: newTextItem,
-      }, {
-        withCredentials: true,
+      try{
+         console.log("yes");
+      await axios.post(`${conf.path}/whiteboard/event`,{
+       drawingOperations:newTextItem,
+      },{
+        withCredentials:true,
       })
 
-    } catch (error) {
+    }catch(error){
       console.log(error)
     }
     redrawAll();
@@ -532,6 +556,7 @@ const Whiteboard = () => {
 
       //  if a text input is already open, commit it before opening a new one
       if (textInput) {
+        
         commitText(textInput);
         return;
       }
@@ -547,41 +572,53 @@ const Whiteboard = () => {
     }
   };
 
+  // double click handler — if text tool is active and user double-clicks
+  // an existing text item, re-opens it in the floating input for editing
+  const handleDoubleClick = async(e) => {
+    if (activeToolRefLocal.current !== "text") return;
 
-  useEffect(() => {
-    const handlesocket = (data) => {
-      drawSegment(ctxRef.current,
-        data.previousPoint,
-        data.point,
-        data.color,
-        data.width,
-        data.isEraser,
-        data.opacity
+    const point = getMousePos(e);
+    const ctx = ctxRef.current;
 
-      )
-    }
-    socket.on("currentreceived", handlesocket)
-    const handleshape = (data) => {
-      redrawAll();
-      drawShape(ctxRef.current,
-        data.shape)
+    // find the topmost text item whose bounding box contains the click point
+    const clicked = [...historyStackRef.current].reverse().find((item) => {
+      if (item.type !== "text") return false;
 
-    }
-    socket.on("currentshapereceived", handleshape)
-    return () => {
-      socket.off("currentreceived", handlesocket);
-      socket.off("currentshapereceived", handleshape);
-    }
+      ctx.font = `${item.fontSize}px Arial`;
+      const measured = ctx.measureText(item.text);
+      const w = measured.width;
+      const h = item.fontSize;
 
-    socket.on("showtext", commitText);
+      return (
+        point.x >= item.x &&
+        point.x <= item.x + w &&
+        point.y >= item.y - h &&
+        point.y <= item.y
+      );
+    });
 
-    return () => {
-      socket.off("showtext", commitText);
-    }
+    if (!clicked) return;
 
+    // remove it from canvas visually and open it in the input box
+    historyStackRef.current = historyStackRef.current.filter(
+      (item) => item.id !== clicked.id
+    );
+    redrawAll();
 
+    setTextInput({
+      x: clicked.x,
+      y: clicked.y,
+      value: clicked.text,
+      color: clicked.color,
+      fontSize: clicked.fontSize,
+      editingId: clicked.id,
+    });
 
-  }, [socket])
+    
+
+   
+  };
+
   const handleMouseMove = (e) => {
     if (!isDrawingRef.current) return;
 
@@ -598,7 +635,7 @@ const Whiteboard = () => {
       previewShapeRef.current.end = point;
 
       redrawAll();
-      socket.emit('currentshapesend', { shape: previewShapeRef.current });
+      socket.emit('currentshapesend',{shape:previewShapeRef.current});
 
       drawShape(
         ctx,
@@ -609,14 +646,13 @@ const Whiteboard = () => {
     }
 
     const previousPoint = lastPointRef.current;
-    socket.emit('currentsend', {
+     socket.emit('currentsend' ,{
       previousPoint,
       point,
-      color: currentStrokeRef.current.color,
-      width: currentStrokeRef.current.width,
-      isEraser: currentStrokeRef.current.isEraser,
-      opacity: currentStrokeRef.current.opacity
-    });
+      color:currentStrokeRef.current.color,
+      width:currentStrokeRef.current.width,
+      isEraser:currentStrokeRef.current.isEraser,
+      opacity:currentStrokeRef.current.opacity});
 
     drawSegment(
       ctx,
@@ -634,7 +670,7 @@ const Whiteboard = () => {
   };
 
 
-  const handleMouseUp = async () => {
+  const handleMouseUp = async() => {
     if (!isDrawingRef.current) return;
 
     isDrawingRef.current = false;
@@ -649,19 +685,19 @@ const Whiteboard = () => {
       historyStackRef.current.push(
         currentStrokeRef.current
       );
-      try {
-        await axios.post(
-          `${conf.path}/whiteboard/event`, {
-          drawingOperations: currentStrokeRef.current,
-        }, {
+ try {
+      await axios.post(
+       `${conf.path}/whiteboard/event`,{
+        drawingOperations:currentStrokeRef.current ,
+        },{
           withCredentials: true,
         },
-        );
-
-
-      } catch (error) {
-        console.log(error);
-      }
+      );
+      
+      
+    } catch (error) {
+      console.log(error);
+    }
 
       redoStackRef.current = [];
       redrawAll();
@@ -678,19 +714,19 @@ const Whiteboard = () => {
       historyStackRef.current.push(
         previewShapeRef.current
       );
-      try {
-        await axios.post(
-          `${conf.path}/whiteboard/event`, {
-          drawingOperations: previewShapeRef.current,
-        }, {
+ try {
+      await axios.post(
+       `${conf.path}/whiteboard/event`,{
+        drawingOperations:previewShapeRef.current ,
+        },{
           withCredentials: true,
         },
-        );
-
-
-      } catch (error) {
-        console.log(error);
-      }
+      );
+      
+      
+    } catch (error) {
+      console.log(error);
+    }
       redoStackRef.current = [];
 
       previewShapeRef.current = null;
@@ -710,7 +746,7 @@ const Whiteboard = () => {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-
+        onDoubleClick={handleDoubleClick} // for re-editing placed text
         className="absolute inset-0 touch-none"
       />
 
@@ -719,8 +755,19 @@ const Whiteboard = () => {
         <textarea
           autoFocus
           value={textInput.value}
-          onChange={(e) =>
-            setTextInput((prev) => ({ ...prev, value: e.target.value }))
+          onChange={(e) => {
+            let value = e.target.value;
+            setTextInput((prev) => ({ ...prev, value: e.target.value }));
+          socket.emit("text",{newTextItem:{
+             x: textInput.x,
+        y:textInput.y,
+        value: value,
+        color: activeColorRefText.current,
+        fontSize: 20,
+        editingId: textInput.editingId,
+
+          }});
+        }
           }
           onKeyDown={(e) => {
             // Enter commits, Shift+Enter allows newline, Escape cancels

@@ -10,12 +10,11 @@ async function EventHandling (req, res) {
     const whiteboard = await Whiteboard.create({
         room: room,
         
-        user: user,
+        user: userid,
          drawingOperations: drawingOperations,
     
     });
-     req.io.to(room._id). emit('event', {
-    whiteboard: whiteboard});
+     
      
      return res.json({Success:"true"});
 
@@ -49,8 +48,7 @@ async function Undo (req, res) {
     
 
     
-     req.io.to(room._id). emit('event', {
-    whiteboard: whiteboard});
+     
      return res.json({Success:"true"});
 
 }
@@ -63,12 +61,11 @@ async function Redo (req, res) {
      const whiteboard = await Whiteboard.create({
         room: room,
         
-        user: user,
+        user: userid,
          drawingOperations: drawingOperations,
     
     });
-     req.io.to(room._id). emit('event', {
-    whiteboard: whiteboard});
+     
     
      return res.json({Success:"true"});
 

@@ -1,21 +1,7 @@
 const User = require("../models/user");
 const Room = require("../models/room");
 
-async function createRoom(req, res) {
-  const io = req.app.get("io");
 
-  io.emit("room-created", {
-    roomId: "123",
-  });
-
-  return res.json({
-    success: true,
-  });
-}
-
-module.exports = {
-  createRoom,
-};
 
 async function handlecreateRoomId(req, res) {
   const { roomID } = req.body;
@@ -25,33 +11,40 @@ async function handlecreateRoomId(req, res) {
 
   await Room.create({
     roomId: roomID,
-    owner: user,
-    participants: [user],
-    activeParticipants: [user],
+    owner: userid,
+    participants: [userid],
+    activeParticipants: [userid],
   });
   const room = await Room.findOne({ roomId: roomID });
-  user.ActiveRoom = room;
+  user.ActiveRoom = room._id;
   await user.save();
 
   return res.json({ success: "true" });
 }
 
 async function UserEnterRoom(req, res) {
-  const io = req.app.get("io");
+  
   const { roomid } = req.body;
 
   const userid = req.user.id;
+   const user = await User.findById(req.user.id);
 
-  const user = await User.findOne({ _id: userid });
-  const room = await Room.findOne({ roomId: roomid });
-   
+  
+  const room = await Room.findOne({ roomId: roomid })
+                
+  
   if (!user || !room) {
     return res.status(404).json({
       success: false,
     });
   }
-   user.ActiveRoom = room;
-     await user.save();
+
+  user.ActiveRoom = room._id;
+  await user.save();
+  room.participants.push(userid);
+  await room.save();
+  room.activeParticipants.push(userid);
+  await room.save();
 
   
   return res.json({
@@ -62,19 +55,7 @@ async function UserEnterRoom(req, res) {
 
   
 }
-async function UserAllowed(req, res) {
-  const { roomid } = req.params.roomid;
-  const userid = req.user._id;
-  const user = await User.findOne({ _id: userid });
-  const room = await Room.findOne({ code: roomid });
 
-  room.participants.push(user);
-  await room.save();
-  user.ActiveRoom = room;
-  await user.save();
-
-  return res.json({ success: "true" });
-}
 
  async function UserLeaveRoom(req,res){
     const {roomid}= req.params.roomid;
@@ -87,4 +68,20 @@ async function UserAllowed(req, res) {
 
     return res.json({success:"true"});
  }
-module.exports = { handlecreateRoomId, UserEnterRoom, UserAllowed ,UserLeaveRoom};
+ async function Name(req,res) {
+    const userid = req.user.id;
+   const user = await User.findById(userid)
+                  .populate("ActiveRoom");
+                 
+    const room= await user.ActiveRoom.populate([{ path: "owner" },
+    { path: "participants" }]);
+    const owner = room.owner.userName;
+    const participants = room.participants;
+    const member_name = participants.map((x) => x.userName);
+     return res.json({owner:owner,
+      mem:member_name
+     });
+
+  
+ }
+module.exports = { handlecreateRoomId, UserEnterRoom ,UserLeaveRoom,Name };

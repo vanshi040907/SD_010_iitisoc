@@ -63,9 +63,11 @@ io.on('connection',(socket) => {
 socket.on("emojisend",async(data) => {
     const {emoji} = data;
     const userid = socket.user.id;
-    const user = await User.findById(userid);
-    const roomid= user.ActiveRoom;
-     const room = await Room.findById(roomid);
+    const user = await User.findById(userid)
+                  .populate("ActiveRoom");
+                 
+    const room= user.ActiveRoom;
+    
     
     
     
@@ -75,35 +77,38 @@ socket.on("emojisend",async(data) => {
 socket.on("historysend",async(data) => {
     const {history} = data;
     const userid = socket.user.id;
-    const user = await User.findById(userid);
-    const roomid= user.ActiveRoom;
-     const room = await Room.findById(roomid);
+    const user = await User.findById(userid)
+                  .populate("ActiveRoom");
+                 
+    const room= user.ActiveRoom;;
     
     
     
-    io.to(room.roomId).emit("historyreceived", {history:history});
+    socket.to(room.roomId).emit("historyreceived", {history:history});
     
 })
 socket.on("currentsend",async(data) => {
     
     const userid = socket.user.id;
-    const user = await User.findById(userid);
-    const roomid= user.ActiveRoom;
-     const room = await Room.findById(roomid);
+    const user = await User.findById(userid)
+                  .populate("ActiveRoom");
+                 
+    const room= user.ActiveRoom;
     
     
     
-    io.to(room.roomId).emit("currentreceived", data);
+    
+    socket.to(room.roomId).emit("currentreceived", data);
     
 })
 
 socket.on("currentshapesend",async(data) => {
     
     const userid = socket.user.id;
-    const user = await User.findById(userid);
-    const roomid= user.ActiveRoom;
-     const room = await Room.findById(roomid);
-    
+   const user = await User.findById(userid)
+                  .populate("ActiveRoom");
+                 
+    const room= user.ActiveRoom;
     
     
     io.to(room.roomId).emit("currentshapereceived", data);
@@ -111,11 +116,15 @@ socket.on("currentshapesend",async(data) => {
 })
 
 socket.on("text" , async(data)=>{
-    const userId = socket.user.id;
-    const user = User.findById(userId);
-    const roomId = user.ActiveRoom;
+    const userid = socket.user.id;
+     const user = await User.findById(userid)
+                  .populate("ActiveRoom");
+                 
+    const room= user.ActiveRoom; 
+    
 
-    io.to(roomId).emit("showtext",data);
+
+    socket.to(room.roomId).emit("showtext",data);
     
 })
 
