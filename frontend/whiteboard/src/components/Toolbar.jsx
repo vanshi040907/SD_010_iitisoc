@@ -63,7 +63,7 @@ const Toolbar = () => {
   return (
     <>
       <div
-        className={`w-18 fixed top-36 left-4 flex flex-col items-center gap-1 px-2 py-3 rounded-2xl border ${theme.border} shadow-2xl z-5`}
+        className={`w-18 fixed top-28 left-4 flex flex-col items-center gap-1 px-2 py-3 rounded-2xl border ${theme.border} shadow-2xl z-5`}
         style={{
           ...theme.glass
         }}
@@ -239,7 +239,7 @@ const Toolbar = () => {
         <ToolTipButton id="redo" icon={Redo2} label="Redo" onClick={redo} isActive={false} disabled={!canRedo} />
       </div>
 
-      <div className={`left-13 -translate-x-1/2 fixed top-154 px-4 py-1.5 rounded-full border ${theme.border} text-xs ${theme.textSecondary}`}
+      <div className={`left-13 -translate-x-1/2 fixed top-167 px-4 py-1.5 rounded-full border ${theme.border} text-xs ${theme.textSecondary}`}
         style={{ ...theme.glass }}
       >
         Active: <span className={`${theme.accent} font-medium capitalize`}>{activeTool === "shape" ? activeShape : activeTool}</span>

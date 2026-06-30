@@ -22,9 +22,11 @@ export function WhiteboardProvider({ children }) {
     bump();
   }, []);
 
-  const undo = useCallback(() => {
-    
+  const downloadCanvas = useCallback(()=>{
+    engineRef.current?.downloadCanvas?.();
+  }, []);
 
+  const undo = useCallback(() => {
     engineRef.current?.undo();
     bump();
   }, [bump]);
@@ -32,6 +34,10 @@ export function WhiteboardProvider({ children }) {
   const redo = useCallback(() => {
     engineRef.current?.redo();
     bump();
+  }, [bump]);
+
+  const notifyHistoryChange = useCallback(() => {
+  bump();
   }, [bump]);
 
   const canUndo = engineRef.current?.canUndo?.() ?? false;
@@ -46,8 +52,11 @@ export function WhiteboardProvider({ children }) {
         registerEngine,
         undo, redo,
         canUndo, canRedo,
+        notifyHistoryChange,
         activeShape,
-        setActiveShape, bump
+        setActiveShape, bump,
+        downloadCanvas,
+
       }}
     >
       {children}

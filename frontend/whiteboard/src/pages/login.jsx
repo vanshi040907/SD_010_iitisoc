@@ -7,6 +7,8 @@ import conf from "../conf/conf";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import LetsCoSketh from "../animations/LetsCoSketh";
+import TextPressure from '../animations/TextPressure';
+
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -80,9 +82,24 @@ function Login() {
           </h1> */}
 
           <LetsCoSketh />
-          <p className="text-violet-300/70 text-base">
+          {/* <p className="text-violet-300/70 text-base">
             Draw together, in real time.
-          </p>
+          </p> */}
+          <div style={{position: 'relative'}}>
+                      <TextPressure
+                        text="Draw  Together  in  Real  Time!"
+                        flex
+                        alpha={false}
+                        stroke={false}
+                        width
+                        weight
+                        italic
+                        textColor="#c4b4ff"
+                        strokeColor="#5227FF"
+                        minFontSize={0.5}
+                        
+                     />
+                    </div>
         </motion.div>
 
         {/* Card */}
