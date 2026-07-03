@@ -3,9 +3,11 @@ import {Download} from "lucide-react";
 import { useContext } from 'react';
 import { ThemeContext } from '../context/ThemeContext';
 import { WhiteboardContext } from '../context/WhiteboardContext';
+import { RoomContext } from '../context/RoomContext';
 
 const TitleCard_download = () => {
   
+  const {roomId} = useContext(RoomContext);
   const {theme} = useContext(ThemeContext);
   const {downloadCanvas} = useContext(WhiteboardContext);
 

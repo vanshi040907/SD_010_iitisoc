@@ -1,18 +1,17 @@
 import React, { useEffect } from 'react'
 import { useState, useContext} from "react";
-import { LogOut, Smile } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { ThemeContext } from '../context/ThemeContext';
 import { useSocket } from '../context/Socket';
 import { useCallback } from 'react';
 
 const EMOJIS = ["👍", "❤️", "😂", "😮", "🔥", "🎉", "👏", "💡", "✅", "🚀"];
  
-const CURRENT_USER = "Vanshika"; 
 let reactionIdCounter = 0;
 
 const SessionStatus = () => {
 
-  const {isDark, theme} = useContext(ThemeContext);
+  const {theme} = useContext(ThemeContext);
 
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [reactions, setReactions] = useState([]);

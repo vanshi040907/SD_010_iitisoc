@@ -1,6 +1,6 @@
 // Welcome.jsx
 import TextPressure from "../animations/TextPressure";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { motion } from 'framer-motion'
 import Ferrofluid from "../animations/Ferrofluid";
 import { Link } from "react-router-dom"
@@ -9,8 +9,12 @@ import conf from "../conf/conf";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import LetsCoSketh from "../animations/LetsCoSketh";
+import { RoomContext } from "../context/RoomContext";
 
 export default function Welcome() {
+
+  const {setRoomId}= useContext(RoomContext);
+
   const [myName, setMyName] = useState("");
   const [roomID, setRoomID] = useState("");
   const [joinName, setJoinName] = useState("");
@@ -49,6 +53,8 @@ export default function Welcome() {
     alert(
       "Room " + roomID + " created!\nShare this room ID with your friends.",
     );
+
+    setRoomId(roomID);
     try {
       await axios.post(
         `${conf.path}/room/createroom`,
@@ -94,6 +100,7 @@ export default function Welcome() {
   myName: joinName.trim()
 });
         navigate(`/Workspace/${joinRoomID}`);
+        setRoomId(roomID);
   }
 else {
         alert("username or roomid not found");

@@ -8,6 +8,7 @@ import { ThemeProvider } from '../context/ThemeContext'
 import ToggleBtn from '../components/ToggleBtn'
 import Background from '../components/Background'
 import Whiteboard from '../components/Whiteboard'
+import Btn_clearCanvas from '../components/ClearCanvas'
 import { WhiteboardProvider } from '../context/WhiteboardContext'
 
 const Workspace = () => {
@@ -24,6 +25,7 @@ const Workspace = () => {
               <Invite_help />
               <ToggleBtn />
               <Whiteboard />
+              <Btn_clearCanvas />
             </WhiteboardProvider>
           </ThemeProvider>
         </>
