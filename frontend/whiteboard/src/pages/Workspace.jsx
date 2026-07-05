@@ -10,6 +10,7 @@ import Background from '../components/Background'
 import Whiteboard from '../components/Whiteboard'
 import Btn_clearCanvas from '../components/ClearCanvas'
 import { WhiteboardProvider } from '../context/WhiteboardContext'
+import LaserWhiteboard from '../components/LaserWhiteboard'
 
 const Workspace = () => {
   
@@ -25,6 +26,7 @@ const Workspace = () => {
               <Invite_help />
               <ToggleBtn />
               <Whiteboard />
+              <LaserWhiteboard />
               <Btn_clearCanvas />
             </WhiteboardProvider>
           </ThemeProvider>

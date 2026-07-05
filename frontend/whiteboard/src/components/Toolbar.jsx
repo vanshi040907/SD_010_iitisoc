@@ -1,16 +1,18 @@
 import React from 'react'
 import { useState, useContext } from "react";
-import { Pencil, StickyNote, Type, Shapes, ChevronDown, Undo2, Redo2, Eraser, MousePointer2, Minus, Square, Circle, Triangle, Highlighter, Pen, } from "lucide-react";
+import { StickyNote, Type, Shapes, ChevronDown, Undo2, Redo2, Eraser, MousePointer2, Minus, Square, Circle, Triangle, Highlighter, Pen, Pointer } from "lucide-react";
 import { ThemeContext } from '../context/ThemeContext';
 import { WhiteboardContext } from '../context/WhiteboardContext';
 
 const tools = [
   { id: "select", icon: MousePointer2, label: "Select" },
-  { id: "pen", icon: Pencil, label: "Pen" },
+  { id: "pen", icon: Pen, label: "Pen" },
   { id: "sticky", icon: StickyNote, label: "Sticky Note" },
   { id: "highlighter", icon: Highlighter, label: "Highlighter" },
   { id: "text", icon: Type, label: "Text" },
   { id: "eraser", icon: Eraser, label: "Eraser" },
+  { id: "laser", icon: Pointer, label: "Laser Pointer" },
+  
 ];
 
 const shapeTools = [
@@ -60,10 +62,11 @@ const Toolbar = () => {
   );
 
 
+
   return (
     <>
       <div
-        className={`w-18 fixed top-28 left-4 flex flex-col items-center gap-1 px-2 py-3 rounded-2xl border ${theme.border} shadow-2xl z-5`}
+        className={`w-18 fixed top-28 left-4 flex flex-col items-center gap-1 px-2 py-3 rounded-2xl border ${theme.border} shadow-2xl z-50`}
         style={{
           ...theme.glass
         }}

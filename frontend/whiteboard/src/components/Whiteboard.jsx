@@ -775,7 +775,7 @@ const Whiteboard = () => {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
         onDoubleClick={handleDoubleClick} // for re-editing placed text
-        className="absolute inset-0 touch-none"
+        className="absolute inset-0 z-2 touch-none"
       />
 
       {/* ADDED: floating input box — rendered when text tool is active and canvas is clicked */}
