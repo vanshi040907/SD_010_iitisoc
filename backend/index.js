@@ -111,7 +111,7 @@ socket.on("currentshapesend",async(data) => {
     const room= user.ActiveRoom;
     
     
-    io.to(room.roomId).emit("currentshapereceived", data);
+    socket.to(room.roomId).emit("currentshapereceived", data);
     
 })
 

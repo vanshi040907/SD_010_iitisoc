@@ -193,7 +193,7 @@ useEffect (() => {
            <span className={`${theme.textMuted} text-xs`}>{onlineCount} of {MEMBERS.length} currently active</span>
           </div>
         </div>
-        <button onClick={logout}>logout</button>
+       
     </div>
   );
 }

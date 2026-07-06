@@ -7,11 +7,13 @@ import Welcome from './pages/Welcome.jsx'
 import Workspace from './pages/Workspace.jsx'
 import { SocketProvider } from './context/Socket.jsx'
 import { RoomProvider } from './context/RoomContext.jsx'
+import { InfinityProvider } from './context/infinity.jsx'
 const App = () => {
     return (
         <SocketProvider>
         <BrowserRouter>
         <RoomProvider>
+          <InfinityProvider>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
@@ -19,6 +21,7 @@ const App = () => {
             <Route path="/Welcome" element={<Welcome />} />
             <Route path="/Workspace/:roomID" element={<Workspace />} />
           </Routes>
+          </InfinityProvider>
         </RoomProvider>
         </BrowserRouter>
         </SocketProvider>

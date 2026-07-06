@@ -4,6 +4,7 @@ import { WhiteboardContext } from '../context/WhiteboardContext';
 import conf from '../conf/conf';
 import axios from 'axios';
 import { useSocket } from '../context/Socket';
+import useInfinity from '../context/infinity';
 
 const THROTTLE_MS = 10;
 
@@ -15,16 +16,21 @@ const Whiteboard = () => {
     const [add,setAdd] = useState(0);
 
   const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump, notifyHistortChange } = useContext(WhiteboardContext);
-
+  const {camera,setCamera,worldtoscreen,screentoworld, zoom, setZoom, cameraonzoom , isZoom, setIsZoom,canvasRef} = useInfinity();
+  const [isPanning, setIsPanning]= useState(true);
   const activeColorRef = useRef(activeColor);
   const strokeWidthRef = useRef(strokeWidth);
   const shapeStartRef = useRef(null);
   const previewShapeRef = useRef(null);
-  const activeToolRefLocal = useRef(activeTool); //  ref mirror for activeTool, needed inside mouse handlers
+  const activeToolRefLocal = useRef(activeTool);
+  const cameraRef = useRef(camera);
+  const zoomRef = useRef(zoom); //  ref mirror for activeTool, needed inside mouse handlers
 
   useEffect(() => { activeColorRef.current = activeColor; }, [activeColor]);
   useEffect(() => { strokeWidthRef.current = strokeWidth; }, [strokeWidth]);
-  useEffect(() => { activeToolRefLocal.current = activeTool; }, [activeTool]); //  keep local tool ref in sync
+  useEffect(() => { activeToolRefLocal.current = activeTool; }, [activeTool]);
+  useEffect(() => { cameraRef.current = camera; }, [camera]); 
+  useEffect(() => { zoomRef.current = zoom; }, [zoom]); //  keep local tool ref in sync
 
   //  ref mirrors for color and font size needed inside text commit handler
   const activeColorRefText = useRef(activeColor);
@@ -75,6 +81,7 @@ const Whiteboard = () => {
        const {remainingHistory , remainingRedoHistory} = res.data
       historyStackRef.current = remainingHistory;
       redoStackRef.current = remainingRedoHistory;
+          bump();
 
     } catch (error) {
       console.log(error);
@@ -95,6 +102,7 @@ const Whiteboard = () => {
        const {remainingHistory , remainingRedoHistory} = res.data;
       historyStackRef.current = remainingHistory;
       redoStackRef.current = remainingRedoHistory;
+          bump();
 
       
       
@@ -137,9 +145,9 @@ const Whiteboard = () => {
       canRedo: () => redoStackRef.current.length > 0,
       downloadCanvas,
     });
-  }, [add]);
+    
+  }, [bump]);
 
-  const canvasRef = useRef(null);
   const ctxRef = useRef(null);
 
   //operation storage for undo and redo
@@ -190,7 +198,7 @@ const Whiteboard = () => {
    const handlesocket = (data) => {
       drawSegment(ctxRef.current,
         data.previousPoint,
-      data.point,
+      data.point_stored,
       data.color,
       data.width,
       data.isEraser,
@@ -237,6 +245,7 @@ const Whiteboard = () => {
 
   //function for undo/redo/ first initialisation of the canvas- complete redraw through object array saved
   const redrawAll = useCallback(() => {
+    
     const ctx = ctxRef.current;
     const canvas = canvasRef.current;
     if (!ctx || !canvas) return;
@@ -251,28 +260,35 @@ const Whiteboard = () => {
       }
 
       else if (item.type === "text") {
+
         drawText(ctx, item);
       }
 
       else {
+         
+
         drawShape(ctx, item);
       }
     });
 
-  }, []);
+  }, [camera,zoom]);
 
   //single stroke drawing
   const drawStroke = (ctx, stroke) => {
 
-    const {
+    const{
       points,
       color,
       width,
       isEraser,
       opacity = 1
     } = stroke;
+     const point = points.map((point) => {
+       return worldtoscreen({world:point, camera})
+   })
+   
 
-    if (points.length < 2) return;
+    if (point.length < 2) return;
 
     ctx.save();
 
@@ -291,34 +307,34 @@ const Whiteboard = () => {
 
     ctx.beginPath();
     ctx.moveTo(
-      points[0].x,
-      points[0].y
+      point[0].x,
+      point[0].y
     );
 
     for (
       let i = 1;
-      i < points.length - 1;
+      i < point.length - 1;
       i++
     ) {
 
       const midX =
-        (points[i].x +
-          points[i + 1].x) / 2;
+        (point[i].x +
+          point[i + 1].x) / 2;
 
       const midY =
-        (points[i].y +
-          points[i + 1].y) / 2;
+        (point[i].y +
+          point[i + 1].y) / 2;
 
       ctx.quadraticCurveTo(
-        points[i].x,
-        points[i].y,
+        point[i].x,
+        point[i].y,
         midX,
         midY
       );
     }
 
     const last =
-      points[points.length - 1];
+      point[point.length - 1];
 
     ctx.lineTo(
       last.x,
@@ -331,10 +347,16 @@ const Whiteboard = () => {
   };
 
   const drawRect = (ctx, shape) => {
-    const x = Math.min(shape.start.x, shape.end.x);
-    const y = Math.min(shape.start.y, shape.end.y);
-    const width = Math.abs(shape.end.x - shape.start.x);
-    const height = Math.abs(shape.end.y - shape.start.y);
+    
+
+    const start = worldtoscreen({world:shape.start, camera});
+    const end = worldtoscreen({world:shape.end, camera});
+     
+
+    const x = Math.min(start.x,end.x);
+    const y = Math.min(start.y,end.y);
+    const width = Math.abs(end.x - start.x);
+    const height = Math.abs(end.y - start.y);
 
     ctx.strokeStyle = shape.color;
     ctx.lineWidth = shape.width;
@@ -343,18 +365,22 @@ const Whiteboard = () => {
   };
 
   const drawLineShape = (ctx, shape) => {
+    const start = worldtoscreen({world:shape.start, camera});
+    const end = worldtoscreen({world:shape.end, camera});
     ctx.strokeStyle = shape.color;
     ctx.lineWidth = shape.width;
 
     ctx.beginPath();
-    ctx.moveTo(shape.start.x, shape.start.y);
-    ctx.lineTo(shape.end.x, shape.end.y);
+    ctx.moveTo(start.x, start.y);
+    ctx.lineTo(end.x, end.y);
     ctx.stroke();
   };
 
   const drawCircle = (ctx, shape) => {
-    const dx = shape.end.x - shape.start.x;
-    const dy = shape.end.y - shape.start.y;
+   const start = worldtoscreen({world:shape.start, camera});
+  const end = worldtoscreen({world:shape.end, camera});
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
 
     const radius = Math.sqrt(dx * dx + dy * dy);
 
@@ -363,8 +389,8 @@ const Whiteboard = () => {
 
     ctx.beginPath();
     ctx.arc(
-      shape.start.x,
-      shape.start.y,
+      start.x,
+      start.y,
       radius,
       0,
       Math.PI * 2
@@ -374,8 +400,9 @@ const Whiteboard = () => {
   };
 
   const drawTriangle = (ctx, shape) => {
-    const start = shape.start;
-    const end = shape.end;
+     const start = worldtoscreen({world:shape.start, camera});
+     const end = worldtoscreen({world:shape.end, camera});
+    
 
     ctx.strokeStyle = shape.color;
     ctx.lineWidth = shape.width;
@@ -435,6 +462,8 @@ const Whiteboard = () => {
     isEraser = false,
     opacity = 1
   ) => {
+     from = worldtoscreen({world:from, camera});
+    to = worldtoscreen({world:to, camera});
 
     ctx.save();
 
@@ -458,7 +487,7 @@ const Whiteboard = () => {
 
   const getMousePos = (e) => {
     const rect = canvasRef.current.getBoundingClientRect();
-    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    return { x: e.nativeEvent.offsetX, y:e.nativeEvent.offsetY  };
   }
 
   const drawText = (ctx, item) => {
@@ -510,7 +539,7 @@ const Whiteboard = () => {
    
 
       try{
-         console.log("yes");
+         
       await axios.post(`${conf.path}/whiteboard/event`,{
        drawingOperations:newTextItem,
       },{
@@ -530,6 +559,9 @@ const Whiteboard = () => {
 
   const handleMouseDown = (e) => {
     const point = getMousePos(e);
+    setIsPanning(false);
+    setIsZoom(false);
+    const point_stored = screentoworld({screen:point,camera})
 
     if (
       activeToolRefLocal.current === "pen" ||
@@ -537,12 +569,14 @@ const Whiteboard = () => {
       activeToolRefLocal.current === "highlighter"
     ) {
       isDrawingRef.current = true;
-      lastPointRef.current = point;
+       
+      lastPointRef.current = point_stored;
+    
 
       currentStrokeRef.current = {
         id: crypto.randomUUID(),
         type: "stroke",
-        points: [point],
+        points: [point_stored],
 
         color: activeColorRef.current,
 
@@ -567,13 +601,13 @@ const Whiteboard = () => {
     else if (activeToolRefLocal.current === "shape") {
       isDrawingRef.current = true;
 
-      shapeStartRef.current = point;
+      shapeStartRef.current = point_stored;
 
       previewShapeRef.current = {
         id: crypto.randomUUID(),
         type: activeShape,
-        start: point,
-        end: point,
+        start:point_stored,
+        end:point_stored,
         color: activeColorRef.current,
         width: strokeWidthRef.current,
       };
@@ -648,6 +682,7 @@ const Whiteboard = () => {
   };
 
   const handleMouseMove = (e) => {
+    
     if (!isDrawingRef.current) return;
 
     const now = performance.now();
@@ -658,9 +693,11 @@ const Whiteboard = () => {
 
     const point = getMousePos(e);
     const ctx = ctxRef.current;
+    const point_stored = screentoworld({screen:point,camera})
 
     if (activeToolRefLocal.current === "shape") {
-      previewShapeRef.current.end = point;
+      previewShapeRef.current.end = point_stored;
+      
 
       redrawAll();
       socket.emit('currentshapesend',{shape:previewShapeRef.current});
@@ -676,7 +713,7 @@ const Whiteboard = () => {
     const previousPoint = lastPointRef.current;
      socket.emit('currentsend' ,{
       previousPoint,
-      point,
+      point_stored,
       color:currentStrokeRef.current.color,
       width:currentStrokeRef.current.width,
       isEraser:currentStrokeRef.current.isEraser,
@@ -685,20 +722,22 @@ const Whiteboard = () => {
     drawSegment(
       ctx,
       previousPoint,
-      point,
+      point_stored,
       currentStrokeRef.current.color,
       currentStrokeRef.current.width,
       currentStrokeRef.current.isEraser,
       currentStrokeRef.current.opacity
     );
 
-    currentStrokeRef.current.points.push(point);
+    currentStrokeRef.current.points.push(point_stored);
 
-    lastPointRef.current = point;
+    lastPointRef.current = point_stored;
   };
 
 
   const handleMouseUp = async() => {
+     setIsPanning(true)
+      setIsZoom(true)
     if (!isDrawingRef.current) return;
 
     isDrawingRef.current = false;
@@ -739,6 +778,8 @@ const Whiteboard = () => {
       activeToolRefLocal.current === "shape" &&
       previewShapeRef.current
     ) {
+        
+
       historyStackRef.current.push(
         previewShapeRef.current
       );
@@ -764,6 +805,75 @@ const Whiteboard = () => {
       bump();
     }
   };
+   useEffect (() => {
+      const canvas = canvasRef.current;
+      
+          
+        
+const handleWheel = (e) => {
+  const MAX = 20;
+  const MIN = 0.02;
+   e.preventDefault();
+   let x = 0;
+  
+  if(e.ctrlKey&&isZoom) {
+    x = 1;
+    
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+          const screen = {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+          }
+          
+          const  world = screentoworld({screen:screen,camera:cameraRef.current})
+          
+
+
+             const zoomFactor = 1 - e.deltaY * 0.001;
+             
+             let newzoom = (zoom*zoomFactor)
+             newzoom = Math.max(MIN,(Math.min(MAX,newzoom)));
+             
+              
+             setZoom(prev =>  Math.max(MIN,(Math.min(MAX,prev*=zoomFactor))));
+             
+             
+        const cameranew = cameraonzoom({world,screen,newzoom})
+          setCamera(cameranew)
+
+
+            
+
+          }
+  const point = {
+              x:e.deltaX,
+
+              y:e.deltaY            }
+              
+  if(x==0&&isPanning) setCamera(prev => ({
+    x: prev.x + e.deltaX,
+    y: prev.y + e.deltaY
+})) ;
+
+
+    
+}
+canvas.addEventListener("wheel",handleWheel,{
+  passive:false,
+
+});
+return  () => {
+canvas.removeEventListener("wheel",handleWheel);
+}
+
+
+
+},[camera,zoom,isPanning, isZoom])
+useEffect(()=> {
+    
+  redrawAll();
+}, [camera,zoom])
 
   return (
     //  wrapper div so the floating input can be positioned relative to the canvas
