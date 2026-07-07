@@ -14,7 +14,6 @@ import { useNavigate } from "react-router-dom";
 
 const Avatar = ({member, size = "md"}) => {
 
-  const navigate = useNavigate();
 
   const {theme, isDark} = useContext(ThemeContext);
   const dim = member.role === "Host" ? "w-12 h-12 text-2xl" : "w-9 h-9 text-m";
@@ -30,6 +29,7 @@ const Avatar = ({member, size = "md"}) => {
 
 
 const MemberList = () => {
+   const navigate = useNavigate();
   const socket = useSocket();
   const [MEMBERS, setMEMBERS] = useState([]);
   
@@ -85,14 +85,21 @@ useEffect (() => {
   const onlineCount = MEMBERS.filter((m) => m.online).length;
   const {theme} = useContext(ThemeContext);
 
-  const logout = async(e)=>{
+  const logout = async()=>{
+
+    alert("Do you really want to logout?");
     try{
-      await axios.get(`${conf.path}/user/logout`,
+       const res = await axios.get(`${conf.path}/user/logout`,
         {
           withCredentials:true
         }
+
+       
       ) 
-      navigate("/login");
+       if(res.data.success){
+          navigate('/login')
+        }
+      
 
 
     }catch(error){
@@ -111,7 +118,7 @@ useEffect (() => {
         >
           {/* here i writing the logic for stacking of the initials  */}
           <div className="flex items-center">
-            {MEMBERS.slice(0, 3).map((m, i) => (
+            {MEMBERS.slice(0, 3).map((m,i) => (
               <div key={m.id} className={`w-10 h-10 rounded-full flex items-center justify-center text-l font-semibold text-white ring-2 ${theme.ringColor} flex-shrink-0`}
               style={{ background:"#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0'), marginLeft: i === 0 ? 0 : "-8px", zIndex: 3 - i }}
               >
@@ -193,7 +200,7 @@ useEffect (() => {
            <span className={`${theme.textMuted} text-xs`}>{onlineCount} of {MEMBERS.length} currently active</span>
           </div>
         </div>
-       
+        <button onClick={logout} className='bg-white'>logout</button>
     </div>
   );
 }
