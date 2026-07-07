@@ -34,6 +34,7 @@ export function WhiteboardProvider({ children }) {
   const redo = useCallback(() => {
     engineRef.current?.redo();
     bump();
+    console.log("redo clicked");
   }, [bump]);
 
   const notifyHistoryChange = useCallback(() => {

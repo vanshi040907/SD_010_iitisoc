@@ -8,9 +8,12 @@ import { ThemeProvider } from '../context/ThemeContext'
 import ToggleBtn from '../components/ToggleBtn'
 import Background from '../components/Background'
 import Whiteboard from '../components/Whiteboard'
+import Btn_clearCanvas from '../components/ClearCanvas'
 import { WhiteboardProvider } from '../context/WhiteboardContext'
+import Zoom from '../components/zoom'
 
 const Workspace = () => {
+  
   
   return (
      <>         
@@ -22,8 +25,10 @@ const Workspace = () => {
               <MemberList />
               <SessionStatus />
               <Invite_help />
+              <Zoom/>
               <ToggleBtn />
               <Whiteboard />
+              <Btn_clearCanvas />
             </WhiteboardProvider>
           </ThemeProvider>
         </>

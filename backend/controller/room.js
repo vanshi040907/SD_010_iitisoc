@@ -58,13 +58,24 @@ async function UserEnterRoom(req, res) {
 
 
  async function UserLeaveRoom(req,res){
-    const {roomid}= req.params.roomid;
-    const user = await User.findOne({_id:userid});
-    const room = await Room.findOne({code:roomid});
+   const userid = req.user.id;
+   const user = await User.findById(userid);
+   const roomid = user.ActiveRoom;
+   const room = await Room.findById(roomid);
+   const n = room.participants.length;
+  
+   for(let i=0;i<n;i++){
+   if( room.participants[i].toString()===userid.toString()){
+    room.participants.splice(i,1);
+    room.activeParticipants.splice(i,1);
+    
+    break;
+   }
+   }
+   user.ActiveRoom = null;
+   user.save();
 
-    room.participants.pop(user);
-    await room.save();
-    await user.save();
+   room.save();
 
     return res.json({success:"true"});
  }
@@ -72,7 +83,8 @@ async function UserEnterRoom(req, res) {
     const userid = req.user.id;
    const user = await User.findById(userid)
                   .populate("ActiveRoom");
-                 
+                  if(user.ActiveRoom === null) return;
+    
     const room= await user.ActiveRoom.populate([{ path: "owner" },
     { path: "participants" }]);
     const owner = room.owner.userName;

@@ -5,19 +5,77 @@ import Ferrofluid from "../animations/Ferrofluid";
 import LetsCoSketh from '../animations/LetsCoSketh';
 import TiltedFeatureCard from '../components/FeatureCard';
 import TextPressure from '../animations/TextPressure';
+import { ArrowRight } from 'lucide-react';
 
 const FEATURES = [
   {
     icon: "🎨",
-    title: "Real-time Drawing",
-    description: "Draw together on a shared canvas with zero lag using HTML5 Canvas.",
+    title: "Real-Time Collaborative Canvas",
+    description:
+      "Draw together on a shared HTML5 Canvas with zero noticeable delay. Every stroke appears on all connected screens the instant your mouse moves — powered by Socket.IO's event-driven broadcast architecture.",
     tag: "Core",
   },
   {
-    icon: "👥",
-    title: "Multi-user Rooms",
-    description: "Invite your team instantly with a room code or shareable link.",
+    icon: "🔐",
+    title: "Secure Authentication",
+    description:
+      "Sign up and log in with your own account. Passwords are hashed using HMAC with a unique per-user salt — your credentials are never stored as plain text. Sessions are managed via JWT tokens in HTTP-only cookies.",
+    tag: "Auth",
+  },
+  {
+    icon: "🏠",
+    title: "Private Room Codes",
+    description:
+      "Create an isolated drawing room and get a unique code. Share it with whoever you want — only people with the code can join. Rooms are completely independent of each other, so multiple sessions can run simultaneously.",
     tag: "Rooms",
+  },
+  {
+    icon: "⚡",
+    title: "Instant Sync",
+    description: "Every stroke syncs across all participants immediately via Socket.io.",
+    tag: "Sync",
+  },
+  {
+    icon: "✏️",
+    title: "Full Drawing Toolkit",
+    description:
+      "Pen, highlighter, eraser, rectangle, circle, triangle, line, and a floating text tool. Customize color and stroke width for every tool. Smooth curves via quadraticCurveTo() so freehand lines never look jagged.",
+    tag: "Tools",
+  },
+  {
+    icon: "↩️",
+    title: "Undo / Redo History",
+    description:
+      "Every drawing action is stored as a lightweight JSON operation in a runtime history stack. Undo reconstructs the canvas by replaying the remaining operations — nothing is destructively deleted, so redo always works too.",
+    tag: "History",
+  },
+  {
+    icon: "😄",
+    title: "Live Emoji Reactions",
+    description:
+      "React to ideas in real time. Click an emoji and it floats upward with your name attached — visible to everyone in the room simultaneously via the same Socket.IO event pipeline as drawing.",
+    tag: null,
+  },
+  {
+    icon: "💾",
+    title: "Export as JPEG",
+    description:
+      "Download your entire whiteboard as a high-quality JPEG with one click. The canvas is composited onto a clean white background before export so there are no black transparent areas in the saved image.",
+    tag: "Export",
+  },
+  {
+    icon: "🌙",
+    title: "Dark & Light Theme",
+    description:
+      "Switch between a deep purple dark mode and a soft pastel light mode at any time. Theme state is managed globally through React Context so every component updates simultaneously with a single toggle.",
+    tag: null,
+  },
+  {
+    icon: "👥",
+    title: "Live Member Presence",
+    description:
+      "See who's in your room — avatars, names, online/offline status, and roles (Host, Editor, Viewer). The member list updates in real time as people join or leave, synced via Socket.IO room events.",
+    tag: "Coming Soon",
   },
   {
     icon: "💬",
@@ -26,16 +84,11 @@ const FEATURES = [
     tag: null,
   },
   {
-    icon: "😄",
-    title: "Emoji Reactions",
-    description: "React to ideas with animated floating emojis in real time.",
+    icon: "🔗",
+    title: "Room Sharing & Invite Links",
+    description:
+      "Share your room instantly via a copyable room code or a direct URL. The Share popup gives both options with a one-click copy that flashes a confirmation checkmark so you always know it worked.",
     tag: null,
-  },
-  {
-    icon: "⚡",
-    title: "Instant Sync",
-    description: "Every stroke syncs across all participants immediately via Socket.io.",
-    tag: "Sync",
   },
 ];
 
@@ -118,7 +171,7 @@ function Home() {
  
         {/* Row 2 — three equal cards */}
         <div className="grid grid-cols-3 gap-4">
-          {FEATURES.slice(2).map((f, i) => (
+          {FEATURES.slice(2, 5).map((f, i) => (
             <TiltedFeatureCard key={i} feature = {f} />
           ))}
         </div>
@@ -127,7 +180,10 @@ function Home() {
 
                 <Link to="/login">
                     <button className="mt-12 px-10 py-3 rounded-xl text-white font-bold text-sm bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 shadow-[0_4px_20px_rgba(124,58,237,0.35)]">
-                        Get Started!
+                        <div className="flex items-center gap-2">
+                          <span>Get Started!</span>
+                          <ArrowRight />
+                        </div>
                     </button>
                 </Link>
             </div>
