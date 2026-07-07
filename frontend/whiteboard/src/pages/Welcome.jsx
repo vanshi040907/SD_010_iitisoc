@@ -59,9 +59,9 @@ export default function Welcome() {
           withCredentials: true,
         },
       );
-        if (!socket.connected) {
-      socket.connect();
-    }
+      if (!socket.connected) {
+        socket.connect();
+      }
       socket.emit("joinroom", { roomID, myName });
       navigate(`/Workspace/${roomID}`);
     } catch (error) {
@@ -85,23 +85,23 @@ export default function Welcome() {
         },
       );
 
-      if (response.data.success){
+      if (response.data.success) {
         if (!socket.connected) {
-      socket.connect();
-    }
-         socket.emit("joinroom", {
-  roomID: joinRoomID.trim().toUpperCase(),
-  myName: joinName.trim()
-});
+          socket.connect();
+        }
+        socket.emit("joinroom", {
+          roomID: joinRoomID.trim().toUpperCase(),
+          myName: joinName.trim()
+        });
         navigate(`/Workspace/${joinRoomID}`);
-  }
-else {
+      }
+      else {
         alert("username or roomid not found");
       }
     } catch (err) {
       console.log(err);
     }
-}
+  }
 
   return (
     <div className="relative h-[100vh] w-full ">
@@ -146,21 +146,21 @@ else {
             Draw together, in real time.
           </p> */}
           <LetsCoSketh />
-          <div style={{position: 'relative'}}>
-                      <TextPressure
-                        text="Draw  Together  in  Real  Time!"
-                        flex
-                        alpha={false}
-                        stroke={false}
-                        width
-                        weight
-                        italic
-                        textColor="#c4b4ff"
-                        strokeColor="#5227FF"
-                        minFontSize={0.5}
-                     />
-                    </div>
-                    
+          <div style={{ position: 'relative' }}>
+            <TextPressure
+              text="Draw  Together  in  Real  Time!"
+              flex
+              alpha={false}
+              stroke={false}
+              width
+              weight
+              italic
+              textColor="#c4b4ff"
+              strokeColor="#5227FF"
+              minFontSize={0.5}
+            />
+          </div>
+
         </motion.div>
 
         {/* Cards row */}
