@@ -32,8 +32,11 @@ async function LoginUser(req,res) {
 }
 
 async function LogoutUser (req,res){
+    console.log(req)
+
     res.clearCookie("uid");
 
+    
     res.json({success:"true"})
 }
 

@@ -83,7 +83,7 @@ socket.on("historysend",async(data) => {
     const room= user.ActiveRoom;;
     
     
-    
+    if(room.roomId === null ) return;
     socket.to(room.roomId).emit("historyreceived", {history:history});
     
 })
@@ -126,6 +126,19 @@ socket.on("text" , async(data)=>{
 
     socket.to(room.roomId).emit("showtext",data);
     
+})
+
+socket.on("logout", async(data)=>{
+    const userid = socket.user.id;
+    const user = await User.findById(userid);
+    const roomid = user.ActiveRoom;
+    const room = await Room.findById(roomid);
+    const rid = room.roomId;
+    const username = user.userName;
+
+    socket.to(rid).emit("leave me!",{username});
+
+
 })
 
 })

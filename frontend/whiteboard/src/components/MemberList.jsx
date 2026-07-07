@@ -60,6 +60,8 @@ const MemberList = () => {
       console.log(error);
     }
   }; 
+
+ 
   fetchMember();
 },[])
 useEffect (() => {
@@ -69,16 +71,23 @@ useEffect (() => {
        setMEMBERS((prev) =>[ ...prev,{ id:prev.length+1, name:name , role: "Editor", online: true }])
       
     }
+
+    const handleLeaveRoom = (data)=>{
+      console.log(data);
+      setMEMBERS((prev)=>prev.filter((m)=>m.name !== data.username));
+  
+    }
      
     socket.on("new user",handlesocket)
+    socket.on("leave me!",handleLeaveRoom)
 
       return () => {
         socket.off("new user",handlesocket);
+        socket.off("leave me!",handleLeaveRoom);
       }
 
     
   },[socket,])
-
 
 
   const [open, setOpen] = useState(false);
@@ -97,6 +106,8 @@ useEffect (() => {
        
       ) 
        if(res.data.success){
+
+        socket.emit("logout");
           navigate('/login')
         }
       

@@ -60,8 +60,11 @@ async function UserEnterRoom(req, res) {
  async function UserLeaveRoom(req,res){
    const userid = req.user.id;
    const user = await User.findById(userid);
+   const username = user.userName;
    const roomid = user.ActiveRoom;
    const room = await Room.findById(roomid);
+   const Rid = room.roomId;
+
    const n = room.participants.length;
   
    for(let i=0;i<n;i++){
@@ -72,11 +75,12 @@ async function UserEnterRoom(req, res) {
     break;
    }
    }
+   req.io.to(Rid.toString()).emit("leave me!",{username});
+
    user.ActiveRoom = null;
    user.save();
-
    room.save();
-
+   
     return res.json({success:"true"});
  }
  async function Name(req,res) {
