@@ -10,12 +10,16 @@ const TitleCard_download = () => {
   
   const {roomId} = useContext(RoomContext);
   const {theme} = useContext(ThemeContext);
-  const {downloadCanvas} = useContext(WhiteboardContext);
+  const {downloadCanvas,downloadCurrentCanvas} = useContext(WhiteboardContext);
    const [open, setOpen] = useState(false);
 
   const handleDownload = () => {
     alert("Download triggered");
     downloadCanvas();
+  };
+   const handleCurrentDownload = () => {
+    alert("Download triggered");
+    downloadCurrentCanvas();
   };
 
   return (
@@ -57,7 +61,7 @@ const TitleCard_download = () => {
           pointerEvents: open ? "auto" : "none",
         }}
         >
-          <div className={`flex items-center gap-2 px-4 py-3 border-b ${theme.border}`}><button className={`${theme.textPrimary}`}> Export Current View</button></div>
+          <div className={`flex items-center gap-2 px-4 py-3 border-b ${theme.border}`}><button onClick={handleCurrentDownload} className={`${theme.textPrimary}`}> Export Current View</button></div>
            <div className={`flex items-center gap-2 px-4 py-3 border-b ${theme.border}`}><button className={`${theme.textPrimary}`}> Export Selected Objects</button></div>
             <div className={`flex items-center gap-2 px-4 py-3 border-b ${theme.border}`} ><button onClick={handleDownload} className={`${theme.textPrimary}`}> Export Everything Anyway</button></div>
           

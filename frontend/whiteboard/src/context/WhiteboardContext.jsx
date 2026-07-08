@@ -25,6 +25,10 @@ export function WhiteboardProvider({ children }) {
   const downloadCanvas = useCallback(()=>{
     engineRef.current?.downloadCanvas?.();
   }, []);
+   const downloadCurrentCanvas = useCallback(()=>{
+    engineRef.current?.downloadCurrentCanvas?.();
+  }, []);
+
 
   const undo = useCallback(() => {
     engineRef.current?.undo();
@@ -57,6 +61,7 @@ export function WhiteboardProvider({ children }) {
         activeShape,
         setActiveShape, bump,
         downloadCanvas,
+        downloadCurrentCanvas,
 
       }}
     >

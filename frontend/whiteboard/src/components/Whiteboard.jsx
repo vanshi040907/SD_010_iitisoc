@@ -112,20 +112,300 @@ const Whiteboard = () => {
     redrawAll();
     redraw();
   }
+      let MAX_X_STROKE = -Infinity;
+    let MAX_Y_STROKE = -Infinity;
+    let MIN_X_STROKE = Infinity;
+    let MIN_Y_STROKE = Infinity;
+     
 
-  const downloadCanvas = useCallback(()=>{
+const downloadCanvas = useCallback(()=>{
     const canvas = canvasRef.current;
     if(!canvas) return;
 
     const tempCanvas =document.createElement("canvas");
-    tempCanvas.width = canvas.width;
-    tempCanvas.height = canvas.height;
-    const tempCtx = tempCanvas.getContext("2d");
+    let MAX_X = -Infinity;
+    let MAX_Y = -Infinity;
+    let MIN_X = Infinity;
+    let MIN_Y = Infinity;
 
-    tempCtx.fillStyle = "#000000";
+    historyStackRef.current.forEach((item)=> {
+       if (item.type === "stroke") {
+        
+        
+        if(item.bounds.minx<MIN_X) MIN_X=item.bounds.minx;
+         if(item.bounds.miny<MIN_Y) MIN_Y=item.bounds.miny;
+         if(item.bounds.maxx>MAX_X) MAX_X=item.bounds.maxx;
+        if(item.bounds.maxy>MAX_Y) MAX_Y=item.bounds.maxy;
+
+        
+        
+      }
+      else if(item.type==="text") {
+        
+      }
+      else {
+        if(item.type==="rect"||item.type==="line") {
+       if(item.start.x<MIN_X) MIN_X=item.start.x;
+         if(item.start.y<MIN_Y) MIN_Y=item.start.y;
+         if(item.start.x>MAX_X) MAX_X=item.start.x;
+        if(item.start.y>MAX_Y) MAX_Y=item.start.y;
+         if(item.end.x<MIN_X) MIN_X=item.end.x;
+         if(item.end.y<MIN_Y) MIN_Y=item.end.y;
+         if(item.end.x>MAX_X) MAX_X=item.end.x;
+        if(item.end.y>MAX_Y) MAX_Y=item.end.y;
+        }
+        else if(item.type==="circle") {
+          const start = item.start;
+          const end = item.end;
+          const dx = end.x - start.x;
+          const dy = end.y - start.y;
+
+    const r = Math.sqrt(dx * dx + dy * dy);
+    const left = Math.min(start.x-r,start.x+r,end.x-r,end.x+r);
+    const right = Math.max(start.x-r,start.x+r,end.x-r,end.x+r);
+    const top = Math.min(start.y-r,start.y+r,end.y-r,end.y+r);
+    const bottom = Math.max(start.y-r,start.y+r,end.y-r,end.y+r);
+    MIN_X=Math.min(left,MIN_X);
+    MIN_Y=Math.min(top,MIN_Y);
+    MAX_X=Math.max(right,MAX_X);
+     MAX_Y=Math.max(bottom,MAX_Y);
+
+    
+
+    
+
+          
+
+        }
+        else {
+           const start = item.start;
+          const end = item.end;
+          const point1_x=(start.x + end.x) / 2;
+          const point1_y=start.y;
+           const point2_x=start.x;
+           const point2_y=end.y;
+            const point3_x=end.x;
+           const point3_y=end.y;
+            MIN_X=Math.min(point1_x,point2_x,point3_x,MIN_X);
+    MIN_Y=Math.min(point1_y,point2_y,point3_y,MIN_Y);
+    MAX_X=Math.max(point1_x,point2_x,point3_x,MAX_X);
+     MAX_Y=Math.max(point1_y,point2_y,point3_y,MAX_Y);
+
+
+          
+
+      
+
+
+        }
+        
+
+      
+      }
+    }
+
+
+    );
+    if (MIN_X === Infinity) {
+    console.log("Nothing to export");
+    }
+       tempCanvas.width = MAX_X-MIN_X;
+   tempCanvas.height = MAX_Y-MIN_Y;
+     const tempCtx = tempCanvas.getContext("2d");
+      tempCtx.fillStyle = "#000000";
     tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
-    historyStackRef.current.forEach((stroke)=> drawStroke(tempCtx, stroke));
+   tempCtx.translate(-MIN_X,-MIN_Y);
+
+   
+
+//Again need to define function because only world coordinate needed
+
+     historyStackRef.current.forEach((item)=>  {
+if (item.type === "stroke") {
+  const Stroke = (ctx, stroke) => {
+
+    const{
+      points,
+      color,
+      width,
+      isEraser,
+      opacity = 1
+    } = stroke;
+       
+
+    if (points.length < 2) return;
+
+    ctx.save();
+
+    if (isEraser) {
+      ctx.globalCompositeOperation =
+        "destination-out";
+    } else {
+      ctx.globalCompositeOperation =
+        "source-over";
+    }
+
+    ctx.globalAlpha = opacity;
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+
+    ctx.beginPath();
+    ctx.moveTo(
+      points[0].x,
+      points[0].y
+    );
+
+    for (
+      let i = 1;
+      i < points.length - 1;
+      i++
+    ) {
+
+      const midX =
+        (points[i].x +
+          points[i + 1].x) / 2;
+
+      const midY =
+        (points[i].y +
+          points[i + 1].y) / 2;
+
+      ctx.quadraticCurveTo(
+        points[i].x,
+        points[i].y,
+        midX,
+        midY
+      );
+    }
+
+    const last =
+      points[points.length - 1];
+
+    ctx.lineTo(
+      last.x,
+      last.y
+    );
+
+    ctx.stroke();
+
+    ctx.restore();
+  };
+
+  
+  Stroke(tempCtx,item);
+
+      }
+else if(item.type==="text") {
+        
+      }
+else {
+    const Rect = (ctx, shape) => {
+    const x = Math.min(shape.start.x,shape.end.x);
+    const y = Math.min(shape.start.y,shape.end.y);
+    const width = Math.abs(shape.end.x - shape.start.x);
+    const height = Math.abs(shape.end.y - shape.start.y);
+
+    ctx.strokeStyle = shape.color;
+    ctx.lineWidth = shape.width;
+
+    ctx.strokeRect(x, y, width, height);
+  };
+
+  const LineShape = (ctx, shape) => {
+    
+    ctx.strokeStyle = shape.color;
+    ctx.lineWidth = shape.width;
+
+    ctx.beginPath();
+    ctx.moveTo(shape.start.x, shape.start.y);
+    ctx.lineTo(shape.end.x,shape.end.y);
+    ctx.stroke();
+  };
+
+  const Circle = (ctx, shape) => {
+   
+    const dx = shape.end.x - shape.start.x;
+    const dy = shape.end.y - shape.start.y;
+
+    const radius = Math.sqrt(dx * dx + dy * dy);
+
+    ctx.strokeStyle = shape.color;
+    ctx.lineWidth = shape.width;
+
+    ctx.beginPath();
+    ctx.arc(
+      shape.start.x,
+      shape.start.y,
+      radius,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.stroke();
+  };
+
+  const Triangle = (ctx, shape) => {
+     const start = shape.start;
+     const end = shape.end;
+    
+
+    ctx.strokeStyle = shape.color;
+    ctx.lineWidth = shape.width;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      (start.x + end.x) / 2,
+      start.y
+    );
+
+    ctx.lineTo(
+      start.x,
+      end.y
+    );
+
+    ctx.lineTo(
+      end.x,
+      end.y
+    );
+
+    ctx.closePath();
+    ctx.stroke();
+  };
+
+  const Shape = (ctx, shape) => {
+    
+    switch (shape.type) {
+      case "rect":
+        Rect(ctx, shape);
+        break;
+
+      case "circle":
+        Circle(ctx, shape);
+        break;
+
+      case "triangle":
+        Triangle(ctx, shape);
+        break;
+
+      case "line":
+        LineShape(ctx, shape);
+        break;
+
+      default:
+        break;
+    }
+  };
+  Shape(tempCtx,item);
+
+
+}
+  });
+    
+    
+    
+
 
     const dataUrl = tempCanvas.toDataURL("image/jpeg", 0.95);
 
@@ -136,6 +416,21 @@ const Whiteboard = () => {
     link.click();
     document.body.removeChild(link);
   }, []);
+const downloadCurrentCanvas = useCallback(()=>{
+    const canvas = canvasRef.current;
+    if(!canvas) return;
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
+
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = `whiteboard-${Date.now()}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }, [camera]);
+
+
+
 
   useEffect(() => {
     registerEngine({
@@ -144,6 +439,7 @@ const Whiteboard = () => {
       canUndo: () => historyStackRef.current.length > 0,
       canRedo: () => redoStackRef.current.length > 0,
       downloadCanvas,
+      downloadCurrentCanvas,
     });
     
   }, [bump]);
@@ -193,7 +489,7 @@ const Whiteboard = () => {
         socket.off("historyreceived",handlesocket);
       }
     
-  },[socket])
+  },[socket,camera])
   useEffect(() => {
    const handlesocket = (data) => {
       drawSegment(ctxRef.current,
@@ -240,7 +536,7 @@ const Whiteboard = () => {
 
     
 
-},[socket])
+},[socket,camera])
 
 
   //function for undo/redo/ first initialisation of the canvas- complete redraw through object array saved
@@ -496,11 +792,16 @@ const Whiteboard = () => {
     ctx.fillStyle = item.color;
 
     ctx.font = `${item.fontSize}px Arial`;
+    const world = {
+      x:item.x,
+      y:item.y
+    }
+    const screen= worldtoscreen({world, camera});
 
     ctx.fillText(
       item.text,
-      item.x,
-      item.y
+      screen.x,
+      screen.y
     );
 
     ctx.restore();
@@ -571,6 +872,11 @@ const Whiteboard = () => {
       isDrawingRef.current = true;
        
       lastPointRef.current = point_stored;
+       if(point_stored.x<MIN_X_STROKE) MIN_X_STROKE=point_stored.x;
+         if(point_stored.y<MIN_Y_STROKE) MIN_Y_STROKE=point_stored.y;
+         if(point_stored.x>MAX_X_STROKE) MAX_X_STROKE=point_stored.x;
+        if(point_stored.y>MAX_Y_STROKE) MAX_Y_STROKE=point_stored.y;
+
     
 
       currentStrokeRef.current = {
@@ -595,6 +901,7 @@ const Whiteboard = () => {
 
         isHighlighter:
           activeToolRefLocal.current === "highlighter",
+        bounds:{}
       };
     }
 
@@ -694,6 +1001,10 @@ const Whiteboard = () => {
     const point = getMousePos(e);
     const ctx = ctxRef.current;
     const point_stored = screentoworld({screen:point,camera})
+     if(point_stored.x<MIN_X_STROKE) MIN_X_STROKE=point_stored.x;
+         if(point_stored.y<MIN_Y_STROKE) MIN_Y_STROKE=point_stored.y;
+         if(point_stored.x>MAX_X_STROKE) MAX_X_STROKE=point_stored.x;
+        if(point_stored.y>MAX_Y_STROKE) MAX_Y_STROKE=point_stored.y;
 
     if (activeToolRefLocal.current === "shape") {
       previewShapeRef.current.end = point_stored;
@@ -730,6 +1041,7 @@ const Whiteboard = () => {
     );
 
     currentStrokeRef.current.points.push(point_stored);
+    
 
     lastPointRef.current = point_stored;
   };
@@ -749,9 +1061,15 @@ const Whiteboard = () => {
       currentStrokeRef.current &&
       currentStrokeRef.current.points.length > 1
     ) {
+      currentStrokeRef.current.bounds = {
+        minx:MIN_X_STROKE,
+        miny:MIN_Y_STROKE,
+        maxx:MAX_X_STROKE,
+        maxy:MAX_Y_STROKE};
       historyStackRef.current.push(
         currentStrokeRef.current
       );
+
  try {
       await axios.post(
        `${conf.path}/whiteboard/event`,{
@@ -771,6 +1089,12 @@ const Whiteboard = () => {
       redraw();
 
       currentStrokeRef.current = null;
+      MAX_X_STROKE = -Infinity;
+      MAX_Y_STROKE = -Infinity;
+      MIN_X_STROKE = Infinity;
+      MIN_Y_STROKE = Infinity;
+
+
       bump();
     }
 
@@ -896,9 +1220,15 @@ useEffect(()=> {
           onChange={(e) => {
             let value = e.target.value;
             setTextInput((prev) => ({ ...prev, value: e.target.value }));
+             const screen = {
+      x:textInput.x,
+      y:textInput.y
+    }
+    const world=screentoworld({screen, camera});
+
           socket.emit("text",{newTextItem:{
-             x: textInput.x,
-        y:textInput.y,
+             x: world.x,
+        y:world.y,
         value: value,
         color: activeColorRefText.current,
         fontSize: 20,
@@ -911,6 +1241,13 @@ useEffect(()=> {
             // Enter commits, Shift+Enter allows newline, Escape cancels
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
+              const screen = {
+      x:textInput.x,
+      y:textInput.y
+    }
+    const world=screentoworld({screen, camera});
+    textInput.x = world.x;
+    textInput.y = world.y;
               commitText(textInput);
             }
             if (e.key === "Escape") {
