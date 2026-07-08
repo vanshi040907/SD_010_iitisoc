@@ -13,7 +13,7 @@ import { RoomContext } from "../context/RoomContext";
 
 export default function Welcome() {
 
-  const {setRoomId}= useContext(RoomContext);
+  const { setRoomId } = useContext(RoomContext);
 
   const [myName, setMyName] = useState("");
   const [roomID, setRoomID] = useState("");
@@ -97,17 +97,13 @@ export default function Welcome() {
         }
         socket.emit("joinroom", {
           roomID: joinRoomID.trim().toUpperCase(),
-          myName: joinName.trim()
+          myName: joinName.trim(),
         });
+
         navigate(`/Workspace/${joinRoomID}`);
-<<<<<<< HEAD
-      }
-      else {
-=======
-        setRoomId(roomID);
-  }
-else {
->>>>>>> origin/main
+        setRoomId(joinRoomID);
+
+      } else {
         alert("username or roomid not found");
       }
     } catch (err) {
