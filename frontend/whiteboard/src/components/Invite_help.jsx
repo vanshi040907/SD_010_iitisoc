@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { useState } from "react";
 import { Share2, HelpCircle, X, Copy, Check, Link, Zap, Users, Pencil, MessageCircle, Smile, ChevronDown, ChevronUp } from "lucide-react";
 import { ThemeContext } from '../context/ThemeContext';
+import { RoomContext } from '../context/RoomContext';
 
 const glassDark = {
   background: "rgba(15, 12, 30, 0.92)",
@@ -29,14 +30,15 @@ function Backdrop({ onClick }) {
 }
 
 //room code and link we will fetch later from the backend when the mongodb set up will be done and romm creation possible
-const ROOM_CODE = "AB12-CD34";
-const ROOM_LINK = `https://whiteboard.app/room/${ROOM_CODE}`;
+const ROOM_LINK = `https://whiteboard.app/room/roomId`;
 
 function SharePopup({onClose}){
     const [codeCopied, setCodeCopied] = useState(false);
     const [linkCopied, setLinkCopied] = useState(false);
 
     const {isDark} = useContext(ThemeContext);
+    const {roomId} = useContext(RoomContext);
+
     const glass = isDark ? glassDark : glassLight;
     const {theme} = useContext(ThemeContext);
 
@@ -77,10 +79,10 @@ function SharePopup({onClose}){
                     <div className="flex items-center gap-2">
                         <div className={`flex-1 flex items-center justify-center py-3 rounded-xl border ${theme.popupBorder} font-mono text-2xl font-bold tracking-[0.25em] ${theme.textPrimary}`}
                          style={{ background: "rgba(168,85,247,0.08)" }}>
-                            {ROOM_CODE}
+                            {roomId}
                         </div>
                         <button
-                          onClick={() => copy(ROOM_CODE, setCodeCopied)}
+                          onClick={() => copy(roomId, setCodeCopied)}
                           className={`w-11 h-11 rounded-xl flex items-center justify-center border transition-all duration-200 flex-shrink-0 ${
                           codeCopied
                             ? `${theme.copied}`

@@ -82,7 +82,7 @@ async function Redo (req, res) {
 
       if(redowhiteboard[i].user.toString() === user._id.toString()){
            const undoroom = redowhiteboard[i].room;
-         const undouserid = redowhiteboard[i].user;;
+         const undouserid = redowhiteboard[i].user;
          const undodrawingOperation  = redowhiteboard[i].drawingOperations;
          await redowhiteboard[i].deleteOne();
          const whiteboard = await Whiteboard.create({
