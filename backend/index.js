@@ -49,15 +49,174 @@ app.use('/user', userrouter);
 
 
 io.use((socket, next) => {
-    const cookies = cookie.parseCookie(socket.handshake.headers.cookie || " ");
+    const cookies = cookie.parse(socket.handshake.headers.cookie || " ");
     const useruid = cookies.uid;
     if (!useruid) return next(new Error("login required"));
     const user = ValidateToken(useruid);
     if (!user) return next(new Error("login required"));
     socket.user = user;
     next();
-});
 
+})
+io.on('connection', (socket) => {
+    socket.on('joinroom', (data) => {
+        const { roomID, myName } = data;
+        socket.join(roomID);
+
+
+
+        socket.broadcast.to(roomID).emit("new user", myName);
+
+    })
+    socket.on("emojisend", async (data) => {
+        const { emoji } = data;
+        const userid = socket.user.id;
+        const user = await User.findById(userid)
+            .populate("ActiveRoom");
+
+        const room = user.ActiveRoom;
+
+
+
+
+        io.to(room.roomId).emit("emojireceived", { emoji: emoji, user: user });
+
+    })
+    socket.on("historysend", async (data) => {
+        const { history } = data;
+        const userid = socket.user.id;
+        const user = await User.findById(userid)
+            .populate("ActiveRoom");
+
+        const room = user.ActiveRoom;;
+
+
+
+        socket.to(room.roomId).emit("historyreceived", { history: history });
+
+    })
+    socket.on("currentsend", async (data) => {
+
+        const userid = socket.user.id;
+        const user = await User.findById(userid)
+            .populate("ActiveRoom");
+
+        const room = user.ActiveRoom;
+
+
+
+
+        socket.to(room.roomId).emit("currentreceived", data);
+
+    })
+
+    socket.on("currentshapesend", async (data) => {
+
+        const userid = socket.user.id;
+        const user = await User.findById(userid)
+            .populate("ActiveRoom");
+
+        const room = user.ActiveRoom;
+
+
+        socket.to(room.roomId).emit("currentshapereceived", data);
+
+    })
+
+    socket.on("text", async (data) => {
+        const userid = socket.user.id;
+        const user = await User.findById(userid)
+            .populate("ActiveRoom");
+
+        const room = user.ActiveRoom;
+
+
+
+        socket.to(room.roomId).emit("showtext", data);
+
+    })
+
+})
+io.on('connection', (socket) => {
+    socket.on('joinroom', (data) => {
+        const { roomID, myName } = data;
+        socket.join(roomID);
+
+
+
+        socket.broadcast.to(roomID).emit("new user", myName);
+
+    })
+    socket.on("emojisend", async (data) => {
+        const { emoji } = data;
+        const userid = socket.user.id;
+        const user = await User.findById(userid)
+            .populate("ActiveRoom");
+
+        const room = user.ActiveRoom;
+
+
+
+
+        io.to(room.roomId).emit("emojireceived", { emoji: emoji, user: user });
+
+    })
+    socket.on("historysend", async (data) => {
+        const { history } = data;
+        const userid = socket.user.id;
+        const user = await User.findById(userid)
+            .populate("ActiveRoom");
+
+        const room = user.ActiveRoom;;
+
+
+
+        socket.to(room.roomId).emit("historyreceived", { history: history });
+
+    })
+    socket.on("currentsend", async (data) => {
+
+        const userid = socket.user.id;
+        const user = await User.findById(userid)
+            .populate("ActiveRoom");
+
+        const room = user.ActiveRoom;
+
+
+
+
+        socket.to(room.roomId).emit("currentreceived", data);
+
+    })
+
+    socket.on("currentshapesend", async (data) => {
+
+        const userid = socket.user.id;
+        const user = await User.findById(userid)
+            .populate("ActiveRoom");
+
+        const room = user.ActiveRoom;
+
+
+        socket.to(room.roomId).emit("currentshapereceived", data);
+
+    })
+
+    socket.on("text", async (data) => {
+        const userid = socket.user.id;
+        const user = await User.findById(userid)
+            .populate("ActiveRoom");
+
+        const room = user.ActiveRoom;
+
+
+
+        socket.to(room.roomId).emit("showtext", data);
+
+    })
+
+
+})
 io.on('connection', (socket) => {
 
     socket.on('joinroom', (data) => {

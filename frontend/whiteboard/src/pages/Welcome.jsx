@@ -97,11 +97,14 @@ export default function Welcome() {
         }
         socket.emit("joinroom", {
           roomID: joinRoomID.trim().toUpperCase(),
-          myName: joinName.trim()
+          myName: joinName.trim(),
         });
+
         navigate(`/Workspace/${joinRoomID}`);
         setRoomId(roomID);
       }
+
+
       else {
 
         alert("username or roomid not found");
