@@ -22,6 +22,7 @@ const SessionStatus = () => {
   const [messages, setMessages] = useState([
     { id: 1, sender: "Rithika", text: "Hey everyone!", time: "19:41" },
     { id: 2, sender: "Aryan", text: "Let's start the session 🚀", time: "19:42" },
+    { id: 3, sender: "Vishruthi", text: "Let's start the session 🚀", time: "19:45" }
   ]);
   const [input, setInput] = useState("");
   const chatEndRef = useRef(null);
@@ -108,7 +109,7 @@ const SessionStatus = () => {
       {/* chat box */}
 
       <div 
-      className="fixed right-4 rounded-2xl border border-white/10 flex flex-col overflow-hidden z-40"
+      className={`fixed right-4 rounded-2xl border ${theme.border} flex flex-col overflow-hidden z-40`}
         style={{
           ...glassStyle,
           bottom: "84px",
@@ -122,34 +123,34 @@ const SessionStatus = () => {
         }}>
 
           {/* Chat Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+          <div className={`flex items-center justify-between px-4 py-3 border-b ${theme.border}`}>
           <div className="flex items-center gap-2">
-            <MessageCircle size={14} className="text-purple-400" />
-            <span className="text-white text-xs font-semibold">Chat</span>
+            <MessageCircle size={14} className={`${theme.accent}`} />
+            <span className={`${theme.textPrimary} text-xs font-semibold`}>Chat</span>
           </div>
-          <button onClick={() => setChatOpen(false)} className="text-slate-500 hover:text-white transition-colors">
+          <button onClick={() => setChatOpen(false)} className={`${theme.textMuted} ${theme.whiteHover} transition-colors`}>
             <X size={14} />
           </button>
           </div>
 
-          {/* Messages 8*/}
+          {/* Messages */}
           <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-3" style={{ minHeight: 0 }}>
             {messages.map((msg)=>{
               const isMe = msg.sender === CURRENT_USER;
               return(
                 <div key={msg.id} className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
                   {!isMe && (
-                    <span className="text-purple-400 text-[10px] font-medium mb-0.5 px-1">
+                    <span className={`${theme.accent} text-[10px] font-medium mb-0.5 px-1`}>
                       {msg.sender}
                     </span>
                   )}
                   <div
                   className={`px-3 py-2 rounded-2xl text-xs max-w-[85%] leading-relaxed ${
                     isMe
-                      ? "bg-purple-600 text-white rounded-br-sm"
-                      : "text-slate-200 rounded-bl-sm"
+                      ? `${theme.memessageBg} ${theme.textPrimary} rounded-br-sm`
+                      : ` ${theme.textPrimary} rounded-bl-sm`
                   }`}
-                  style={isMe ? {} : { background: "rgba(255,255,255,0.08)" }}
+                  style={isMe ? {} : { background: `${theme.messageBg}` }}
                 >
                   {msg.text}
                 </div>
@@ -161,18 +162,18 @@ const SessionStatus = () => {
           </div>
 
           {/* Input */}
-          <div className="px-3 py-3 border-t border-white/10 flex items-center gap-2">
+          <div className={`px-3 py-3 border-t ${theme.border} flex items-center gap-2`}>
             <input
-              className="flex-1 bg-white/5 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 outline-none border border-white/10 focus:border-purple-500/50 transition-colors"
+              className={`flex-1 ${theme.away} rounded-xl px-3 py-2 text-xs ${theme.textPrimary} placeholder-slate-500 outline-none border ${theme.border} focus:border-purple-500/50 transition-colors`}
               placeholder="Type a message..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}/>
               <button
               onClick={sendMessage}
-              className="w-8 h-8 rounded-xl bg-purple-600 hover:bg-purple-500 flex items-center justify-center transition-colors flex-shrink-0"
+              className={`w-8 h-8 rounded-xl ${theme.iconBg} hover:bg-purple-400 flex items-center justify-center transition-colors flex-shrink-0`}
               >
-                <Send size={13} className="text-white" />
+                <Send size={13} className={`${theme.textPrimary}`} />
               </button>
           </div>
       </div>
@@ -229,11 +230,11 @@ const SessionStatus = () => {
             <button
             onClick={() => { setChatOpen(!chatOpen); setEmojiOpen(false); }}
               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${
-                chatOpen ? "bg-purple-600 text-white shadow-lg shadow-purple-900/60" : "text-slate-400 hover:text-white hover:bg-white/10"
+                chatOpen ? `${theme.activeBg} ${theme.textPrimary} shadow-lg shadow-purple-900/60` : `${theme.popupLabel} ${theme.hover}`
               }`}>
                 <MessageCircle size={17} strokeWidth={1.8} />
             </button>
-            <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md bg-[#1a1a2e] border border-white/10 text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl">
+            <div className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md bg-[#1a1a2e] border ${theme.border} text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl`}>
                Chat
                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1a1a2e]" />
             </div>

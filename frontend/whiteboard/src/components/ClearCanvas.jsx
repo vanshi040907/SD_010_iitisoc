@@ -12,7 +12,7 @@ const Btn_clearCanvas = () => {
 
   return (
     <div>
-      <div className={` group fixed bottom-4 left-1/2 translate-x-25 w-14 h-14 rounded-xl flex z-50 items-center justify-center ${theme.textSecondary} ${theme.iconButtonHover} transition-all duration-200 z-5`}
+      <div className={` group fixed bottom-4 left-1/2 translate-x-30 w-14 h-14 rounded-xl flex z-50 items-center justify-center ${theme.textSecondary} ${theme.iconButtonHover} transition-all duration-200 z-5`}
           style={{
             ...theme.glass
           }}>

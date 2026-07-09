@@ -23,7 +23,7 @@ const Avatar = ({member, size = "md"}) => {
       className={`${dim} rounded-full flex items-center justify-center font-semibold text-white flex-shrink-0 ring-2 ${theme.ringColor}`}
       style={{ background: "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0') }}
     >
-      {member.name[0]}
+      {member.name[0].toUpperCase()}
     </div>
   );
 }
@@ -115,7 +115,7 @@ useEffect (() => {
               <div key={m.id} className={`w-10 h-10 rounded-full flex items-center justify-center text-l font-semibold text-white ring-2 ${theme.ringColor} flex-shrink-0`}
               style={{ background:"#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0'), marginLeft: i === 0 ? 0 : "-8px", zIndex: 3 - i }}
               >
-                {m.name[0]}
+                {m.name[0].toUpperCase()}
               </div>
             ))}
              {/* For Extra members */}
