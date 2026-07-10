@@ -4,6 +4,10 @@ import { LogOut, MessageCircle, X, Send } from "lucide-react";
 import { ThemeContext } from '../context/ThemeContext';
 import { useSocket } from '../context/Socket';
 import { useCallback, useRef } from 'react';
+import { useNavigate } from "react-router-dom";
+import conf from "../conf/conf";
+
+import axios from "axios";
 
 const EMOJIS = ["👍", "❤️", "😂", "😮", "🔥", "🎉", "👏", "💡", "✅", "🚀"];
  
@@ -11,6 +15,8 @@ let reactionIdCounter = 0;
 const CURRENT_USER = "Vishruthi";
 
 const SessionStatus = () => {
+
+  const navigate= useNavigate();
 
   const {theme} = useContext(ThemeContext);
 
@@ -84,6 +90,24 @@ const SessionStatus = () => {
   const glassStyle = {
     ...theme.glass
   };
+
+  const handleLeaveRoom = async()=>{
+
+    try{
+      const res = await axios.get(`${conf.path}/room/leaveRoom`,
+        {
+        withCredentials: true,
+      })
+
+      if(res.data.success){
+        navigate('/Welcome')
+      }
+
+    }catch(error){
+      console.log(error);
+
+    }
+  }
 
   return (
     <>
@@ -211,7 +235,7 @@ const SessionStatus = () => {
           <div className="relative group">
             <button
               className={`flex items-center gap-2 px-4 py-2 rounded-xl ${theme.leaveBtn} hover:bg-red-500/25 hover:border-red-500/40 hover:text-red-300 transition-all duration-200`}
-              onClick={() => alert("Session ended.")}
+              onClick={handleLeaveRoom}
               >
                 <LogOut size={15} strokeWidth={1.8} />
                 <span className="text-xs font-medium">Leave</span>
