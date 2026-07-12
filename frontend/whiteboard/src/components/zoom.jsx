@@ -51,7 +51,7 @@ function Zoom() {
 
     }
   return (
-    <div className={`fixed bottom-4 left-4 z-40 flex items-center gap-1.5 px-2 py-2 rounded-xl border ${theme.border}`} style={glassBtn}>
+    <div className={`fixed bottom-20 right-4 z-40 flex items-center gap-1.5 px-2 py-2 rounded-xl border ${theme.border}`} style={glassBtn}>
         <div><button onClick= {handleZoomIncrease}  className={`flex items-center gap-2 px-3 py-2 rounded-lg ${theme.textPrimary} ${theme.iconButtonHover} transition-all duration-200`}><Plus/></button></div>
         <div className={`${theme.textPrimary} ${theme.iconButtonHover} `}><label>{(zoom*100).toFixed(0)}</label> <Search/></div>
         <div><button onClick= {handleZoomdecrease}  className={`flex items-center gap-2 px-3 py-2 rounded-lg ${theme.textPrimary} ${theme.iconButtonHover} transition-all duration-200`}><Minus/></button></div>

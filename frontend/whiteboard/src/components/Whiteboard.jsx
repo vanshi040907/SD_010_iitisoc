@@ -5,6 +5,7 @@ import conf from '../conf/conf';
 import axios from 'axios';
 import { useSocket } from '../context/Socket';
 import useInfinity from '../context/infinity';
+import { TOOL_CURSORS } from "../utils/cursor";
 
 const THROTTLE_MS = 10;
 
@@ -816,8 +817,10 @@ useEffect(() => {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-
         className="absolute inset-0 touch-none"
+        style={{
+      cursor: TOOL_CURSORS[activeTool] ?? "crosshair",
+    }}
       />
 
       {textInput && (

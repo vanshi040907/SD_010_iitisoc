@@ -18,7 +18,7 @@ const io = new Server(server, {
     }
 });
 
-const PORT = 5000;
+const PORT = 5001;
 const { connectmongoose } = require("./connection");
 const cookieparser = require("cookie-parser");
 const userrouter = require("./routes/user");
