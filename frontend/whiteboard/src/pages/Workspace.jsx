@@ -10,6 +10,7 @@ import Background from '../components/Background'
 import Whiteboard from '../components/Whiteboard'
 import Btn_clearCanvas from '../components/ClearCanvas'
 import { WhiteboardProvider } from '../context/WhiteboardContext'
+import LaserWhiteboard from '../components/LaserWHITEboard'
 import Zoom from '../components/zoom'
 
 const Workspace = () => {
@@ -28,6 +29,7 @@ const Workspace = () => {
               <Zoom/>
               <ToggleBtn />
               <Whiteboard />
+              <LaserWhiteboard />
               <Btn_clearCanvas />
             </WhiteboardProvider>
           </ThemeProvider>

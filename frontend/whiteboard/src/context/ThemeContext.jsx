@@ -34,7 +34,9 @@ const themes = {
     popupLabel:"text-slate-400",
     popupDiv:"bg-white/10",
     copied:"bg-green-500/20 border-green-500/30 text-green-400",
-    colorpicker: "ring-[#0d0d1a]"
+    colorpicker: "ring-[#0d0d1a]",
+    messageBg: "rgba(255,255,255,0.08)",
+    memessageBg:"bg-purple-900"
   },
 
   light: {
@@ -69,7 +71,9 @@ const themes = {
     popupLabel:"text-[#3d2a5c]",
     popupDiv:"bg-black/10",
     copied:"bg-green-800/20 border-green-800 text-green-800",
-    colorpicker: "ring-[#ffffff]"
+    colorpicker: "ring-[#ffffff]",
+    messageBg: "rgba(0,0,255,0.08)",
+    memessageBg:"bg-purple-300"
   },
 };
 
