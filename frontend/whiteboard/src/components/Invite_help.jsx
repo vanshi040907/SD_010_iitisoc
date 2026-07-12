@@ -4,7 +4,7 @@ import {
   Pencil, Highlighter, Eraser, Type, Shapes,
   MousePointer2, Pointer, Undo2, Redo2, Palette,
   SlidersHorizontal, Download, Share2, Users,
-  MessageCircle, Smile, LogOut, Sun, Trash2, Sparkles, HelpCircle, X
+  MessageCircle, Smile, LogOut, Sun, Trash2, Sparkles, HelpCircle, X, Copy, Link
 } from "lucide-react";
 import { ThemeContext } from '../context/ThemeContext';
 import { RoomContext } from '../context/RoomContext';
