@@ -8,6 +8,7 @@ export function WhiteboardProvider({ children }) {
   const [activeColor, setActiveColor] = useState("#a855f7");
   const [strokeWidth, setStrokeWidth] = useState(3);
   const [activeShape, setActiveShape] = useState("rect");
+  const [selectExport, setSelectExport] = useState(false);
 
   //for the undo and redo functions
   const engineRef = useRef(null);
@@ -28,6 +29,8 @@ export function WhiteboardProvider({ children }) {
    const downloadCurrentCanvas = useCallback(()=>{
     engineRef.current?.downloadCurrentCanvas?.();
   }, []);
+   
+  
 
 
   const undo = useCallback(() => {
@@ -62,6 +65,9 @@ export function WhiteboardProvider({ children }) {
         setActiveShape, bump,
         downloadCanvas,
         downloadCurrentCanvas,
+        selectExport,
+        setSelectExport
+        
 
       }}
     >

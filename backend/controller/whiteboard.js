@@ -119,7 +119,7 @@ async function Redo (req, res) {
 }
 async function Get(req,res) {
       const userid = req.user.id;
-     const user = await User.findById(req.user.id);
+       const user = await User.findById(userid);
        const room = user.ActiveRoom;
        const whiteboard = await Whiteboard.find({room:room});
        
@@ -127,7 +127,21 @@ async function Get(req,res) {
                return res.json({data:whiteboard||[]});
      
 }
+async function Update(req,res) {
+  
+    const userid = req.user.id;
+       const user = await User.findById(userid);
+       const room = user.ActiveRoom;
+       const  { drawingOperations}    = req.body;
+       const itemid = drawingOperations.id;
+       const whiteboard = await Whiteboard.findOne({room:room,"drawingOperations.id":itemid});
+       whiteboard.drawingOperations=drawingOperations;
+       await whiteboard.save();
+         
+     return res.json({Success:"true"});
+      
+}
 
 
 
-module.exports = {EventHandling, Undo , Redo, Get};
+module.exports = {EventHandling, Undo , Redo, Get, Update};

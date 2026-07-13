@@ -10,7 +10,7 @@ const TitleCard_download = () => {
   
   const {roomId} = useContext(RoomContext);
   const {theme} = useContext(ThemeContext);
-  const {downloadCanvas,downloadCurrentCanvas} = useContext(WhiteboardContext);
+  const {downloadCanvas,downloadCurrentCanvas,downloadSelectCanvas,selectExport,setSelectExport} = useContext(WhiteboardContext);
    const [open, setOpen] = useState(false);
 
   const handleDownload = () => {
@@ -20,6 +20,10 @@ const TitleCard_download = () => {
    const handleCurrentDownload = () => {
     alert("Download triggered");
     downloadCurrentCanvas();
+  };
+   const handleSelectDownload = () => {
+    setSelectExport(true);
+    
   };
 
   return (
@@ -40,7 +44,7 @@ const TitleCard_download = () => {
 
           <div className="relative group">
             <button
-          onClick={() => setOpen(!open)}
+          onClick={() => setOpen(true)}
           className={`w-18 h-18 rounded-xl flex items-center justify-center text-slate-400 ${theme.iconButtonHover} transition-all duration-200 border ${theme.border}`}
           style={{
             ...theme.glass
@@ -61,9 +65,9 @@ const TitleCard_download = () => {
           pointerEvents: open ? "auto" : "none",
         }}
         >
-          <div className={`flex items-center gap-2 px-4 py-3 border-b ${theme.border}`}><button onClick={handleCurrentDownload} className={`${theme.textPrimary}`}> Export Current View</button></div>
-           <div className={`flex items-center gap-2 px-4 py-3 border-b ${theme.border}`}><button className={`${theme.textPrimary}`}> Export Selected Objects</button></div>
-            <div className={`flex items-center gap-2 px-4 py-3 border-b ${theme.border}`} ><button onClick={handleDownload} className={`${theme.textPrimary}`}> Export Everything Anyway</button></div>
+          <div className={`flex items-center gap-2 px-4 py-3 border-b ${theme.border}`}><button onClick={() => {setOpen(false),handleCurrentDownload()}} className={`${theme.textPrimary}`}> Export Current View</button></div>
+           <div className={`flex items-center gap-2 px-4 py-3 border-b ${theme.border}`}><button onClick={() => {setOpen(false),handleSelectDownload()}} className={`${theme.textPrimary}`}> Export Selected Objects</button></div>
+            <div className={`flex items-center gap-2 px-4 py-3 border-b ${theme.border}`} ><button onClick={() => {setOpen(false),handleDownload()}} className={`${theme.textPrimary}`}> Export Everything Anyway</button></div>
           
 
         </div>
