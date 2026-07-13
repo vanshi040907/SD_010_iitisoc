@@ -115,11 +115,11 @@ export default function Welcome() {
   }
 
   return (
-    <div className="relative h-[100vh] w-full ">
+    <div className="relative min-h-screen w-full ">
       {/* Background layer */}
       <div className=" absolute inset-0 bg-[#0a0014]">
         <Ferrofluid
-          colors={["#4f1b69", "#7C3AED", "#ffffff"]}
+          colors={["#4f1b69", "#7C3AED", "#a855f7"]}
           speed={0.5}
           scale={1.6}
           turbulence={1}
