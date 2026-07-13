@@ -7,6 +7,7 @@ import { useSocket } from '../context/Socket';
 import axios from 'axios';
 import conf from '../conf/conf';
 import { useNavigate } from "react-router-dom";
+import Logout from './Logout';
 
 // Right now i have taken a random array for the members. later we will fetch these details from the Database.
 
@@ -22,7 +23,7 @@ const Avatar = ({member, size = "md"}) => {
       className={`${dim} rounded-full flex items-center justify-center font-semibold text-white flex-shrink-0 ring-2 ${theme.ringColor}`}
       style={{ background: "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0') }}
     >
-      {member.name[0]}
+      {member.name[0].toUpperCase()}
     </div>
   );
 }
@@ -89,14 +90,20 @@ useEffect (() => {
     
   },[socket,])
 
-
+  const [logoutOpen, setLogoutOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const onlineCount = MEMBERS.filter((m) => m.online).length;
   const {theme} = useContext(ThemeContext);
 
   const logout = async()=>{
+    console.log("logout clicked!!");
+    const isConfirmed = window.confirm("Do you really want to logout?");
 
-    alert("Do you really want to logout?");
+    if (!isConfirmed) {
+    return; 
+  }
+
+
     try{
        const res = await axios.get(`${conf.path}/user/logout`,
         {
@@ -119,8 +126,10 @@ useEffect (() => {
   }
 
   return (
+    <>
     <div className="fixed top-4 right-4 z-50 flex flex-col items-end">
-      <button
+      <div className='flex gap-5'>
+        <button
        onClick={()=> setOpen(!open)}
        className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border ${theme.border} transition-all duration-200 hover:border-purple-500/40`}
         style={{
@@ -133,7 +142,7 @@ useEffect (() => {
               <div key={m.id} className={`w-10 h-10 rounded-full flex items-center justify-center text-l font-semibold text-white ring-2 ${theme.ringColor} flex-shrink-0`}
               style={{ background:"#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0'), marginLeft: i === 0 ? 0 : "-8px", zIndex: 3 - i }}
               >
-                {m.name[0]}
+                {m.name[0].toUpperCase()}
               </div>
             ))}
              {/* For Extra members */}
@@ -155,7 +164,31 @@ useEffect (() => {
           size={14}
           className={`${theme.textSecondary}transition-transform duration-300 ${open ? "rotate-180" : ""}`}
         />
+        </button>  
+        
+        <button 
+         onClick={()=> setLogoutOpen(!logoutOpen)}
+         className={`h-18 w-18 border ${theme.border} rounded-full flex justify-center items-center ${theme.textPrimary} text-4xl`}
+        style={{
+          ...theme.glass,
+        }}
+        >
+           V
         </button>
+      </div>
+
+      <div className={`mt-2 w-69.5 rounded-2xl border ${theme.border}  z-400`}
+        style={{
+          ...theme.glass,
+          maxHeight: logoutOpen ? "50px" : "0px",
+          opacity: logoutOpen ? 1 : 0,
+          transform: logoutOpen ? "translateY(0) scale(1)" : "translateY(12px) scale(0.97)",
+          transformOrigin: "top right",
+          transition: "max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease, transform 0.25s ease",
+          pointerEvents: logoutOpen ? "auto" : "none",
+        }}>
+          <Logout onCustomClick={logout} />
+        </div>
 
         <div
         className={`mt-2 w-69.5 rounded-xl border ${theme.border} overflow-hidden`}
@@ -211,8 +244,9 @@ useEffect (() => {
            <span className={`${theme.textMuted} text-xs`}>{onlineCount} of {MEMBERS.length} currently active</span>
           </div>
         </div>
-        <button onClick={logout} className='bg-white'>logout</button>
+
     </div>
+    </>
   );
 }
 

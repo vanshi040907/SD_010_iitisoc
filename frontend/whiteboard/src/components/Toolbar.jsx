@@ -1,16 +1,19 @@
-import React from 'react'
-import { useState, useContext } from "react";
-import { Pencil, StickyNote, Type, Shapes, ChevronDown, Undo2, Redo2, Eraser, MousePointer2, Minus, Square, Circle, Triangle, Highlighter, Pen, } from "lucide-react";
+import React, { useEffect } from 'react'
+import { useState, useContext, useRef } from "react";
+import { StickyNote, Type, Shapes, ChevronDown, Undo2, Redo2, Eraser, MousePointer2, Minus, Square, Circle, Triangle, Highlighter, Pen, Pointer, } from "lucide-react";
 import { ThemeContext } from '../context/ThemeContext';
 import { WhiteboardContext } from '../context/WhiteboardContext';
+import ColorPicker from './ColorPicker';
 
 const tools = [
   { id: "select", icon: MousePointer2, label: "Select" },
-  { id: "pen", icon: Pencil, label: "Pen" },
+  { id: "pen", icon: Pen, label: "Pen" },
   { id: "sticky", icon: StickyNote, label: "Sticky Note" },
   { id: "highlighter", icon: Highlighter, label: "Highlighter" },
   { id: "text", icon: Type, label: "Text" },
   { id: "eraser", icon: Eraser, label: "Eraser" },
+  { id: "laser", icon: Pointer, label: "Laser Pointer" },
+  
 ];
 
 const shapeTools = [
@@ -20,10 +23,11 @@ const shapeTools = [
   { id: "line", icon: Minus, label: "Line" },
 ];
 
-const SWATCHES = ["#a855f7", "#3b82f6", "#22c55e", "#f97316", "#ef4444", "#ffffff", "#000000"];
-
 const Toolbar = () => {
 
+  const pickerRef = useRef(null);
+  const shapesRef = useRef(null);
+  const rangeRef = useRef(null);
 
   const { theme, isDark } = useContext(ThemeContext);
   const { activeTool, setActiveTool, activeColor, setActiveColor, strokeWidth, setStrokeWidth, undo, redo, canUndo, canRedo, activeShape,
@@ -33,6 +37,42 @@ const Toolbar = () => {
   const [shapesOpen, setShapesOpen] = useState(false);
 
   const [rangeOpen, setRangeOpen] = useState(false);
+
+  useEffect(()=>{
+    const handleClickOOutside = (e)=>{
+      if(pickerRef.current && !pickerRef.current.contains(e.target)){
+        setColorPickerOpen(false);
+      }
+    };
+    if(colorPickerOpen) {
+      document.addEventListener("mousedown", handleClickOOutside);
+    }
+    return ()=>document.removeEventListener("mousedown", handleClickOOutside);
+  }, [colorPickerOpen]);
+
+  useEffect(()=>{
+    const handleClickOOutside = (e)=>{
+      if(shapesRef.current && !shapesRef.current.contains(e.target)){
+        setShapesOpen(false);
+      }
+    };
+    if(shapesOpen) {
+      document.addEventListener("mousedown", handleClickOOutside);
+    }
+    return ()=>document.removeEventListener("mousedown", handleClickOOutside);
+  }, [shapesOpen]);
+
+  useEffect(()=>{
+    const handleClickOOutside = (e)=>{
+      if(rangeRef.current && !rangeRef.current.contains(e.target)){
+        setRangeOpen(false);
+      }
+    };
+    if(rangeOpen) {
+      document.addEventListener("mousedown", handleClickOOutside);
+    }
+    return ()=>document.removeEventListener("mousedown", handleClickOOutside);
+  }, [rangeOpen]);
 
   const ToolTipButton = ({ id, icon: Icon, label, onClick, isActive, disabled }) => (<div className="relative group flex items-center justify-center">
     <button
@@ -60,10 +100,11 @@ const Toolbar = () => {
   );
 
 
+
   return (
     <>
       <div
-        className={`w-18 fixed top-28 left-4 flex flex-col items-center gap-1 px-2 py-3 rounded-2xl border ${theme.border} shadow-2xl z-5`}
+        className={`w-18 fixed top-28 left-4 flex flex-col items-center gap-1 px-2 py-3 rounded-2xl border ${theme.border} shadow-2xl z-50`}
         style={{
           ...theme.glass
         }}
@@ -109,6 +150,7 @@ const Toolbar = () => {
 
           {shapesOpen && (
             <div
+              ref={shapesRef}
               className={`absolute left-full ml-3 flex flex-col gap-1 p-2 rounded-xl border ${theme.border} z-50`}
               style={{
 
@@ -137,7 +179,8 @@ const Toolbar = () => {
         <div className={`w-6 h-px ${theme.divider} my-1 rounded-full`} />
 
         <div className="relative flex flex-col items-center">
-          <div className="relative group flex items-center justify-center">
+          <div 
+          className="relative group flex items-center justify-center">
             <button
               onClick={() => setColorPickerOpen(!colorPickerOpen)}
               className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200">
@@ -155,34 +198,16 @@ const Toolbar = () => {
           </div>
 
           {colorPickerOpen && (
-            <div
-              className={`absolute left-full ml-3 p-3 rounded-xl border ${theme.border} z-50 flex flex-col gap-3`}
-              style={{ ...theme.glass, top: "50%", transform: "translateY(-50%)", width: "180px" }}>
-
-              {/* Swatches */}
-              <div className="grid grid-cols-4 gap-2">
-                {SWATCHES.map((swatch) => (
-                  <button
-                    key={swatch}
-                    onClick={() => setActiveColor(swatch)}
-                    className={`w-8 h-8 rounded-lg transition-transform hover:scale-110 ${activeColor === swatch ? `ring-1 ring-offset-1/2 ${theme.colorpicker}ring-offset-transparent` : ""
-                      }`}
-                    style={{ background: swatch }}
-                  />
-                ))}
-              </div>
-
-              {/* custom colours */}
-              <label className={`flex items-center gap-2 text-xs ${theme.textSecondary} cursor-pointer`}>
-                <input
-                  type="color"
-                  value={activeColor}
-                  onChange={(e) => setActiveColor(e.target.value)}
-                  className="w-8 h-8 rounded-sm cursor-pointer border-none bg-[conic-gradient(red,magenta,blue,cyan,green,yellow,red)] p-0"
-                />
-                Custom
-              </label>
-            </div>
+            <div 
+            ref={pickerRef}
+            className="absolute left-full ml-8 z-50" style={{ top: "50%", transform: "translateY(-75%)" }}>
+            <ColorPicker
+              value={activeColor}
+              onChange={(hex) => {
+                setActiveColor(hex);   // updates context → Whiteboard reads it
+              }}
+            />
+          </div>
           )}
         </div>
 
@@ -209,6 +234,7 @@ const Toolbar = () => {
 
           {rangeOpen && (
             <div
+              ref={rangeRef}
               className={`absolute left-full ml-5 p-3 rounded-xl border ${theme.border} z-50 flex flex-col gap-3`}
               style={{ ...theme.glass, width: "110px" }}>
               <div className="relative group flex flex-col items-center gap-1 px-1 py-2">

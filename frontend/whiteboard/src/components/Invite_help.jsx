@@ -1,6 +1,11 @@
 import React, { useContext } from 'react';
 import { useState } from "react";
-import { Share2, HelpCircle, X, Copy, Check, Link, Zap, Users, Pencil, MessageCircle, Smile, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Pencil, Highlighter, Eraser, Type, Shapes,
+  MousePointer2, Pointer, Undo2, Redo2, Palette,
+  SlidersHorizontal, Download, Share2, Users,
+  MessageCircle, Smile, LogOut, Sun, Trash2, Sparkles, HelpCircle, X, Copy, Link
+} from "lucide-react";
 import { ThemeContext } from '../context/ThemeContext';
 import { RoomContext } from '../context/RoomContext';
 
@@ -128,16 +133,106 @@ function SharePopup({onClose}){
 }
 
 const FEATURES = [
-  { icon: Pencil, title: "Real-time Drawing", desc: "Draw, sketch, and annotate together with your team instantly." },
-  { icon: Users, title: "Multi-user Rooms", desc: "Invite unlimited members with a simple room code or link." },
-  { icon: MessageCircle, title: "Live Chat", desc: "Communicate without leaving the whiteboard using the built-in chat." },
-  { icon: Smile, title: "Emoji Reactions", desc: "React to ideas in real time with animated floating emojis." },
-  { icon: Zap, title: "Instant Sync", desc: "Every stroke and action is synced across all participants instantly." },
-  { icon: Pencil, title: "ABCD", desc: "Draw, sketch, and annotate together with your team instantly." },
-  { icon: Users, title: "EFGH", desc: "Invite unlimited members with a simple room code or link." },
-  { icon: MessageCircle, title: "IJKL", desc: "Communicate without leaving the whiteboard using the built-in chat." },
-  { icon: Smile, title: "MNOP", desc: "React to ideas in real time with animated floating emojis." },
-  { icon: Zap, title: "QRST", desc: "Every stroke and action is synced across all participants instantly." },
+  {
+    icon: Pencil,
+    title: "Pen Tool",
+    desc: "Draw freehand strokes on the canvas. Select it from the toolbar, then click and drag to draw. Change color using the color picker and adjust thickness with the stroke width slider.",
+  },
+  {
+    icon: Highlighter,
+    title: "Highlighter",
+    desc: "Draw semi-transparent strokes to highlight areas of the board. Works exactly like the pen but with a wider, translucent brush — great for marking important regions.",
+  },
+  {
+    icon: Eraser,
+    title: "Eraser",
+    desc: "Remove strokes from the canvas. Select the eraser, then click and drag over any area you want to clear. The eraser is stored as an operation, so undo/redo works correctly with it.",
+  },
+  {
+    icon: Type,
+    title: "Text Tool",
+    desc: "Add text anywhere on the board. Select the text tool, then click on the canvas where you want to type. A floating text box appears — type your content, then press Enter or click outside to commit it. Press Escape to cancel.",
+  },
+  {
+    icon: Shapes,
+    title: "Shape Tools",
+    desc: "Draw geometric shapes by clicking the shapes icon in the toolbar to expand the submenu. Choose from Rectangle, Circle, Triangle, or Line. Click and drag on the canvas to draw — the shape previews live as you drag and commits when you release.",
+  },
+  {
+    icon: MousePointer2,
+    title: "Select Tool",
+    desc: "Switch back to the default pointer mode without drawing anything. Use this when you want to interact with UI elements (toolbar, popups, chat) without accidentally drawing on the canvas.",
+  },
+  {
+    icon: Pointer,
+    title: "Laser Pointer",
+    desc: "Point to areas of the board without leaving any permanent marks. Select the laser tool and move your mouse — a glowing red dot with a fading trail appears and is visible to all participants in real time. Nothing is saved to the canvas history.",
+  },
+  {
+    icon: Undo2,
+    title: "Undo",
+    desc: "Removes the most recent drawing operation from the canvas and moves it to the redo stack. Every tool action — strokes, shapes, text, and eraser — is individually undoable. Keyboard shortcut: Ctrl+Z (Cmd+Z on Mac).",
+  },
+  {
+    icon: Redo2,
+    title: "Redo",
+    desc: "Reapplies the most recently undone action. The redo stack clears automatically if you draw something new after undoing. Keyboard shortcut: Ctrl+Y or Ctrl+Shift+Z (Cmd+Shift+Z on Mac).",
+  },
+  {
+    icon: Palette,
+    title: "Color Picker",
+    desc: "Opens a custom color picker panel. Drag the color map to pick any hue, saturation and brightness. Use the hue bar to change the base color, type a hex code directly, or click a preset swatch. The eyedropper button (Chrome 95+) lets you pick any color from anywhere on your screen.",
+  },
+  {
+    icon: SlidersHorizontal,
+    title: "Stroke Width",
+    desc: "The vertical slider in the toolbar controls how thick or thin your strokes are. Drag up for thinner lines, drag down for thicker ones. The current width applies to the pen, highlighter, and shape outlines.",
+  },
+  {
+    icon: Download,
+    title: "Download as JPEG",
+    desc: "Exports the entire current whiteboard as a JPEG image file. Click the download icon in the top-left header. The canvas is composited onto a white background before export so the image looks correct in all viewers.",
+  },
+  {
+    icon: Share2,
+    title: "Share Room",
+    desc: "Opens the share popup with your room code and a direct invite link. Copy the room code and share it verbally or via chat — anyone who enters the code on the join screen can request access to your session.",
+  },
+  {
+    icon: Users,
+    title: "Member List",
+    desc: "Click the member count badge in the top-right to see everyone in your room. Each member shows their name, role (Host, Editor, or Viewer), and online/away status. The count updates in real time as people join or leave.",
+  },
+  {
+    icon: MessageCircle,
+    title: "Chat",
+    desc: "Click the chat bubble icon in the bottom bar to open the live chat panel. Type a message and press Enter to send. Messages are visible to all room members instantly. Your messages appear on the right, others on the left.",
+  },
+  {
+    icon: Smile,
+    title: "Emoji Reactions",
+    desc: "Click the emoji icon in the bottom bar to open the reaction picker. Select any emoji and it floats upward from the bottom of the screen with your name attached — visible to everyone in the room simultaneously in real time.",
+  },
+  {
+    icon: LogOut,
+    title: "Leave Session",
+    desc: "Click the Leave button in the bottom bar to disconnect from the current room. Your drawing history is saved to the board — if you rejoin with the same room code, everything you drew will still be there.",
+  },
+  {
+    icon: Sun,
+    title: "Dark / Light Theme",
+    desc: "Click the sun/moon icon to toggle between the dark purple theme and the soft pastel light theme. The theme applies instantly across every component in the app and is independent per user — each person in the room can use their own preferred theme.",
+  },
+  {
+    icon: Trash2,
+    title: "Clear Canvas",
+    desc: "Removes all strokes and shapes from the board permanently. This action is broadcast to all room members so everyone's canvas clears simultaneously. Unlike undo, clear canvas cannot be reversed — use it carefully.",
+  },
+  {
+    icon: Sparkles,
+    title: "AI Session Summary",
+    desc: "Click the AI button to generate an automatic summary of your whiteboard session. Claude AI analyzes what was drawn on the canvas and the chat conversation, then produces a short paragraph describing the session's topics, ideas, and conclusions. Useful for capturing meeting notes without any manual effort.",
+  },
 ];
 
 function AboutPopup({onClose}){

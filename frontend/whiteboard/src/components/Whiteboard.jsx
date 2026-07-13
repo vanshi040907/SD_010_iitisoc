@@ -5,6 +5,7 @@ import conf from '../conf/conf';
 import axios from 'axios';
 import { useSocket } from '../context/Socket';
 import useInfinity from '../context/infinity';
+import { TOOL_CURSORS } from "../utils/cursor";
 
 const THROTTLE_MS = 10;
 
@@ -121,7 +122,7 @@ const Whiteboard = () => {
           const historyflatted = whiteboard
             .map((item) => item.drawingOperations)
             .flat();
-          historyStackRef.current = historyflatted;
+          historyStackRef.current = historyflatted;console.log(historyStackRef.current)
           redrawAll();
         }
       } catch (error) {
@@ -134,10 +135,13 @@ const Whiteboard = () => {
   const undo = async () => {
      console.log("UNDO START");
     if (historyStackRef.current.length === 0) return;
-
-    try {
-      const res = await axios.get(
-        ` ${conf.path}/whiteboard/undo`, { withCredentials: true }
+    const last = historyStackRef.current.pop();
+    redoStackRef.current.push(last);
+     try {
+      await axios.get(
+       ` ${conf.path}/whiteboard/undo`,  {
+    withCredentials: true,
+  }
       );
 
       const { remainingHistory, remainingRedoHistory } = res.data;
@@ -154,10 +158,13 @@ const Whiteboard = () => {
 
   const redo = async () => {
     if (redoStackRef.current.length === 0) return;
-
+const restored = redoStackRef.current.pop();
+    historyStackRef.current.push(restored);
     try {
-      const res = await axios.get(
-        `${conf.path}/whiteboard/redo`, { withCredentials: true }
+     await axios.post(
+        `${conf.path}/whiteboard/redo`,{
+           drawingOperations: restored,
+        }, { withCredentials: true }
       );
       const { remainingHistory, remainingRedoHistory } = res.data;
       historyStackRef.current = remainingHistory;
@@ -965,6 +972,7 @@ else {
   };
 
   const drawShape = (ctx, shape) => {
+    console.log("Drawing:", shape.type);
     switch (shape.type) {
       case "rect": drawRect(ctx, shape); break;
       case "circle": drawCircle(ctx, shape); break;
@@ -1052,12 +1060,15 @@ else {
     ctx.restore();
   };
 
+  // commits the floating input box text onto the canvas as a history item
+  // called on Enter key or when the input loses focus
   const commitText = useCallback(async (inputState) => {
     if (!inputState || !inputState.value.trim()) {
       setTextInput((prev) => (prev?.value.trim() ? prev : null));
       return;
     }
 
+    // if editing an existing text item, remove the old one first
     if (inputState.editingId) {
       historyStackRef.current = historyStackRef.current.filter(
         (item) => item.id !== inputState.editingId
@@ -1086,7 +1097,6 @@ else {
     }
     redrawAll();
     setTextInput(null);
-    redraw();
     bump();
   }, [redrawAll]);
 
@@ -1196,7 +1206,67 @@ else {
     
   };
 
+  // double click handler — if text tool is active and user double-clicks
+  // an existing text item, re-opens it in the floating input for editing
+  const handleDoubleClick = (e) => {
+    if (activeToolRefLocal.current !== "text") return;
 
+    const point = getMousePos(e);
+    const ctx = ctxRef.current;
+
+    // find the topmost text item whose bounding box contains the click point
+    const clicked = [...historyStackRef.current].reverse().find((item) => {
+      if (item.type !== "text") return false;
+
+      ctx.font = `${item.fontSize}px Arial`;
+      const measured = ctx.measureText(item.text);
+      const w = measured.width;
+      const h = item.fontSize;
+
+      return (
+        point.x >= item.x &&
+        point.x <= item.x + w &&
+        point.y >= item.y - h &&
+        point.y <= item.y
+      );
+    });
+
+    if (!clicked) return;
+
+    // remove it from canvas visually and open it in the input box
+    historyStackRef.current = historyStackRef.current.filter(
+      (item) => item.id !== clicked.id
+    );
+    redrawAll();
+
+    setTextInput({
+      x: clicked.x,
+      y: clicked.y,
+      value: clicked.text,
+      color: clicked.color,
+      fontSize: clicked.fontSize,
+      editingId: clicked.id,
+    });
+  };
+useEffect(() => {
+   const handlesocket = (data) => {
+      drawSegment(ctxRef.current,
+        data.previousPoint,
+      data.point,
+      data.color,
+      data.width,
+      data.isEraser,
+      data.opacity
+
+      )
+    }
+    socket.on("currentreceived",handlesocket)
+      return () => {
+        socket.off("currentreceived",handlesocket);
+      }
+    
+
+},[socket]);
   const handleMouseMove = (e) => {
     if (!isDrawingRef.current && !isDraggingRef.current) return;
 
@@ -1371,7 +1441,6 @@ else {
       redoStackRef.current = [];
       previewShapeRef.current = null;
       redrawAll();
-      redraw();
       bump();
     }
   };
@@ -1433,8 +1502,10 @@ else {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-
         className="absolute inset-0 touch-none"
+        style={{
+      cursor: TOOL_CURSORS[activeTool] ?? "crosshair",
+    }}
       />
 
       {textInput && (
