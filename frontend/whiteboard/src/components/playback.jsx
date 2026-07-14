@@ -1,8 +1,10 @@
 import React, { useContext, useRef, useState } from 'react'
 import { WhiteboardContext } from '../context/WhiteboardContext'
+import { ThemeContext } from '../context/ThemeContext'
 
 function Playback() {
     const { drawingRefs } = useContext(WhiteboardContext);
+    const { theme } = useContext(ThemeContext);
 
     const replayIndexRef = useRef(0);
     const replayTimeoutRef = useRef(null);
@@ -99,34 +101,34 @@ function Playback() {
     );
 
     return (
-        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10 flex items-center gap-[14px] bg-[rgba(15,12,25,0.9)] border border-[rgba(139,92,246,0.3)] px-[18px] py-[10px] rounded-full backdrop-blur-md shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
+        <div
+            className={`absolute bottom-20 left-1/2 -translate-x-1/2 z-10 flex items-center gap-[14px] border ${theme.border} px-[18px] py-[10px] rounded-full backdrop-blur-md`}
+            style={theme.glass}
+        >
 
             <button
                 onClick={handlePlayPauseClick}
-                className="flex items-center justify-center w-9 h-9 rounded-full border-none cursor-pointer transition-colors duration-150"
-                style={{
-                    background: isReplaying ? "#8b5cf6" : "rgba(255,255,255,0.08)",
-                    color: isReplaying ? "#fff" : "#c4b5fd",
-                }}
+                className={`flex items-center justify-center w-9 h-9 rounded-full border-none cursor-pointer transition-colors duration-150 ${isReplaying ? `${theme.activeBg} text-white` : `${theme.iconBg} ${theme.accent}`
+                    }`}
             >
                 {isReplaying ? <PauseIcon /> : <PlayIcon />}
             </button>
 
             <button
                 onClick={stopReplay}
-                className="flex items-center justify-center w-8 h-8 rounded-full border-none cursor-pointer bg-[rgba(255,255,255,0.08)] text-[#c4b5fd]"
+                className={`flex items-center justify-center w-8 h-8 rounded-full border-none cursor-pointer ${theme.iconBg} ${theme.accent}`}
             >
                 <StopIcon />
             </button>
 
-            <div className="w-[160px] h-1 bg-white/10 rounded-full">
+            <div className={`w-[160px] h-1 ${theme.divider} rounded-full`}>
                 <div
-                    className="h-full bg-[#8b5cf6] rounded-full transition-[width] duration-100 ease-linear"
+                    className={`h-full ${theme.activeBg} rounded-full transition-[width] duration-100 ease-linear`}
                     style={{ width: `${replayPercent}%` }}
                 />
             </div>
 
-            <span className="text-[#a78bfa] text-xs font-inherit min-w-[50px]">
+            <span className={`${theme.accent} text-xs font-inherit min-w-[50px]`}>
                 {replayProgress}/{replayTotal}
             </span>
         </div>

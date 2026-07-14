@@ -6,13 +6,14 @@ import axios from 'axios';
 import { useSocket } from '../context/Socket';
 import useInfinity from '../context/infinity';
 import { TOOL_CURSORS } from "../utils/cursor";
+import { ThemeContext } from '../context/ThemeContext';
 
 const THROTTLE_MS = 10;
 
 const Whiteboard = () => {
   const socket = useSocket();
 
-
+  const { isDark } = useContext(ThemeContext);
   // state for the floating text input box position, value, and id of item being edited
   const [textInput, setTextInput] = useState(null);
   const [add, setAdd] = useState(0);
@@ -88,6 +89,30 @@ const Whiteboard = () => {
       minX: Math.min(start.x, end.x), maxX: Math.max(start.x, end.x),
       minY: Math.min(start.y, end.y), maxY: Math.max(start.y, end.y),
     };
+  };
+
+  const drawGrid = (ctx, canvas) => {
+    const gap = 50 * zoom; // world grid spacing scaled by zoom
+    const offsetX = camera.x % gap;
+    const offsetY = camera.y % gap;
+
+    ctx.save();
+    ctx.strokeStyle = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.12)";
+    ctx.lineWidth = 1;
+
+    for (let x = offsetX; x < canvas.width; x += gap) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+      ctx.stroke();
+    }
+    for (let y = offsetY; y < canvas.height; y += gap) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+      ctx.stroke();
+    }
+    ctx.restore();
   };
 
   const hitTestScreen = (screenPoint) => {
@@ -394,6 +419,7 @@ const Whiteboard = () => {
     const canvas = canvasRef.current;
     if (!ctx || !canvas) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawGrid(ctx, canvas)
 
     historyStackRef.current.forEach((item) => {
       if (item.type === "stroke") {
@@ -417,7 +443,8 @@ const Whiteboard = () => {
         ctx.restore();
       }
     }
-  }, [camera, zoom]);
+
+  }, [camera, zoom, isDark]);
 
   useEffect(() => {
     registerDrawing({
@@ -898,7 +925,7 @@ const Whiteboard = () => {
 
   useEffect(() => {
     redrawAll();
-  }, [camera, zoom]);
+  }, [camera, zoom, isDark]);
 
 
   return (
