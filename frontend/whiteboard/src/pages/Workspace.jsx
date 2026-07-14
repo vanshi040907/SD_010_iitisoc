@@ -12,29 +12,32 @@ import Btn_clearCanvas from '../components/ClearCanvas'
 import { WhiteboardProvider } from '../context/WhiteboardContext'
 import LaserWhiteboard from '../components/LaserWHITEboard'
 import Zoom from '../components/zoom'
+import { Play } from 'lucide-react'
+import Playback from '../components/playback'
 
 const Workspace = () => {
-  
-  
+
+
   return (
-     <>         
-          <ThemeProvider>
-            <WhiteboardProvider>
-              <Background />
-              <TitleCard_download/>
-              <Toolbar/>
-              <MemberList />
-              <SessionStatus />
-              <Invite_help />
-              <Zoom/>
-              <ToggleBtn />
-              <Whiteboard />
-              <LaserWhiteboard />
-              <Btn_clearCanvas />
-            </WhiteboardProvider>
-          </ThemeProvider>
-        </>
-    
+    <>
+      <ThemeProvider>
+        <WhiteboardProvider>
+          <Background />
+          <TitleCard_download />
+          <Toolbar />
+          <MemberList />
+          <SessionStatus />
+          <Invite_help />
+          <Zoom />
+          <Playback />
+          <ToggleBtn />
+          <Whiteboard />
+          <LaserWhiteboard />
+          <Btn_clearCanvas />
+        </WhiteboardProvider>
+      </ThemeProvider>
+    </>
+
   )
 }
 

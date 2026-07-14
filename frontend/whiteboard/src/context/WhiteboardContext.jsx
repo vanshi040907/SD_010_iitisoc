@@ -22,7 +22,7 @@ export function WhiteboardProvider({ children }) {
     bump();
   }, []);
 
-  const downloadCanvas = useCallback(()=>{
+  const downloadCanvas = useCallback(() => {
     engineRef.current?.downloadCanvas?.();
   }, []);
 
@@ -38,12 +38,16 @@ export function WhiteboardProvider({ children }) {
   }, [bump]);
 
   const notifyHistoryChange = useCallback(() => {
-  bump();
+    bump();
   }, [bump]);
 
   const canUndo = engineRef.current?.canUndo?.() ?? false;
   const canRedo = engineRef.current?.canRedo?.() ?? false;
 
+  const drawingRefs = useRef({});
+  const registerDrawing = useCallback((refs) => {
+    drawingRefs.current = refs;
+  }, []);
   return (
     <WhiteboardContext.Provider
       value={{
@@ -56,7 +60,7 @@ export function WhiteboardProvider({ children }) {
         notifyHistoryChange,
         activeShape,
         setActiveShape, bump,
-        downloadCanvas,
+        downloadCanvas, drawingRefs, registerDrawing,
 
       }}
     >

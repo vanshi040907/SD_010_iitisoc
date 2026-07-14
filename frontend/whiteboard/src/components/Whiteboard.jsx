@@ -9,33 +9,10 @@ import { TOOL_CURSORS } from "../utils/cursor";
 
 const THROTTLE_MS = 10;
 
-const PlayIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M8 5v14l11-7z" />
-  </svg>
-);
-
-const PauseIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-    <rect x="6" y="5" width="4" height="14" />
-    <rect x="14" y="5" width="4" height="14" />
-  </svg>
-);
-
-const StopIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-    <rect x="5" y="5" width="14" height="14" />
-  </svg>
-);
-
 const Whiteboard = () => {
   const socket = useSocket();
 
 
-  const replayIndexRef = useRef(0);
-  const replayTimeoutRef = useRef(null);
-  const [isReplaying, setIsReplaying] = useState(false);
-  const [replayProgress, setReplayProgress] = useState(0); // 0 to historyStackRef.current.length
   // state for the floating text input box position, value, and id of item being edited
   const [textInput, setTextInput] = useState(null);
   const [add, setAdd] = useState(0);
@@ -43,7 +20,7 @@ const Whiteboard = () => {
   const selectedIdRef = useRef(null);
   useEffect(() => { selectedIdRef.current = selectedId; }, [selectedId]);
 
-  const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump, setActiveShape, setActiveTool
+  const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump, setActiveShape, setActiveTool, registerDrawing
   } = useContext(WhiteboardContext);
   const { camera, setCamera, worldtoscreen, screentoworld, zoom, setZoom, cameraonzoom, isZoom, setIsZoom, canvasRef } = useInfinity();
   const [isPanning, setIsPanning] = useState(true);
@@ -442,73 +419,17 @@ const Whiteboard = () => {
     }
   }, [camera, zoom]);
 
-  const handlePlayPauseClick = () => {
-    if (isReplaying) {
-      pauseReplay();
-    } else if (replayIndexRef.current > 0 && replayIndexRef.current < historyStackRef.current.length) {
-      resumeReplay();
-    } else {
-      startReplay();
-    }
-  };
-
-  const playReplayStep = () => {
-    const items = historyStackRef.current;
-    const index = replayIndexRef.current;
-
-    if (index >= items.length) {
-      setIsReplaying(false);
-      return;
-    }
-
-    const item = items[index];
-    const ctx = ctxRef.current;
-
-    if (item.type === "stroke") {
-      drawStroke(ctx, item);
-    } else if (item.type === "text") {
-      drawText(ctx, item);
-    } else {
-      drawShape(ctx, item);
-    }
-
-    replayIndexRef.current = index + 1;
-    setReplayProgress(index + 1);
-
-    replayTimeoutRef.current = setTimeout(playReplayStep, 500);
-  };
-
-  const startReplay = () => {
-    const ctx = ctxRef.current;
-    const canvas = canvasRef.current;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    replayIndexRef.current = 0;
-    setReplayProgress(0);
-    setIsReplaying(true);
-    playReplayStep();
-  };
-
-  const pauseReplay = () => {
-    clearTimeout(replayTimeoutRef.current);
-    setIsReplaying(false);
-  };
-
-  const resumeReplay = () => {
-    setIsReplaying(true);
-    playReplayStep();
-  };
-
-  const stopReplay = () => {
-    clearTimeout(replayTimeoutRef.current);
-    setIsReplaying(false);
-    redrawAll();
-  };
-  const replayPercent = historyStackRef.current.length > 0
-    ? (replayProgress / historyStackRef.current.length) * 100
-    : 0;
-
-
+  useEffect(() => {
+    registerDrawing({
+      historyStackRef,
+      ctxRef,
+      canvasRef,
+      drawStroke,
+      drawText,
+      drawShape,
+      redrawAll,
+    });
+  }, []);
 
   const drawRect = (ctx, shape) => {
     const start = worldtoscreen({ world: shape.start, camera });
@@ -979,58 +900,10 @@ const Whiteboard = () => {
     redrawAll();
   }, [camera, zoom]);
 
-  const PlayIcon = () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M8 5v14l11-7z" />
-    </svg>
-  );
-
-  const PauseIcon = () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-      <rect x="6" y="5" width="4" height="14" />
-      <rect x="14" y="5" width="4" height="14" />
-    </svg>
-  );
-
-  const StopIcon = () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-      <rect x="5" y="5" width="14" height="14" />
-    </svg>
-  );
 
   return (
     <div className="absolute inset-0">
-      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10 flex items-center gap-[14px] bg-[rgba(15,12,25,0.9)] border border-[rgba(139,92,246,0.3)] px-[18px] py-[10px] rounded-full backdrop-blur-md shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
 
-        <button
-          onClick={handlePlayPauseClick}
-          className="flex items-center justify-center w-9 h-9 rounded-full border-none cursor-pointer transition-colors duration-150"
-          style={{
-            background: isReplaying ? "#8b5cf6" : "rgba(255,255,255,0.08)",
-            color: isReplaying ? "#fff" : "#c4b5fd",
-          }}
-        >
-          {isReplaying ? <PauseIcon /> : <PlayIcon />}
-        </button>
-
-        <button
-          onClick={stopReplay}
-          className="flex items-center justify-center w-8 h-8 rounded-full border-none cursor-pointer bg-[rgba(255,255,255,0.08)] text-[#c4b5fd]"
-        >
-          <StopIcon />
-        </button>
-
-        <div className="w-[160px] h-1 bg-white/10 rounded-full">
-          <div
-            className="h-full bg-[#8b5cf6] rounded-full transition-[width] duration-100 ease-linear"
-            style={{ width: `${replayPercent}%` }}
-          />
-        </div>
-
-        <span className="text-[#a78bfa] text-xs font-inherit min-w-[50px]">
-          {replayProgress}/{historyStackRef.current.length}
-        </span>
-      </div>
 
 
       <canvas
