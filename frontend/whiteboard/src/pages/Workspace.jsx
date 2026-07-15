@@ -13,10 +13,12 @@ import { WhiteboardProvider } from '../context/WhiteboardContext'
 import LaserWhiteboard from '../components/LaserWHITEboard'
 import Zoom from '../components/zoom'
 import AlertPopup from '../components/Hostpermission'
+import { Play } from 'lucide-react'
+import Playback from '../components/playback'
 
 const Workspace = () => {
-  
-  
+
+
   return (
      <>         
           <ThemeProvider>
@@ -29,6 +31,7 @@ const Workspace = () => {
               <Invite_help />
               <Zoom/>
               <AlertPopup/>
+              <Playback/>
               <ToggleBtn />
               <Whiteboard />
               <LaserWhiteboard />

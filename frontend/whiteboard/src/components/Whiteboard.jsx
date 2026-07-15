@@ -7,12 +7,14 @@ import { useSocket } from '../context/Socket';
 import useInfinity from '../context/infinity';
 import { TOOL_CURSORS } from "../utils/cursor";
 import { RoomContext } from '../context/RoomContext';
+import { ThemeContext } from '../context/ThemeContext';
 
 const THROTTLE_MS = 10;
 
 const Whiteboard = () => {
   const socket = useSocket();
 
+  const { isDark } = useContext(ThemeContext);
   // state for the floating text input box position, value, and id of item being edited
   const [textInput, setTextInput] = useState(null);
   const [add, setAdd] = useState(0);
@@ -21,7 +23,8 @@ const Whiteboard = () => {
   const [role,setRole] = useState("Editor");
   useEffect(() => { selectedIdRef.current = selectedId; }, [selectedId]);
 
-  const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump, notifyHistortChange ,selectExport,setSelectExport} = useContext(WhiteboardContext);
+  const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump, notifyHistortChange ,setActiveShape, setActiveTool, registerDrawing, selectExport,setSelectExport} = useContext(WhiteboardContext);
+  
   const { camera, setCamera, worldtoscreen, screentoworld, zoom, setZoom, cameraonzoom, isZoom, setIsZoom, canvasRef } = useInfinity();
   const {roomId} = useContext(RoomContext);
   const [isPanning, setIsPanning] = useState(true);
@@ -91,6 +94,30 @@ const Whiteboard = () => {
     };
   };
 
+  const drawGrid = (ctx, canvas) => {
+    const gap = 50 * zoom; // world grid spacing scaled by zoom
+    const offsetX = camera.x % gap;
+    const offsetY = camera.y % gap;
+
+    ctx.save();
+    ctx.strokeStyle = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.12)";
+    ctx.lineWidth = 1;
+
+    for (let x = offsetX; x < canvas.width; x += gap) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+      ctx.stroke();
+    }
+    for (let y = offsetY; y < canvas.height; y += gap) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+      ctx.stroke();
+    }
+    ctx.restore();
+  };
+
   const hitTestScreen = (screenPoint) => {
     const padding = 8; // tolerance in px, makes thin strokes/lines easier to grab
     for (let i = historyStackRef.current.length - 1; i >= 0; i--) {
@@ -125,7 +152,7 @@ const Whiteboard = () => {
           const historyflatted = whiteboard
             .map((item) => item.drawingOperations)
             .flat();
-          historyStackRef.current = historyflatted;console.log(historyStackRef.current)
+          historyStackRef.current = historyflatted; console.log(historyStackRef.current)
           redrawAll();
         }
       } catch (error) {
@@ -140,11 +167,11 @@ const Whiteboard = () => {
     if (historyStackRef.current.length === 0) return;
     const last = historyStackRef.current.pop();
     redoStackRef.current.push(last);
-     try {
+    try {
       await axios.get(
-       ` ${conf.path}/whiteboard/undo`,  {
-    withCredentials: true,
-  }
+        ` ${conf.path}/whiteboard/undo`, {
+        withCredentials: true,
+      }
       );
 
       const { remainingHistory, remainingRedoHistory } = res.data;
@@ -161,13 +188,13 @@ const Whiteboard = () => {
 
   const redo = async () => {
     if (redoStackRef.current.length === 0) return;
-const restored = redoStackRef.current.pop();
+    const restored = redoStackRef.current.pop();
     historyStackRef.current.push(restored);
     try {
-     await axios.post(
-        `${conf.path}/whiteboard/redo`,{
-           drawingOperations: restored,
-        }, { withCredentials: true }
+      await axios.post(
+        `${conf.path}/whiteboard/redo`, {
+        drawingOperations: restored,
+      }, { withCredentials: true }
       );
       const { remainingHistory, remainingRedoHistory } = res.data;
       historyStackRef.current = remainingHistory;
@@ -822,6 +849,83 @@ else {
 
     return () => window.removeEventListener("resize", resize);
   }, []);
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const tag = document.activeElement.tagName;
+      if (tag === "TEXTAREA" || tag === "INPUT") return;
+
+      const isCtrlOrCmd = e.ctrlKey || e.metaKey;
+      const key = e.key.toLowerCase();
+
+      // Undo
+      if (isCtrlOrCmd && key === "z" && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+        return;
+      }
+
+      // Redo
+      if (isCtrlOrCmd && (key === "y" || (key === "z" && e.shiftKey))) {
+        e.preventDefault();
+        redo();
+        return;
+      }
+
+
+
+      // Escape - deselect
+      if (e.key === "Escape") {
+        setSelectedId(null);
+        selectedIdRef.current = null;
+        redrawAll();
+        return;
+      }
+
+      // Only run tool shortcuts if no Ctrl/Cmd/Shift is held
+      if (isCtrlOrCmd || e.shiftKey) return;
+
+      // Tools
+      if (key === "v") {
+        setActiveTool("select");
+      }
+      if (key === "p") {
+        setActiveTool("pen");
+      }
+      if (key === "e") {
+        setActiveTool("eraser");
+      }
+      if (key === "h") {
+        setActiveTool("highlighter");
+      }
+      if (key === "s") {
+        setActiveTool("sticky");
+      }
+      if (key === "x") {
+        setActiveTool("text");
+      }
+
+      // Shapes (tool = "shape", plus which shape)
+      if (key === "r") {
+        setActiveTool("shape");
+        setActiveShape("rect");
+      }
+      if (key === "c") {
+        setActiveTool("shape");
+        setActiveShape("circle");
+      }
+      if (key === "t") {
+        setActiveTool("shape");
+        setActiveShape("triangle");
+      }
+      if (key === "l") {
+        setActiveTool("shape");
+        setActiveShape("line");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const redraw = () => {
     socket.emit('historysend', { history: historyStackRef.current });
@@ -920,6 +1024,7 @@ else {
     const canvas = canvasRef.current;
     if (!ctx || !canvas) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawGrid(ctx, canvas)
 
     historyStackRef.current.forEach((item) => {
       if (item.type === "stroke") {
@@ -943,7 +1048,20 @@ else {
         ctx.restore();
       }
     }
-  }, [camera, zoom]);
+
+  }, [camera, zoom, isDark]);
+
+  useEffect(() => {
+    registerDrawing({
+      historyStackRef,
+      ctxRef,
+      canvasRef,
+      drawStroke,
+      drawText,
+      drawShape,
+      redrawAll,
+    });
+  }, []);
 
   const drawRect = (ctx, shape) => {
     const start = worldtoscreen({ world: shape.start, camera });
@@ -1283,7 +1401,6 @@ else {
       editingId: clicked.id,
     });
   };
-
   const handleMouseMove = (e) => {
     if (!isDrawingRef.current && !isDraggingRef.current) return;
 
@@ -1509,10 +1626,14 @@ else {
 
   useEffect(() => {
     redrawAll();
-  }, [camera, zoom]);
+  }, [camera, zoom, isDark]);
+
 
   return (
     <div className="absolute inset-0">
+
+
+
       <canvas
         ref={canvasRef}
         onMouseDown={handleMouseDown}
@@ -1521,8 +1642,8 @@ else {
         onMouseLeave={handleMouseUp}
         className="absolute inset-0 touch-none"
         style={{
-      cursor: TOOL_CURSORS[activeTool] ?? "crosshair",
-    }}
+          cursor: TOOL_CURSORS[activeTool] ?? "crosshair",
+        }}
       />
 
       {textInput && (
@@ -1566,23 +1687,14 @@ else {
             }
           }}
           onMouseDown={(e) => e.stopPropagation()}
+          className="absolute bg-transparent border border-dashed border-white/40 outline-none resize-none min-w-[120px] leading-[1.2] px-1 py-0.5 overflow-hidden font-sans"
           style={{
-            position: "absolute",
             left: textInput.x,
             top: textInput.y - textInput.fontSize,
             fontSize: `${textInput.fontSize}px`,
             color: textInput.color,
-            fontFamily: "Arial",
-            background: "transparent",
-            border: "1px dashed rgba(255,255,255,0.4)",
-            outline: "none",
-            resize: "none",
-            minWidth: "120px",
             minHeight: `${textInput.fontSize + 8}px`,
-            lineHeight: 1.2,
-            padding: "2px 4px",
             caretColor: textInput.color,
-            overflow: "hidden",
           }}
           rows={1}
         />

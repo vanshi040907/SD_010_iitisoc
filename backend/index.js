@@ -80,6 +80,7 @@ io.on('connection', (socket) => {
     
     });
     socket.on("pending",(data) => {
+        console.log("hhhhhhh");
           socket.join(socket.user.id);
         
     });
