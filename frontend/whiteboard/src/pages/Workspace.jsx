@@ -15,6 +15,7 @@ import Zoom from '../components/zoom'
 import AlertPopup from '../components/Hostpermission'
 import { Play } from 'lucide-react'
 import Playback from '../components/playback'
+import { LaserProvider } from '../context/laser'
 
 const Workspace = () => {
 
@@ -23,6 +24,7 @@ const Workspace = () => {
      <>         
           <ThemeProvider>
             <WhiteboardProvider>
+              <LaserProvider>
               <Background />
               <TitleCard_download/>
               <Toolbar/>
@@ -36,6 +38,7 @@ const Workspace = () => {
               <Whiteboard />
               <LaserWhiteboard />
               <Btn_clearCanvas />
+              </LaserProvider>
             </WhiteboardProvider>
           </ThemeProvider>
         </>

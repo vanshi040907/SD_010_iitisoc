@@ -63,11 +63,17 @@ io.use((socket, next) => {
 io.on('connection', (socket) => {
     
 
-    socket.on('joinroom', (data) => {
+    socket.on('joinroom', async(data) => {
         const { roomID, myName } = data;
         socket.join(roomID);
         socket.join(socket.user.id);
-        socket.broadcast.to(roomID).emit("new user", myName);
+          const userid = socket.user.id;
+        const user = await User.findById(userid).populate("ActiveRoom");
+            const room= await user.ActiveRoom.populate("participants.user");
+    const m = room.participants.find((x) => x.user._id.toString()===userid.toString());
+     
+
+        socket.broadcast.to(roomID).emit("new user",{name: myName,role:m.role});
     });
     socket.on('refresh', async() => {
          

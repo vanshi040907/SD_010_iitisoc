@@ -1,6 +1,8 @@
 import React from 'react'
 import { useRef, useEffect, useCallback, useContext } from "react";
 import { WhiteboardContext } from "../context/WhiteboardContext";
+import useInfinity from '../context/infinity';
+import { LaserContext } from '../context/laser';
 
 const TRAIL_LENGTH    = 100;    // how many trail points to keep
 const TRAIL_DECAY_MS  = 1000;    // ms between each fade-out frame
@@ -12,6 +14,8 @@ const GLOW_COLOR      = "rgba(239, 68, 68,";  // same, used for glow
 const LaserWhiteboard = () => {
 
 const { activeTool } = useContext(WhiteboardContext);
+const { camera, setCamera, worldtoscreen, screentoworld, zoom, setZoom, cameraonzoom, isZoom, setIsZoom} = useInfinity();
+  const { registerLaser} = useContext(LaserContext);
  
   const laserRef      = useRef(null);
   const isActiveRef   = useRef(false);
@@ -40,7 +44,14 @@ const { activeTool } = useContext(WhiteboardContext);
  
     ctx.clearRect(0, 0, canvas.width, canvas.height);
  
-    const pts = pointsRef.current;
+    const pt = pointsRef.current;
+     const pts = pt.map((point) => {
+      const screen = worldtoscreen({ world: point, camera });
+       console.log("camera", camera);
+    console.log("zoom", zoom);
+      return {x:screen.x,y:screen.y,t:point.t};
+    });
+    
     if (pts.length === 0) return;
  
     const now  = Date.now();
@@ -86,7 +97,7 @@ const { activeTool } = useContext(WhiteboardContext);
     ctx.arc(last.x - 1.5, last.y - 1.5, DOT_RADIUS * 0.35, 0, Math.PI * 2);
     ctx.fillStyle = "rgba(255,255,255,0.8)";
     ctx.fill();
-  }, []);
+  }, [camera,worldtoscreen,zoom]);
  
   // ── Fade out trail after mouse stops ────────────────────────────────
   const startFadeOut = useCallback(() => {
@@ -106,7 +117,7 @@ const { activeTool } = useContext(WhiteboardContext);
   }, [render]);
  
   // ── Mouse handlers ───────────────────────────────────────────────────
-  const handleMouseMove = useCallback((e) => {
+  const laserMove = useCallback((e) => {
     if (activeTool !== "laser") return;
  
     cancelAnimationFrame(fadeRafRef.current); // stop fade while mouse is moving
@@ -117,21 +128,37 @@ const { activeTool } = useContext(WhiteboardContext);
  
     const canvas = laserRef.current;
     const rect   = canvas.getBoundingClientRect();
-    const pt     = { x: e.clientX - rect.left, y: e.clientY - rect.top, t: Date.now() };
- 
-    pointsRef.current = [...pointsRef.current, pt].slice(-TRAIL_LENGTH);
+    const pt     = { x:  e.nativeEvent.offsetX, y: e.nativeEvent.offsetY,};
+    
+    const world =  screentoworld({screen:pt,camera})
+    const worldpt = {
+      x:world.x,
+      y:world.y,
+      t: Date.now(),
+    }
+
+    pointsRef.current = [...pointsRef.current, worldpt].slice(-TRAIL_LENGTH);
  
     cancelAnimationFrame(animRafRef.current);
     animRafRef.current = requestAnimationFrame(render);
-  }, [activeTool, render]);
+  }, [activeTool, render,camera,zoom,screentoworld]);
  
-  const handleMouseLeave = useCallback(() => {
+  const laserLeave = useCallback(() => {
     startFadeOut();
   }, [startFadeOut]);
  
-  const handleMouseUp = useCallback(() => {
+  const laserUp = useCallback(() => {
     startFadeOut();
   }, [startFadeOut]);
+   useEffect(() => {
+      registerLaser({
+        laserLeave,
+        laserMove,
+        laserUp,
+        
+        
+      });
+    },[laserLeave,laserMove,laserUp]);
  
   // ── When tool changes away from laser, clear everything ─────────────
   useEffect(() => {
@@ -146,20 +173,28 @@ const { activeTool } = useContext(WhiteboardContext);
       clearTimeout(fadeRafRef.current);
     }
   }, [activeTool]);
+  useEffect(() => {
+    if (activeTool === "laser") {
+      pointsRef.current = [];
+      render();
+    }
+  }, [activeTool,camera,zoom,render]);
+
  
   // ── Whether overlay should capture mouse events ─────────────────────
   // pointer-events-none when not in laser mode so it doesn't block drawing
   const isLaser = activeTool === "laser";
+  
+  
+  
+
  
   return (
     <canvas
       ref={laserRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      onMouseUp={handleMouseUp}
       className="absolute inset-0 z-20"
       style={{
-        pointerEvents: isLaser ? "auto" : "none",
+        pointerEvents:"none",
         cursor: isLaser ? "none" : "default",
       }}
     />

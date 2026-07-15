@@ -67,9 +67,9 @@ const MemberList = () => {
 },[])
 useEffect (() => {
     const handlesocket = (data) => {
-      const name = data;
+      const {name,role} = data;
        
-       setMEMBERS((prev) =>[ ...prev,{ id:prev.length+1, name:name , role: "Editor", online: true }])
+       setMEMBERS((prev) =>[ ...prev,{ id:prev.length+1, name:name , role: role, online: true }])
       
     }
 

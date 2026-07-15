@@ -8,6 +8,7 @@ import useInfinity from '../context/infinity';
 import { TOOL_CURSORS } from "../utils/cursor";
 import { RoomContext } from '../context/RoomContext';
 import { ThemeContext } from '../context/ThemeContext';
+import { LaserContext } from '../context/laser';
 
 const THROTTLE_MS = 10;
 
@@ -26,6 +27,7 @@ const Whiteboard = () => {
   const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump, notifyHistortChange ,setActiveShape, setActiveTool, registerDrawing, selectExport,setSelectExport} = useContext(WhiteboardContext);
   
   const { camera, setCamera, worldtoscreen, screentoworld, zoom, setZoom, cameraonzoom, isZoom, setIsZoom, canvasRef } = useInfinity();
+  const { laserLeave,laserMove,laserUp} = useContext(LaserContext);
   const {roomId} = useContext(RoomContext);
   const [isPanning, setIsPanning] = useState(true);
   const activeColorRef = useRef(activeColor);
@@ -1402,6 +1404,9 @@ else {
     });
   };
   const handleMouseMove = (e) => {
+    if (activeTool === "laser") {
+  laserMove(e);
+}
     if (!isDrawingRef.current && !isDraggingRef.current) return;
 
     const now = performance.now();
@@ -1491,9 +1496,13 @@ else {
   const handleMouseUp = async () => {
     setIsPanning(true);
     setIsZoom(true);
+    if (activeTool === "laser") {
+  laserUp();
+}
 
     if (!isDrawingRef.current && !isDraggingRef.current) return;
     isDrawingRef.current = false;
+
 
     if (
       (activeToolRefLocal.current === "pen" ||
