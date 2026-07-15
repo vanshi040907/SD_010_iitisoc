@@ -49,7 +49,7 @@ const MemberList = () => {
       const participants = list.mem;
       setMEMBERS(  [{ id: 1, name:host , role: "Host", online: true },
         ...participants.slice(1).map((x,index) => ( {
-          id: index+2, name:x , role: "Editor", online: true
+          id: index+2, name:x.name , role: x.role, online: true
         }))
       ]
       )

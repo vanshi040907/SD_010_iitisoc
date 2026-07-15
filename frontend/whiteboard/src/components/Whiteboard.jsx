@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useSocket } from '../context/Socket';
 import useInfinity from '../context/infinity';
 import { TOOL_CURSORS } from "../utils/cursor";
+import { RoomContext } from '../context/RoomContext';
 
 const THROTTLE_MS = 10;
 
@@ -17,10 +18,12 @@ const Whiteboard = () => {
   const [add, setAdd] = useState(0);
   const [selectedId, setSelectedId] = useState(null);
   const selectedIdRef = useRef(null);
+  const [role,setRole] = useState("Editor");
   useEffect(() => { selectedIdRef.current = selectedId; }, [selectedId]);
 
   const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump, notifyHistortChange ,selectExport,setSelectExport} = useContext(WhiteboardContext);
   const { camera, setCamera, worldtoscreen, screentoworld, zoom, setZoom, cameraonzoom, isZoom, setIsZoom, canvasRef } = useInfinity();
+  const {roomId} = useContext(RoomContext);
   const [isPanning, setIsPanning] = useState(true);
   const activeColorRef = useRef(activeColor);
   const strokeWidthRef = useRef(strokeWidth);
@@ -558,6 +561,7 @@ const downloadSelectCanvas = useCallback((item)=>{
         MAX_Y= worldmax.y;
           tempCanvas.width = MAX_X-MIN_X;
    tempCanvas.height = MAX_Y-MIN_Y;
+   const maxpixel = 100000000;
    if(tempCanvas.width*tempCanvas.height > maxpixel) {
     alert("This much large area to export")
     return;
@@ -797,7 +801,7 @@ else {
       canRedo: () => redoStackRef.current.length > 0,
       downloadCanvas,
       downloadCurrentCanvas,
-      downloadSelectCanvas
+      
     });
   }, [bump,camera]);
 
@@ -822,6 +826,32 @@ else {
   const redraw = () => {
     socket.emit('historysend', { history: historyStackRef.current });
   };
+  useEffect(() => {
+   
+    socket.emit("refresh");
+  },[])
+
+  useEffect(() => {
+    const handleAlert = (data) => {
+      alert(data.response);
+    }
+    socket.on("access",handleAlert)
+      return () => {
+        socket.off("access",handleAlert);
+      }
+    
+  },[socket])
+  useEffect(() => {
+    const handleRole = (data) => {
+      setRole(data.role);
+    }
+    socket.emit("introrole")
+    socket.on("role",handleRole);
+      return () => {
+        socket.off("role",handleRole);
+      }
+  },[socket])
+  
 
   useEffect(() => {
     const handlesocket = (data) => {
@@ -1102,9 +1132,12 @@ else {
 
   // Mouse Handlers
   const handleMouseDown = (e) => {
+
+    if(role==="Viewer") return;
     const point = getMousePos(e);
     setIsPanning(false);
     setIsZoom(false);
+    
     const point_stored = screentoworld({ screen: point, camera });
     if(selectExport) {
       
@@ -1122,6 +1155,8 @@ else {
          
         }
     }
+    
+    
 
     else if (
       activeToolRefLocal.current === "pen" ||
@@ -1248,25 +1283,7 @@ else {
       editingId: clicked.id,
     });
   };
-useEffect(() => {
-   const handlesocket = (data) => {
-      drawSegment(ctxRef.current,
-        data.previousPoint,
-      data.point,
-      data.color,
-      data.width,
-      data.isEraser,
-      data.opacity
 
-      )
-    }
-    socket.on("currentreceived",handlesocket)
-      return () => {
-        socket.off("currentreceived",handlesocket);
-      }
-    
-
-},[socket]);
   const handleMouseMove = (e) => {
     if (!isDrawingRef.current && !isDraggingRef.current) return;
 

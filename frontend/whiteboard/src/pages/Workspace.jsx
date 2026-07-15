@@ -12,6 +12,7 @@ import Btn_clearCanvas from '../components/ClearCanvas'
 import { WhiteboardProvider } from '../context/WhiteboardContext'
 import LaserWhiteboard from '../components/LaserWHITEboard'
 import Zoom from '../components/zoom'
+import AlertPopup from '../components/Hostpermission'
 
 const Workspace = () => {
   
@@ -27,6 +28,7 @@ const Workspace = () => {
               <SessionStatus />
               <Invite_help />
               <Zoom/>
+              <AlertPopup/>
               <ToggleBtn />
               <Whiteboard />
               <LaserWhiteboard />

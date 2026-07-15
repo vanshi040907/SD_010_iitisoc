@@ -10,6 +10,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import LetsCoSketh from "../animations/LetsCoSketh";
 import { RoomContext } from "../context/RoomContext";
+import { useEffect } from "react";
 
 export default function Welcome() {
 
@@ -21,6 +22,7 @@ export default function Welcome() {
   const [joinRoomID, setJoinRoomID] = useState("");
   const [copyMsg, setCopyMsg] = useState("");
   const [joinMsg, setJoinMsg] = useState("");
+  const [hostpermission, setHostpermission] = useState(false);
   const socket = useSocket();
   const navigate = useNavigate();
 
@@ -60,6 +62,7 @@ export default function Welcome() {
         `${conf.path}/room/createroom`,
         {
           roomID: roomID,
+          hostpermission:hostpermission,
         },
         {
           withCredentials: true,
@@ -101,7 +104,12 @@ export default function Welcome() {
         });
 
         navigate(`/Workspace/${joinRoomID}`);
-        setRoomId(roomID);
+        setRoomId(joinRoomID);
+        
+      }
+      else if(response.data.pending) {
+         alert("wait for approval");
+         socket.emit("pending",{ myName: joinName.trim()});
       }
 
 
@@ -113,6 +121,35 @@ export default function Welcome() {
       console.log(err);
     }
   }
+  useEffect(() => {
+     const handleApproval = (data) => {
+      console.log("sdfghj");
+       if (!socket.connected) {
+          socket.connect();
+        }
+        socket.emit("joinroom", {
+          roomID: joinRoomID.trim().toUpperCase(),
+          myName: joinName.trim(),
+        });
+
+        navigate(`/Workspace/${joinRoomID}`);
+        setRoomId(joinRoomID);
+        
+
+      
+    }
+    const handleDeny = (data) => {
+      alert(`Sorry 😔 host didn't allowed you ❌ ${joinRoomID}`);
+      socket.emit("cancelPending",{response:"disconnect"});
+    }
+    socket.on("allow",handleApproval);
+    socket.on("deny",handleDeny);
+      return () => {
+        socket.off("allow",handleApproval);
+        socket.off("deny",handleDeny);
+      }
+  
+  },[socket,joinRoomID])
 
   return (
     <div className="relative h-[100vh] w-full ">
@@ -218,6 +255,21 @@ export default function Welcome() {
             </div>
 
             <p className="text-violet-400 text-xs mb-5 h-4">{copyMsg}</p>
+            <label className="text-[11px] text-violet-300 font-semibold uppercase tracking-[0.15em] mb-1 block">
+              Host Permission
+            </label>
+            <button onClick={() => {setHostpermission(prev => !prev)}}>
+              <div className={`relative w-14 h-8 rounded-xl text-sm font-semibold text-white border border-white/10 transition-colors duration-300 ${hostpermission? "bg-blue-500":"bg-white/[0.07]"}`}>
+                  <div className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white transition-transform duration-300
+                  ${hostpermission? "translate-x-6":"translate-x-0"}
+                    `}></div>
+                  <div className={`absolute top-1 left-1 w-6 h-6 text-sm font-semibold text-white  transition-transform duration-300
+                         ${hostpermission? "translate-x-0":"translate-x-6"}
+                    `}> {hostpermission? "yes":"no"}</div>
+
+              </div>
+
+            </button>
 
             <button
               onClick={createRoom}

@@ -5,15 +5,26 @@ const roomSchema = new Schema({
         type:String,
         required:true,
     },
+    hostpermission : {
+         type: Boolean,
+      default: false,
+    },
     owner:{
         type: Schema.Types.ObjectId,
         ref: "user",
         required:true,
     },
     participants:[{
+        user:{
         type: Schema.Types.ObjectId,
         ref: "user",
-    }],
+    },
+     role:{
+        type:String,
+        enum:["Host","Viewer","Editor"],
+        default:"Editor",
+
+     }}],
     activeParticipants:[{
         type: Schema.Types.ObjectId,
         ref: "user",

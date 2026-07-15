@@ -24,7 +24,7 @@ const cookieparser = require("cookie-parser");
 const userrouter = require("./routes/user");
 const roomrouter = require("./routes/room");
 const whiteboardrouter = require("./routes/whiteboard");
-const { restrictToLoggedinUser } = require("./middleware/auth");
+const { restrictToLoggedinUser,requiredEditorAccess} = require("./middleware/auth");
 
 connectmongoose("mongodb://127.0.0.1:27017/whiteboard");
 
@@ -59,12 +59,33 @@ io.use((socket, next) => {
 
 })
 
+
 io.on('connection', (socket) => {
+    
 
     socket.on('joinroom', (data) => {
         const { roomID, myName } = data;
         socket.join(roomID);
+        socket.join(socket.user.id);
         socket.broadcast.to(roomID).emit("new user", myName);
+    });
+    socket.on('refresh', async() => {
+         
+        
+         const userid = socket.user.id;
+        const user = await User.findById(userid).populate("ActiveRoom");
+        const room = user.ActiveRoom;
+        socket.join(room.roomId);
+        socket.join(socket.user.id);
+    
+    });
+    socket.on("pending",(data) => {
+          socket.join(socket.user.id);
+        
+    });
+    socket.on("cancelPending",(data) => {
+         socket.leave(socket.user.id);
+
     });
 
     socket.on("emojisend", async (data) => {
@@ -74,12 +95,31 @@ io.on('connection', (socket) => {
         const room = user.ActiveRoom;
         io.to(room.roomId).emit("emojireceived", { emoji: emoji, user: user });
     });
+    socket.on("introrole",async() => {
+        
+        const userid = socket.user.id;
+        const user = await User.findById(userid).populate("ActiveRoom");
+          const room= await user.ActiveRoom.populate("participants.user");
+    const m = room.participants.find((x) => x.user._id.toString()===userid.toString());
+     
+    
+        
+    
+
+     socket.emit("role",{role:m.role});
+    })
 
     socket.on("historysend", async (data) => {
         const { history } = data;
         const userid = socket.user.id;
         const user = await User.findById(userid).populate("ActiveRoom");
-        const room = user.ActiveRoom;
+          const room= await user.ActiveRoom.populate("participants.user");
+    const participants = room.participants;
+    const m = participants.some((x) => x.user._id.toString()===userid.toString()&&(x.role==="Editor"||x.role==="Host"));
+        if(!m) {
+          socket.emit("access",{response:"Required Editor Access"});
+          return;
+        }
         if (room.roomId === null) return;
         socket.to(room.roomId).emit("historyreceived", { history: history });
     });
@@ -87,14 +127,26 @@ io.on('connection', (socket) => {
     socket.on("currentsend", async (data) => {
         const userid = socket.user.id;
         const user = await User.findById(userid).populate("ActiveRoom");
-        const room = user.ActiveRoom;
+          const room= await user.ActiveRoom.populate("participants.user");
+    /*const participants = room.participants;
+    const m = participants.some((x) => x.user._id.toString()===userid.toString()&&(x.role==="Editor"||x.role==="Host"));
+        if(!m) {
+          socket.emit("access",{response:"Required Editor Access"});
+          return;
+        }*/
         socket.to(room.roomId).emit("currentreceived", data);
     });
 
     socket.on("currentshapesend", async (data) => {
         const userid = socket.user.id;
         const user = await User.findById(userid).populate("ActiveRoom");
-        const room = user.ActiveRoom;
+          const room= await user.ActiveRoom.populate("participants.user");
+    const participants = room.participants;
+    const m = participants.some((x) => x.user._id.toString()===userid.toString()&&(x.role==="Editor"||x.role==="Host"));
+        if(!m) {
+          socket.emit("access",{response:"Required Editor Access"});
+          return;
+        }
 
         io.to(room.roomId).emit("currentshapereceived", data);
     });
@@ -102,7 +154,14 @@ io.on('connection', (socket) => {
     socket.on("text", async (data) => {
         const userid = socket.user.id;
         const user = await User.findById(userid).populate("ActiveRoom");
-        const room = user.ActiveRoom;
+    
+          const room= await user.ActiveRoom.populate("participants.user");
+    const participants = room.participants;
+    const m = participants.some((x) => x.user._id.toString()===userid.toString()&&(x.role==="Editor"||x.role==="Host"));
+        if(!m) {
+          socket.emit("access",{response:"Required Editor Access"});
+          return;
+        }
         socket.to(room.roomId).emit("showtext", data);
     });
 
@@ -119,7 +178,14 @@ io.on('connection', (socket) => {
     socket.on("objectmoving", async (data) => {
         const userid = socket.user.id;
         const user = await User.findById(userid).populate("ActiveRoom");
-        const room = user.ActiveRoom;
+    
+        const room= await user.ActiveRoom.populate("participants.user");
+    const participants = room.participants;
+    const m = participants.some((x) => x.user._id.toString()===userid.toString()&&(x.role==="Editor"||x.role==="Host"));
+        if(!m) {
+          socket.emit("access",{response:"Required Editor Access"});
+          return;
+        }
 
         socket.to(room.roomId).emit("showobjectmoving", data);
     });

@@ -12,6 +12,7 @@ export const SocketProvider = (props) => {
         () => 
             io(`${conf.path}`, {
           withCredentials: true,
+          autoConnect:true,
         }), 
             []
     );
