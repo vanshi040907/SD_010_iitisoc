@@ -165,6 +165,7 @@ const Whiteboard = () => {
   }, []);
 
   const undo = async () => {
+     if(role==="Viewer") return;
      console.log("UNDO START");
     if (historyStackRef.current.length === 0) return;
     const last = historyStackRef.current.pop();
@@ -189,6 +190,7 @@ const Whiteboard = () => {
   };
 
   const redo = async () => {
+     if(role==="Viewer") return;
     if (redoStackRef.current.length === 0) return;
     const restored = redoStackRef.current.pop();
     historyStackRef.current.push(restored);
