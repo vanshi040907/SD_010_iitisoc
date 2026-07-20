@@ -9,6 +9,10 @@ import { TOOL_CURSORS } from "../utils/cursor";
 import { RoomContext } from '../context/RoomContext';
 import { ThemeContext } from '../context/ThemeContext';
 import { LaserContext } from '../context/laser';
+import { useGrid } from "../context/GridContext";
+
+
+
 
 const THROTTLE_MS = 10;
 
@@ -21,14 +25,14 @@ const Whiteboard = () => {
   const [add, setAdd] = useState(0);
   const [selectedId, setSelectedId] = useState(null);
   const selectedIdRef = useRef(null);
-  const [role,setRole] = useState("Editor");
+  const [role, setRole] = useState("Editor");
   useEffect(() => { selectedIdRef.current = selectedId; }, [selectedId]);
 
-  const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump, notifyHistortChange ,setActiveShape, setActiveTool, registerDrawing, selectExport,setSelectExport} = useContext(WhiteboardContext);
-  
+  const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump, notifyHistortChange, setActiveShape, setActiveTool, registerDrawing, selectExport, setSelectExport } = useContext(WhiteboardContext);
+
   const { camera, setCamera, worldtoscreen, screentoworld, zoom, setZoom, cameraonzoom, isZoom, setIsZoom, canvasRef } = useInfinity();
-  const { laserLeave,laserMove,laserUp} = useContext(LaserContext);
-  const {roomId} = useContext(RoomContext);
+  const { laserLeave, laserMove, laserUp } = useContext(LaserContext);
+  const { roomId } = useContext(RoomContext);
   const [isPanning, setIsPanning] = useState(true);
   const activeColorRef = useRef(activeColor);
   const strokeWidthRef = useRef(strokeWidth);
@@ -49,7 +53,7 @@ const Whiteboard = () => {
   const dragLastWorldRef = useRef({ x: 0, y: 0 });
 
   const ctxRef = useRef(null);
-
+  const { showGrid } = useGrid();
   //operation storage for undo and redo
   const historyStackRef = useRef([]);
   const redoStackRef = useRef([]);
@@ -165,8 +169,8 @@ const Whiteboard = () => {
   }, []);
 
   const undo = async () => {
-     if(role==="Viewer") return;
-     console.log("UNDO START");
+    if (role === "Viewer") return;
+    console.log("UNDO START");
     if (historyStackRef.current.length === 0) return;
     const last = historyStackRef.current.pop();
     redoStackRef.current.push(last);
@@ -190,7 +194,7 @@ const Whiteboard = () => {
   };
 
   const redo = async () => {
-     if(role==="Viewer") return;
+    if (role === "Viewer") return;
     if (redoStackRef.current.length === 0) return;
     const restored = redoStackRef.current.pop();
     historyStackRef.current.push(restored);
@@ -210,333 +214,333 @@ const Whiteboard = () => {
     redrawAll();
     redraw();
   }
-      let MAX_X_STROKE = -Infinity;
-    let MAX_Y_STROKE = -Infinity;
-    let MIN_X_STROKE = Infinity;
-    let MIN_Y_STROKE = Infinity;
-     
+  let MAX_X_STROKE = -Infinity;
+  let MAX_Y_STROKE = -Infinity;
+  let MIN_X_STROKE = Infinity;
+  let MIN_Y_STROKE = Infinity;
 
 
- 
+
+
   const downloadCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const tempCanvas =document.createElement("canvas");
+    const tempCanvas = document.createElement("canvas");
     let MAX_X = -Infinity;
     let MAX_Y = -Infinity;
     let MIN_X = Infinity;
     let MIN_Y = Infinity;
 
-    historyStackRef.current.forEach((item)=> {
-       if (item.type === "stroke") {
-        
-        
-        if(item.bounds.minx<MIN_X) MIN_X=item.bounds.minx;
-         if(item.bounds.miny<MIN_Y) MIN_Y=item.bounds.miny;
-         if(item.bounds.maxx>MAX_X) MAX_X=item.bounds.maxx;
-        if(item.bounds.maxy>MAX_Y) MAX_Y=item.bounds.maxy;
+    historyStackRef.current.forEach((item) => {
+      if (item.type === "stroke") {
 
-        
-        
+
+        if (item.bounds.minx < MIN_X) MIN_X = item.bounds.minx;
+        if (item.bounds.miny < MIN_Y) MIN_Y = item.bounds.miny;
+        if (item.bounds.maxx > MAX_X) MAX_X = item.bounds.maxx;
+        if (item.bounds.maxy > MAX_Y) MAX_Y = item.bounds.maxy;
+
+
+
       }
-      else if(item.type==="text") {
+      else if (item.type === "text") {
         const ctx = ctxRef.current;
-      ctx.font = `${item.fontSize}px Arial`;
-      const w = ctx.measureText(item.text).width;
-      const h = item.fontSize;
-      
-      if(item.x<MIN_X) MIN_X=item.x;
-         if(item.y - h<MIN_Y) MIN_Y=item.y - h;
-         if(item.x + w>MAX_X) MAX_X=item.x + w;
-        if(item.y>MAX_Y) MAX_Y=item.y;
-        
+        ctx.font = `${item.fontSize}px Arial`;
+        const w = ctx.measureText(item.text).width;
+        const h = item.fontSize;
+
+        if (item.x < MIN_X) MIN_X = item.x;
+        if (item.y - h < MIN_Y) MIN_Y = item.y - h;
+        if (item.x + w > MAX_X) MAX_X = item.x + w;
+        if (item.y > MAX_Y) MAX_Y = item.y;
+
       }
       else {
-        if(item.type==="rect"||item.type==="line") {
-       if(item.start.x<MIN_X) MIN_X=item.start.x;
-         if(item.start.y<MIN_Y) MIN_Y=item.start.y;
-         if(item.start.x>MAX_X) MAX_X=item.start.x;
-        if(item.start.y>MAX_Y) MAX_Y=item.start.y;
-         if(item.end.x<MIN_X) MIN_X=item.end.x;
-         if(item.end.y<MIN_Y) MIN_Y=item.end.y;
-         if(item.end.x>MAX_X) MAX_X=item.end.x;
-        if(item.end.y>MAX_Y) MAX_Y=item.end.y;
+        if (item.type === "rect" || item.type === "line") {
+          if (item.start.x < MIN_X) MIN_X = item.start.x;
+          if (item.start.y < MIN_Y) MIN_Y = item.start.y;
+          if (item.start.x > MAX_X) MAX_X = item.start.x;
+          if (item.start.y > MAX_Y) MAX_Y = item.start.y;
+          if (item.end.x < MIN_X) MIN_X = item.end.x;
+          if (item.end.y < MIN_Y) MIN_Y = item.end.y;
+          if (item.end.x > MAX_X) MAX_X = item.end.x;
+          if (item.end.y > MAX_Y) MAX_Y = item.end.y;
         }
-        else if(item.type==="circle") {
+        else if (item.type === "circle") {
           const start = item.start;
           const end = item.end;
           const dx = end.x - start.x;
           const dy = end.y - start.y;
 
-    const r = Math.sqrt(dx * dx + dy * dy);
-    const left = Math.min(start.x-r,start.x+r,end.x-r,end.x+r);
-    const right = Math.max(start.x-r,start.x+r,end.x-r,end.x+r);
-    const top = Math.min(start.y-r,start.y+r,end.y-r,end.y+r);
-    const bottom = Math.max(start.y-r,start.y+r,end.y-r,end.y+r);
-    MIN_X=Math.min(left,MIN_X);
-    MIN_Y=Math.min(top,MIN_Y);
-    MAX_X=Math.max(right,MAX_X);
-     MAX_Y=Math.max(bottom,MAX_Y);
+          const r = Math.sqrt(dx * dx + dy * dy);
+          const left = Math.min(start.x - r, start.x + r, end.x - r, end.x + r);
+          const right = Math.max(start.x - r, start.x + r, end.x - r, end.x + r);
+          const top = Math.min(start.y - r, start.y + r, end.y - r, end.y + r);
+          const bottom = Math.max(start.y - r, start.y + r, end.y - r, end.y + r);
+          MIN_X = Math.min(left, MIN_X);
+          MIN_Y = Math.min(top, MIN_Y);
+          MAX_X = Math.max(right, MAX_X);
+          MAX_Y = Math.max(bottom, MAX_Y);
 
-    
 
-    
 
-          
+
+
+
 
         }
         else {
-           const start = item.start;
+          const start = item.start;
           const end = item.end;
-          const point1_x=(start.x + end.x) / 2;
-          const point1_y=start.y;
-           const point2_x=start.x;
-           const point2_y=end.y;
-            const point3_x=end.x;
-           const point3_y=end.y;
-            MIN_X=Math.min(point1_x,point2_x,point3_x,MIN_X);
-    MIN_Y=Math.min(point1_y,point2_y,point3_y,MIN_Y);
-    MAX_X=Math.max(point1_x,point2_x,point3_x,MAX_X);
-     MAX_Y=Math.max(point1_y,point2_y,point3_y,MAX_Y);
+          const point1_x = (start.x + end.x) / 2;
+          const point1_y = start.y;
+          const point2_x = start.x;
+          const point2_y = end.y;
+          const point3_x = end.x;
+          const point3_y = end.y;
+          MIN_X = Math.min(point1_x, point2_x, point3_x, MIN_X);
+          MIN_Y = Math.min(point1_y, point2_y, point3_y, MIN_Y);
+          MAX_X = Math.max(point1_x, point2_x, point3_x, MAX_X);
+          MAX_Y = Math.max(point1_y, point2_y, point3_y, MAX_Y);
 
 
-          
 
-      
+
+
 
 
         }
-        
 
-      
+
+
       }
     }
 
 
     );
     if (MIN_X === Infinity) {
-    console.log("Nothing to export");
+      console.log("Nothing to export");
     }
 
-       tempCanvas.width = MAX_X-MIN_X;
-   tempCanvas.height = MAX_Y-MIN_Y;
-   const maxpixel = 100000000;
-   if(tempCanvas.width*tempCanvas.height > maxpixel) {
-    alert("This much large area to export")
-    return;
-   }
-     const tempCtx = tempCanvas.getContext("2d");
-      tempCtx.fillStyle = "#000000";
+    tempCanvas.width = MAX_X - MIN_X;
+    tempCanvas.height = MAX_Y - MIN_Y;
+    const maxpixel = 100000000;
+    if (tempCanvas.width * tempCanvas.height > maxpixel) {
+      alert("This much large area to export")
+      return;
+    }
+    const tempCtx = tempCanvas.getContext("2d");
+    tempCtx.fillStyle = "#000000";
     tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
-   tempCtx.translate(-MIN_X,-MIN_Y);
+    tempCtx.translate(-MIN_X, -MIN_Y);
 
-   
 
-//Again need to define function because only world coordinate needed
 
-     historyStackRef.current.forEach((item)=>  {
-if (item.type === "stroke") {
-  const Stroke = (ctx, stroke) => {
+    //Again need to define function because only world coordinate needed
 
-    const{
-      points,
-      color,
-      width,
-      isEraser,
-      opacity = 1
-    } = stroke;
-       
+    historyStackRef.current.forEach((item) => {
+      if (item.type === "stroke") {
+        const Stroke = (ctx, stroke) => {
 
-    if (points.length < 2) return;
+          const {
+            points,
+            color,
+            width,
+            isEraser,
+            opacity = 1
+          } = stroke;
 
-    ctx.save();
 
-    if (isEraser) {
-      ctx.globalCompositeOperation =
-        "destination-out";
-    } else {
-      ctx.globalCompositeOperation =
-        "source-over";
-    }
+          if (points.length < 2) return;
 
-    ctx.globalAlpha = opacity;
+          ctx.save();
 
-    ctx.strokeStyle = color;
-    ctx.lineWidth = width;
+          if (isEraser) {
+            ctx.globalCompositeOperation =
+              "destination-out";
+          } else {
+            ctx.globalCompositeOperation =
+              "source-over";
+          }
 
-    ctx.beginPath();
-    ctx.moveTo(
-      points[0].x,
-      points[0].y
-    );
+          ctx.globalAlpha = opacity;
 
-    for (
-      let i = 1;
-      i < points.length - 1;
-      i++
-    ) {
+          ctx.strokeStyle = color;
+          ctx.lineWidth = width;
 
-      const midX =
-        (points[i].x +
-          points[i + 1].x) / 2;
+          ctx.beginPath();
+          ctx.moveTo(
+            points[0].x,
+            points[0].y
+          );
 
-      const midY =
-        (points[i].y +
-          points[i + 1].y) / 2;
+          for (
+            let i = 1;
+            i < points.length - 1;
+            i++
+          ) {
 
-      ctx.quadraticCurveTo(
-        points[i].x,
-        points[i].y,
-        midX,
-        midY
-      );
-    }
+            const midX =
+              (points[i].x +
+                points[i + 1].x) / 2;
 
-    const last =
-      points[points.length - 1];
+            const midY =
+              (points[i].y +
+                points[i + 1].y) / 2;
 
-    ctx.lineTo(
-      last.x,
-      last.y
-    );
+            ctx.quadraticCurveTo(
+              points[i].x,
+              points[i].y,
+              midX,
+              midY
+            );
+          }
 
-    ctx.stroke();
+          const last =
+            points[points.length - 1];
 
-    ctx.restore();
-  };
+          ctx.lineTo(
+            last.x,
+            last.y
+          );
 
-  
-  Stroke(tempCtx,item);
+          ctx.stroke();
+
+          ctx.restore();
+        };
+
+
+        Stroke(tempCtx, item);
 
       }
-else if(item.type==="text") {
-  const Text = (ctx, item) => {
-    ctx.save();
-    ctx.fillStyle = item.color;
-    ctx.font = `${item.fontSize}px Arial`;
+      else if (item.type === "text") {
+        const Text = (ctx, item) => {
+          ctx.save();
+          ctx.fillStyle = item.color;
+          ctx.font = `${item.fontSize}px Arial`;
 
 
-    ctx.fillText(
-      item.text,
-      item.x,
-      item.y
-    );
+          ctx.fillText(
+            item.text,
+            item.x,
+            item.y
+          );
 
-    
-    ctx.restore();
-  };
-  Text(tempCtx,item);
-  
-        
+
+          ctx.restore();
+        };
+        Text(tempCtx, item);
+
+
       }
-else {
-    const Rect = (ctx, shape) => {
-    const x = Math.min(shape.start.x,shape.end.x);
-    const y = Math.min(shape.start.y,shape.end.y);
-    const width = Math.abs(shape.end.x - shape.start.x);
-    const height = Math.abs(shape.end.y - shape.start.y);
+      else {
+        const Rect = (ctx, shape) => {
+          const x = Math.min(shape.start.x, shape.end.x);
+          const y = Math.min(shape.start.y, shape.end.y);
+          const width = Math.abs(shape.end.x - shape.start.x);
+          const height = Math.abs(shape.end.y - shape.start.y);
 
-    ctx.strokeStyle = shape.color;
-    ctx.lineWidth = shape.width;
+          ctx.strokeStyle = shape.color;
+          ctx.lineWidth = shape.width;
 
-    ctx.strokeRect(x, y, width, height);
-  };
+          ctx.strokeRect(x, y, width, height);
+        };
 
-  const LineShape = (ctx, shape) => {
-    
-    ctx.strokeStyle = shape.color;
-    ctx.lineWidth = shape.width;
+        const LineShape = (ctx, shape) => {
 
-    ctx.beginPath();
-    ctx.moveTo(shape.start.x, shape.start.y);
-    ctx.lineTo(shape.end.x,shape.end.y);
-    ctx.stroke();
-  };
+          ctx.strokeStyle = shape.color;
+          ctx.lineWidth = shape.width;
 
-  const Circle = (ctx, shape) => {
-   
-    const dx = shape.end.x - shape.start.x;
-    const dy = shape.end.y - shape.start.y;
+          ctx.beginPath();
+          ctx.moveTo(shape.start.x, shape.start.y);
+          ctx.lineTo(shape.end.x, shape.end.y);
+          ctx.stroke();
+        };
 
-    const radius = Math.sqrt(dx * dx + dy * dy);
+        const Circle = (ctx, shape) => {
 
-    ctx.strokeStyle = shape.color;
-    ctx.lineWidth = shape.width;
+          const dx = shape.end.x - shape.start.x;
+          const dy = shape.end.y - shape.start.y;
 
-    ctx.beginPath();
-    ctx.arc(
-      shape.start.x,
-      shape.start.y,
-      radius,
-      0,
-      Math.PI * 2
-    );
+          const radius = Math.sqrt(dx * dx + dy * dy);
 
-    ctx.stroke();
-  };
+          ctx.strokeStyle = shape.color;
+          ctx.lineWidth = shape.width;
 
-  const Triangle = (ctx, shape) => {
-     const start = shape.start;
-     const end = shape.end;
-    
+          ctx.beginPath();
+          ctx.arc(
+            shape.start.x,
+            shape.start.y,
+            radius,
+            0,
+            Math.PI * 2
+          );
 
-    ctx.strokeStyle = shape.color;
-    ctx.lineWidth = shape.width;
+          ctx.stroke();
+        };
 
-    ctx.beginPath();
-
-    ctx.moveTo(
-      (start.x + end.x) / 2,
-      start.y
-    );
-
-    ctx.lineTo(
-      start.x,
-      end.y
-    );
-
-    ctx.lineTo(
-      end.x,
-      end.y
-    );
-
-    ctx.closePath();
-    ctx.stroke();
-  };
-
-  const Shape = (ctx, shape) => {
-    
-    switch (shape.type) {
-      case "rect":
-        Rect(ctx, shape);
-        break;
-
-      case "circle":
-        Circle(ctx, shape);
-        break;
-
-      case "triangle":
-        Triangle(ctx, shape);
-        break;
-
-      case "line":
-        LineShape(ctx, shape);
-        break;
-
-      default:
-        break;
-    }
-  };
-  Shape(tempCtx,item);
+        const Triangle = (ctx, shape) => {
+          const start = shape.start;
+          const end = shape.end;
 
 
-}
-  });
-    
-    
-    
+          ctx.strokeStyle = shape.color;
+          ctx.lineWidth = shape.width;
+
+          ctx.beginPath();
+
+          ctx.moveTo(
+            (start.x + end.x) / 2,
+            start.y
+          );
+
+          ctx.lineTo(
+            start.x,
+            end.y
+          );
+
+          ctx.lineTo(
+            end.x,
+            end.y
+          );
+
+          ctx.closePath();
+          ctx.stroke();
+        };
+
+        const Shape = (ctx, shape) => {
+
+          switch (shape.type) {
+            case "rect":
+              Rect(ctx, shape);
+              break;
+
+            case "circle":
+              Circle(ctx, shape);
+              break;
+
+            case "triangle":
+              Triangle(ctx, shape);
+              break;
+
+            case "line":
+              LineShape(ctx, shape);
+              break;
+
+            default:
+              break;
+          }
+        };
+        Shape(tempCtx, item);
+
+
+      }
+    });
+
+
+
 
 
     const dataUrl = tempCanvas.toDataURL("image/jpeg", 0.95);
@@ -548,9 +552,9 @@ else {
     link.click();
     document.body.removeChild(link);
   }, []);
-const downloadCurrentCanvas = useCallback(()=>{
+  const downloadCurrentCanvas = useCallback(() => {
     const canvas = canvasRef.current;
-    if(!canvas) return;
+    if (!canvas) return;
     const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
 
     const link = document.createElement('a');
@@ -560,255 +564,255 @@ const downloadCurrentCanvas = useCallback(()=>{
     link.click();
     document.body.removeChild(link);
   }, [camera]);
-const downloadSelectCanvas = useCallback((item)=>{
+  const downloadSelectCanvas = useCallback((item) => {
     alert("Download triggered");
     const canvas = canvasRef.current;
-    if(!canvas) return;
-     const tempCanvas =document.createElement("canvas");
-      setSelectExport(false);
-  
-       let MAX_X = -Infinity;
+    if (!canvas) return;
+    const tempCanvas = document.createElement("canvas");
+    setSelectExport(false);
+
+    let MAX_X = -Infinity;
     let MAX_Y = -Infinity;
     let MIN_X = Infinity;
     let MIN_Y = Infinity;
 
 
-      if (item) {
-          const padding = 8; 
-            const box = getScreenBoundingBox(item);
-            const screenmin = {
-               x: box.minX - padding ,
-               y: box.minY - padding ,
-            }
-            const screenmax = {
-               x: box.maxX + padding ,
-               y: box.maxY + padding ,
-            }
-            const worldmin = screentoworld({ screen: screenmin, camera })
-            const worldmax = screentoworld({ screen: screenmax, camera })
-            MIN_X= worldmin.x ;
-           MAX_X= worldmax.x;
-        MIN_Y = worldmin.y;
-        MAX_Y= worldmax.y;
-          tempCanvas.width = MAX_X-MIN_X;
-   tempCanvas.height = MAX_Y-MIN_Y;
-   const maxpixel = 100000000;
-   if(tempCanvas.width*tempCanvas.height > maxpixel) {
-    alert("This much large area to export")
-    return;
-   }
-     const tempCtx = tempCanvas.getContext("2d");
+    if (item) {
+      const padding = 8;
+      const box = getScreenBoundingBox(item);
+      const screenmin = {
+        x: box.minX - padding,
+        y: box.minY - padding,
+      }
+      const screenmax = {
+        x: box.maxX + padding,
+        y: box.maxY + padding,
+      }
+      const worldmin = screentoworld({ screen: screenmin, camera })
+      const worldmax = screentoworld({ screen: screenmax, camera })
+      MIN_X = worldmin.x;
+      MAX_X = worldmax.x;
+      MIN_Y = worldmin.y;
+      MAX_Y = worldmax.y;
+      tempCanvas.width = MAX_X - MIN_X;
+      tempCanvas.height = MAX_Y - MIN_Y;
+      const maxpixel = 100000000;
+      if (tempCanvas.width * tempCanvas.height > maxpixel) {
+        alert("This much large area to export")
+        return;
+      }
+      const tempCtx = tempCanvas.getContext("2d");
       tempCtx.fillStyle = "#000000";
-    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
-   tempCtx.translate(-MIN_X,-MIN_Y);
+      tempCtx.translate(-MIN_X, -MIN_Y);
 
 
-          
-if (item.type === "stroke") {
-  const Stroke = (ctx, stroke) => {
 
-    const{
-      points,
-      color,
-      width,
-      isEraser,
-      opacity = 1
-    } = stroke;
-       
+      if (item.type === "stroke") {
+        const Stroke = (ctx, stroke) => {
 
-    if (points.length < 2) return;
+          const {
+            points,
+            color,
+            width,
+            isEraser,
+            opacity = 1
+          } = stroke;
 
-    ctx.save();
 
-    if (isEraser) {
-      ctx.globalCompositeOperation =
-        "destination-out";
+          if (points.length < 2) return;
+
+          ctx.save();
+
+          if (isEraser) {
+            ctx.globalCompositeOperation =
+              "destination-out";
+          } else {
+            ctx.globalCompositeOperation =
+              "source-over";
+          }
+
+          ctx.globalAlpha = opacity;
+
+          ctx.strokeStyle = color;
+          ctx.lineWidth = width;
+
+          ctx.beginPath();
+          ctx.moveTo(
+            points[0].x,
+            points[0].y
+          );
+
+          for (
+            let i = 1;
+            i < points.length - 1;
+            i++
+          ) {
+
+            const midX =
+              (points[i].x +
+                points[i + 1].x) / 2;
+
+            const midY =
+              (points[i].y +
+                points[i + 1].y) / 2;
+
+            ctx.quadraticCurveTo(
+              points[i].x,
+              points[i].y,
+              midX,
+              midY
+            );
+          }
+
+          const last =
+            points[points.length - 1];
+
+          ctx.lineTo(
+            last.x,
+            last.y
+          );
+
+          ctx.stroke();
+
+          ctx.restore();
+        };
+
+
+        Stroke(tempCtx, item);
+
+      }
+      else if (item.type === "text") {
+        const Text = (ctx, item) => {
+          ctx.save();
+          ctx.fillStyle = item.color;
+          ctx.font = `${item.fontSize}px Arial`;
+
+
+          ctx.fillText(
+            item.text,
+            item.x,
+            item.y
+          );
+
+
+          ctx.restore();
+        };
+        Text(tempCtx, item);
+
+      }
+      else {
+        const Rect = (ctx, shape) => {
+          const x = Math.min(shape.start.x, shape.end.x);
+          const y = Math.min(shape.start.y, shape.end.y);
+          const width = Math.abs(shape.end.x - shape.start.x);
+          const height = Math.abs(shape.end.y - shape.start.y);
+
+          ctx.strokeStyle = shape.color;
+          ctx.lineWidth = shape.width;
+
+          ctx.strokeRect(x, y, width, height);
+        };
+
+        const LineShape = (ctx, shape) => {
+
+          ctx.strokeStyle = shape.color;
+          ctx.lineWidth = shape.width;
+
+          ctx.beginPath();
+          ctx.moveTo(shape.start.x, shape.start.y);
+          ctx.lineTo(shape.end.x, shape.end.y);
+          ctx.stroke();
+        };
+
+        const Circle = (ctx, shape) => {
+
+          const dx = shape.end.x - shape.start.x;
+          const dy = shape.end.y - shape.start.y;
+
+          const radius = Math.sqrt(dx * dx + dy * dy);
+
+          ctx.strokeStyle = shape.color;
+          ctx.lineWidth = shape.width;
+
+          ctx.beginPath();
+          ctx.arc(
+            shape.start.x,
+            shape.start.y,
+            radius,
+            0,
+            Math.PI * 2
+          );
+
+          ctx.stroke();
+        };
+
+        const Triangle = (ctx, shape) => {
+          const start = shape.start;
+          const end = shape.end;
+
+
+          ctx.strokeStyle = shape.color;
+          ctx.lineWidth = shape.width;
+
+          ctx.beginPath();
+
+          ctx.moveTo(
+            (start.x + end.x) / 2,
+            start.y
+          );
+
+          ctx.lineTo(
+            start.x,
+            end.y
+          );
+
+          ctx.lineTo(
+            end.x,
+            end.y
+          );
+
+          ctx.closePath();
+          ctx.stroke();
+        };
+
+        const Shape = (ctx, shape) => {
+
+          switch (shape.type) {
+            case "rect":
+              Rect(ctx, shape);
+              break;
+
+            case "circle":
+              Circle(ctx, shape);
+              break;
+
+            case "triangle":
+              Triangle(ctx, shape);
+              break;
+
+            case "line":
+              LineShape(ctx, shape);
+              break;
+
+            default:
+              break;
+          }
+        };
+        Shape(tempCtx, item);
+
+
+      }
+
+
+
+
+
     } else {
-      ctx.globalCompositeOperation =
-        "source-over";
+      return null;
+
     }
-
-    ctx.globalAlpha = opacity;
-
-    ctx.strokeStyle = color;
-    ctx.lineWidth = width;
-
-    ctx.beginPath();
-    ctx.moveTo(
-      points[0].x,
-      points[0].y
-    );
-
-    for (
-      let i = 1;
-      i < points.length - 1;
-      i++
-    ) {
-
-      const midX =
-        (points[i].x +
-          points[i + 1].x) / 2;
-
-      const midY =
-        (points[i].y +
-          points[i + 1].y) / 2;
-
-      ctx.quadraticCurveTo(
-        points[i].x,
-        points[i].y,
-        midX,
-        midY
-      );
-    }
-
-    const last =
-      points[points.length - 1];
-
-    ctx.lineTo(
-      last.x,
-      last.y
-    );
-
-    ctx.stroke();
-
-    ctx.restore();
-  };
-
-  
-  Stroke(tempCtx,item);
-
-      }
-else if(item.type==="text") {
-         const Text = (ctx, item) => {
-    ctx.save();
-    ctx.fillStyle = item.color;
-    ctx.font = `${item.fontSize}px Arial`;
-
-
-    ctx.fillText(
-      item.text,
-      item.x,
-      item.y
-    );
-
-    
-    ctx.restore();
-  };
-  Text(tempCtx,item);
-  
-      }
-else {
-    const Rect = (ctx, shape) => {
-    const x = Math.min(shape.start.x,shape.end.x);
-    const y = Math.min(shape.start.y,shape.end.y);
-    const width = Math.abs(shape.end.x - shape.start.x);
-    const height = Math.abs(shape.end.y - shape.start.y);
-
-    ctx.strokeStyle = shape.color;
-    ctx.lineWidth = shape.width;
-
-    ctx.strokeRect(x, y, width, height);
-  };
-
-  const LineShape = (ctx, shape) => {
-    
-    ctx.strokeStyle = shape.color;
-    ctx.lineWidth = shape.width;
-
-    ctx.beginPath();
-    ctx.moveTo(shape.start.x, shape.start.y);
-    ctx.lineTo(shape.end.x,shape.end.y);
-    ctx.stroke();
-  };
-
-  const Circle = (ctx, shape) => {
-   
-    const dx = shape.end.x - shape.start.x;
-    const dy = shape.end.y - shape.start.y;
-
-    const radius = Math.sqrt(dx * dx + dy * dy);
-
-    ctx.strokeStyle = shape.color;
-    ctx.lineWidth = shape.width;
-
-    ctx.beginPath();
-    ctx.arc(
-      shape.start.x,
-      shape.start.y,
-      radius,
-      0,
-      Math.PI * 2
-    );
-
-    ctx.stroke();
-  };
-
-  const Triangle = (ctx, shape) => {
-     const start = shape.start;
-     const end = shape.end;
-    
-
-    ctx.strokeStyle = shape.color;
-    ctx.lineWidth = shape.width;
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-      (start.x + end.x) / 2,
-      start.y
-    );
-
-    ctx.lineTo(
-      start.x,
-      end.y
-    );
-
-    ctx.lineTo(
-      end.x,
-      end.y
-    );
-
-    ctx.closePath();
-    ctx.stroke();
-  };
-
-  const Shape = (ctx, shape) => {
-    
-    switch (shape.type) {
-      case "rect":
-        Rect(ctx, shape);
-        break;
-
-      case "circle":
-        Circle(ctx, shape);
-        break;
-
-      case "triangle":
-        Triangle(ctx, shape);
-        break;
-
-      case "line":
-        LineShape(ctx, shape);
-        break;
-
-      default:
-        break;
-    }
-  };
-  Shape(tempCtx,item);
-
-
-}
-
-  
-    
-
-         
-      } else {
-       return null;
-        
-      }
     const dataUrl = tempCanvas.toDataURL("image/jpeg", 0.95);
 
     const link = document.createElement('a');
@@ -817,7 +821,7 @@ else {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
   }, [camera]);
 
 
@@ -832,9 +836,9 @@ else {
       canRedo: () => redoStackRef.current.length > 0,
       downloadCanvas,
       downloadCurrentCanvas,
-      
+
     });
-  }, [bump,camera]);
+  }, [bump, camera]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -935,31 +939,31 @@ else {
     socket.emit('historysend', { history: historyStackRef.current });
   };
   useEffect(() => {
-   
+
     socket.emit("refresh");
-  },[])
+  }, [])
 
   useEffect(() => {
     const handleAlert = (data) => {
       alert(data.response);
     }
-    socket.on("access",handleAlert)
-      return () => {
-        socket.off("access",handleAlert);
-      }
-    
-  },[socket])
+    socket.on("access", handleAlert)
+    return () => {
+      socket.off("access", handleAlert);
+    }
+
+  }, [socket])
   useEffect(() => {
     const handleRole = (data) => {
       setRole(data.role);
     }
     socket.emit("introrole")
-    socket.on("role",handleRole);
-      return () => {
-        socket.off("role",handleRole);
-      }
-  },[socket])
-  
+    socket.on("role", handleRole);
+    return () => {
+      socket.off("role", handleRole);
+    }
+  }, [socket])
+
 
   useEffect(() => {
     const handlesocket = (data) => {
@@ -967,12 +971,12 @@ else {
       historyStackRef.current = history;
       redrawAll();
     }
-    socket.on("historyreceived",handlesocket)
-      return () => {
-        socket.off("historyreceived",handlesocket);
-      }
-    
-  },[socket,camera])
+    socket.on("historyreceived", handlesocket)
+    return () => {
+      socket.off("historyreceived", handlesocket);
+    }
+
+  }, [socket, camera])
   useEffect(() => {
     const handlesocket = (data) => {
       drawSegment(ctxRef.current,
@@ -997,28 +1001,28 @@ else {
         fontSize: data.newTextItem.fontSize,
       });
     };
-    const handledrag = ({item}) => {
-        const index = historyStackRef.current.findIndex((i) => i.id === item.id);
-        if(index !== -1) {
-          historyStackRef.current[index] = item;
-        }
-        redrawAll();
+    const handledrag = ({ item }) => {
+      const index = historyStackRef.current.findIndex((i) => i.id === item.id);
+      if (index !== -1) {
+        historyStackRef.current[index] = item;
+      }
+      redrawAll();
 
     }
     socket.on("currentreceived", handlesocket);
     socket.on("currentshapereceived", handleshape);
     socket.on("showtext", handletext);
-    socket.on("showobjectmoving",handledrag);
+    socket.on("showobjectmoving", handledrag);
 
     return () => {
       socket.off("currentreceived", handlesocket);
       socket.off("currentshapereceived", handleshape);
       socket.off("showtext", handletext);
-      socket.off("showobjectmoving",handledrag);
+      socket.off("showobjectmoving", handledrag);
     };
-  }, [socket,camera]);
+  }, [socket, camera]);
 
-    
+
 
 
   //function for undo/redo/ first initialisation of the canvas- complete redraw through object array saved
@@ -1028,7 +1032,9 @@ else {
     const canvas = canvasRef.current;
     if (!ctx || !canvas) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawGrid(ctx, canvas)
+    if (showGrid) {
+      drawGrid(ctx, canvas);
+    }
 
     historyStackRef.current.forEach((item) => {
       if (item.type === "stroke") {
@@ -1053,7 +1059,7 @@ else {
       }
     }
 
-  }, [camera, zoom, isDark]);
+  }, [camera, zoom, isDark, showGrid]);
 
   useEffect(() => {
     registerDrawing({
@@ -1153,7 +1159,7 @@ else {
     ctx.stroke();
     ctx.restore();
   };
-   const drawStroke = (ctx, stroke) => {
+  const drawStroke = (ctx, stroke) => {
     const { points, color, width, isEraser, opacity = 1 } = stroke;
     const point = points.map((point) => {
       return worldtoscreen({ world: point, camera });
@@ -1197,10 +1203,10 @@ else {
     ctx.fillStyle = item.color;
     ctx.font = `${item.fontSize}px Arial`;
     const world = {
-      x:item.x,
-      y:item.y
+      x: item.x,
+      y: item.y
     }
-    const screen= worldtoscreen({world, camera});
+    const screen = worldtoscreen({ world, camera });
 
     ctx.fillText(
       item.text,
@@ -1208,7 +1214,7 @@ else {
       screen.y
     );
 
-    
+
     ctx.restore();
   };
 
@@ -1255,30 +1261,30 @@ else {
   // Mouse Handlers
   const handleMouseDown = (e) => {
 
-    if(role==="Viewer") return;
+    if (role === "Viewer") return;
     const point = getMousePos(e);
     setIsPanning(false);
     setIsZoom(false);
-    
+
     const point_stored = screentoworld({ screen: point, camera });
-    if(selectExport) {
-      
-        const item = hitTestScreen(point);
-        if(item) {
-           setSelectedId(item.id);
+    if (selectExport) {
+
+      const item = hitTestScreen(point);
+      if (item) {
+        setSelectedId(item.id);
         selectedIdRef.current = item.id;
         redrawAll();
         setTimeout(() => {
-            downloadSelectCanvas(item);
+          downloadSelectCanvas(item);
           setSelectedId(null);
           selectedIdRef.current = null;
           redrawAll();
-        },100)
-         
-        }
+        }, 100)
+
+      }
     }
-    
-    
+
+
 
     else if (
       activeToolRefLocal.current === "pen" ||
@@ -1287,12 +1293,12 @@ else {
     ) {
       isDrawingRef.current = true;
       lastPointRef.current = point_stored;
-       if(point_stored.x<MIN_X_STROKE) MIN_X_STROKE=point_stored.x;
-         if(point_stored.y<MIN_Y_STROKE) MIN_Y_STROKE=point_stored.y;
-         if(point_stored.x>MAX_X_STROKE) MAX_X_STROKE=point_stored.x;
-        if(point_stored.y>MAX_Y_STROKE) MAX_Y_STROKE=point_stored.y;
+      if (point_stored.x < MIN_X_STROKE) MIN_X_STROKE = point_stored.x;
+      if (point_stored.y < MIN_Y_STROKE) MIN_Y_STROKE = point_stored.y;
+      if (point_stored.x > MAX_X_STROKE) MAX_X_STROKE = point_stored.x;
+      if (point_stored.y > MAX_Y_STROKE) MAX_Y_STROKE = point_stored.y;
 
-    
+
 
       currentStrokeRef.current = {
         id: crypto.randomUUID(),
@@ -1315,7 +1321,7 @@ else {
 
         isHighlighter:
           activeToolRefLocal.current === "highlighter",
-        bounds:{}
+        bounds: {}
       };
     } else if (activeToolRefLocal.current === "shape") {
       isDrawingRef.current = true;
@@ -1350,7 +1356,7 @@ else {
         return;
       }
 
-      
+
       setTextInput({
         x: point.x,
         y: point.y,
@@ -1360,7 +1366,7 @@ else {
         editingId: null,
       });
     }
-    
+
   };
 
   // double click handler — if text tool is active and user double-clicks
@@ -1407,8 +1413,8 @@ else {
   };
   const handleMouseMove = (e) => {
     if (activeTool === "laser") {
-  laserMove(e);
-}
+      laserMove(e);
+    }
     if (!isDrawingRef.current && !isDraggingRef.current) return;
 
     const now = performance.now();
@@ -1417,11 +1423,11 @@ else {
 
     const point = getMousePos(e);
     const ctx = ctxRef.current;
-    const point_stored = screentoworld({screen:point,camera})
-     if(point_stored.x<MIN_X_STROKE) MIN_X_STROKE=point_stored.x;
-         if(point_stored.y<MIN_Y_STROKE) MIN_Y_STROKE=point_stored.y;
-         if(point_stored.x>MAX_X_STROKE) MAX_X_STROKE=point_stored.x;
-        if(point_stored.y>MAX_Y_STROKE) MAX_Y_STROKE=point_stored.y;
+    const point_stored = screentoworld({ screen: point, camera })
+    if (point_stored.x < MIN_X_STROKE) MIN_X_STROKE = point_stored.x;
+    if (point_stored.y < MIN_Y_STROKE) MIN_Y_STROKE = point_stored.y;
+    if (point_stored.x > MAX_X_STROKE) MAX_X_STROKE = point_stored.x;
+    if (point_stored.y > MAX_Y_STROKE) MAX_Y_STROKE = point_stored.y;
 
     if (activeToolRefLocal.current === "shape") {
       previewShapeRef.current.end = point_stored;
@@ -1443,7 +1449,7 @@ else {
       const item = historyStackRef.current.find((i) => i.id === selectedIdRef.current);
 
       if (item) {
-        
+
         if (item.type === "text") {
           item.x += worldDx;
           item.y += worldDy;
@@ -1461,7 +1467,7 @@ else {
 
         redrawAll();
         socket.emit("objectmoving", { item: item });
-        
+
       }
 
       dragLastScreenRef.current = point;
@@ -1490,7 +1496,7 @@ else {
     );
 
     currentStrokeRef.current.points.push(point_stored);
-    
+
 
     lastPointRef.current = point_stored;
   };
@@ -1499,8 +1505,8 @@ else {
     setIsPanning(true);
     setIsZoom(true);
     if (activeTool === "laser") {
-  laserUp();
-}
+      laserUp();
+    }
 
     if (!isDrawingRef.current && !isDraggingRef.current) return;
     isDrawingRef.current = false;
@@ -1514,27 +1520,28 @@ else {
       currentStrokeRef.current.points.length > 1
     ) {
       currentStrokeRef.current.bounds = {
-        minx:MIN_X_STROKE,
-        miny:MIN_Y_STROKE,
-        maxx:MAX_X_STROKE,
-        maxy:MAX_Y_STROKE};
+        minx: MIN_X_STROKE,
+        miny: MIN_Y_STROKE,
+        maxx: MAX_X_STROKE,
+        maxy: MAX_Y_STROKE
+      };
       historyStackRef.current.push(
         currentStrokeRef.current
       );
 
- try {
-      await axios.post(
-       `${conf.path}/whiteboard/event`,{
-        drawingOperations:currentStrokeRef.current ,
-        },{
+      try {
+        await axios.post(
+          `${conf.path}/whiteboard/event`, {
+          drawingOperations: currentStrokeRef.current,
+        }, {
           withCredentials: true,
         },
-      );
-      
-      
-    } catch (error) {
-      console.log(error);
-    }
+        );
+
+
+      } catch (error) {
+        console.log(error);
+      }
 
       redoStackRef.current = [];
       redrawAll();
@@ -1598,11 +1605,11 @@ else {
       const MAX = 20;
       const MIN = 0.02;
       let x = 0;
-       e.preventDefault();
+      e.preventDefault();
 
       if (e.ctrlKey && isZoom) {
         x = 1;
-       
+
         const rect = canvas.getBoundingClientRect();
         const screen = {
           x: e.clientX - rect.left,
@@ -1637,7 +1644,7 @@ else {
 
   useEffect(() => {
     redrawAll();
-  }, [camera, zoom, isDark]);
+  }, [camera, zoom, isDark, showGrid]);
 
 
   return (
@@ -1664,33 +1671,35 @@ else {
           onChange={(e) => {
             let value = e.target.value;
             setTextInput((prev) => ({ ...prev, value: e.target.value }));
-             const screen = {
-      x:textInput.x,
-      y:textInput.y
-    }
-    const world=screentoworld({screen, camera});
+            const screen = {
+              x: textInput.x,
+              y: textInput.y
+            }
+            const world = screentoworld({ screen, camera });
 
-          socket.emit("text",{newTextItem:{
-             x: world.x,
-        y:world.y,
-        value: value,
-        color: activeColorRefText.current,
-        fontSize: 20,
-        editingId: textInput.editingId,
+            socket.emit("text", {
+              newTextItem: {
+                x: world.x,
+                y: world.y,
+                value: value,
+                color: activeColorRefText.current,
+                fontSize: 20,
+                editingId: textInput.editingId,
 
-          }});
-        }
+              }
+            });
+          }
           }
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
               const screen = {
-      x:textInput.x,
-      y:textInput.y
-    }
-    const world=screentoworld({screen, camera});
-    textInput.x = world.x;
-    textInput.y = world.y;
+                x: textInput.x,
+                y: textInput.y
+              }
+              const world = screentoworld({ screen, camera });
+              textInput.x = world.x;
+              textInput.y = world.y;
               commitText(textInput);
             }
             if (e.key === "Escape") {
