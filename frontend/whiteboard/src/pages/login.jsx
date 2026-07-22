@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import LetsCoSketh from "../animations/LetsCoSketh";
 import TextPressure from '../animations/TextPressure';
+import SplashCursor from "../animations/cursor";
 
 function Login() {
   const navigate = useNavigate();
@@ -45,6 +46,18 @@ function Login() {
     <>
       {/* Cord + housing — behind the title */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 z-[8] flex flex-col items-center">
+        <SplashCursor
+          DENSITY_DISSIPATION={2}
+          VELOCITY_DISSIPATION={1.5}
+          PRESSURE={0.05}
+          CURL={3}
+          SPLAT_RADIUS={0.13}
+          SPLAT_FORCE={3000}
+          COLOR_UPDATE_SPEED={23}
+          SHADING
+          RAINBOW_MODE={false}
+          COLOR="#7C3AED"
+        />
         <div className="w-[2px] h-[180px] bg-gradient-to-b from-[#26203a] to-[#3a3454]" />
         <div className="w-[100px] h-[50px] bg-[#201a30] rounded-b-md rounded-t-[40px] shadow-md" />
       </div>

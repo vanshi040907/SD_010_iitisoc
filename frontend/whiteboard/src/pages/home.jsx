@@ -6,6 +6,7 @@ import LetsCoSketh from '../animations/LetsCoSketh';
 import TiltedFeatureCard from '../components/FeatureCard';
 import TextPressure from '../animations/TextPressure';
 import { ArrowRight } from 'lucide-react';
+import SplashCursor from '../animations/cursor';
 
 const FEATURES = [
   {
@@ -96,6 +97,18 @@ const FEATURES = [
 function Home() {
     return (
         <div className="relative min-h-screen w-full">
+           <SplashCursor
+        DENSITY_DISSIPATION={2}
+        VELOCITY_DISSIPATION={1.5}
+        PRESSURE={0.05}
+        CURL={3}
+        SPLAT_RADIUS={0.13}
+        SPLAT_FORCE={3000}
+        COLOR_UPDATE_SPEED={23}
+        SHADING
+        RAINBOW_MODE={false}
+        COLOR="#7C3AED"
+      />
             {/* Background layer */}
             <div className="absolute inset-0 bg-[#0a0014]">
                 <Ferrofluid
