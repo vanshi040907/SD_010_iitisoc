@@ -123,6 +123,7 @@ async function Denial(req,res) {
    const roomid = user.ActiveRoom;
    const room = await Room.findById(roomid);
    const Rid = room.roomId;
+   if(!room.roomId) return;
 
    const n = room.participants.length;
   
@@ -147,14 +148,16 @@ async function Denial(req,res) {
    const user = await User.findById(userid)
                   .populate("ActiveRoom");
                   if(user.ActiveRoom === null) return;
+                  console.log("userid",userid);
     
     const room= await user.ActiveRoom.populate([{ path: "owner" },
     { path: "participants.user" }]);
     const owner = room.owner.userName;
+    const ownerId = await room.owner._id;
     const participants = room.participants;
-    const member_name = participants.map((x) => ({name:x.user.userName,role:x.role}));
+    const member_name = participants.map((x) => ({name:x.user.userName,role:x.role ,MemberId:x.user._id}));
      return res.json({owner:owner,
-      mem:member_name
+      mem:member_name, MemId:ownerId
      });
 
   

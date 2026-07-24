@@ -24,7 +24,13 @@ const roomSchema = new Schema({
         enum:["Host","Viewer","Editor"],
         default:"Editor",
 
-     }}],
+     },
+     enabled:{
+        type:Boolean,
+        default:true
+     }
+    
+}],
     activeParticipants:[{
         type: Schema.Types.ObjectId,
         ref: "user",

@@ -36,7 +36,10 @@ const themes = {
     copied:"bg-green-500/20 border-green-500/30 text-green-400",
     colorpicker: "ring-[#0d0d1a]",
     messageBg: "rgba(255,255,255,0.08)",
-    memessageBg:"bg-purple-900"
+    memessageBg:"bg-purple-900",
+    mutebtn:"20 text-black bg ",
+    bgcolor:"bg-white",
+    muteme:"20 text-white bg"
   },
 
   light: {
@@ -73,7 +76,11 @@ const themes = {
     copied:"bg-green-800/20 border-green-800 text-green-800",
     colorpicker: "ring-[#ffffff]",
     messageBg: "rgba(0,0,255,0.08)",
-    memessageBg:"bg-purple-300"
+    memessageBg:"bg-purple-300",
+    mutebtn:"20 text-white bg ",
+    bgcolor:"bg-black",
+    muteme:"20 text-black bg ",
+
   },
 };
 
