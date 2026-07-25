@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import LetsCoSketh from "../animations/LetsCoSketh";
 import { RoomContext } from "../context/RoomContext";
 import { useEffect } from "react";
+import SplashCursor from "../animations/cursor";
 
 export default function Welcome() {
 
@@ -62,7 +63,7 @@ export default function Welcome() {
         `${conf.path}/room/createroom`,
         {
           roomID: roomID,
-          hostpermission:hostpermission,
+          hostpermission: hostpermission,
         },
         {
           withCredentials: true,
@@ -105,11 +106,11 @@ export default function Welcome() {
 
         navigate(`/Workspace/${joinRoomID}`);
         setRoomId(joinRoomID);
-        
+
       }
-      else if(response.data.pending) {
-         alert("wait for approval");
-         socket.emit("pending",{ myName: joinName.trim()});
+      else if (response.data.pending) {
+        alert("wait for approval");
+        socket.emit("pending", { myName: joinName.trim() });
       }
 
 
@@ -122,37 +123,49 @@ export default function Welcome() {
     }
   }
   useEffect(() => {
-     const handleApproval = (data) => {
+    const handleApproval = (data) => {
       console.log("sdfghj");
-       if (!socket.connected) {
-          socket.connect();
-        }
-        socket.emit("joinroom", {
-          roomID: joinRoomID.trim().toUpperCase(),
-          myName: joinName.trim(),
-        });
+      if (!socket.connected) {
+        socket.connect();
+      }
+      socket.emit("joinroom", {
+        roomID: joinRoomID.trim().toUpperCase(),
+        myName: joinName.trim(),
+      });
 
-        navigate(`/Workspace/${joinRoomID}`);
-        setRoomId(joinRoomID);
-        
+      navigate(`/Workspace/${joinRoomID}`);
+      setRoomId(joinRoomID);
 
-      
+
+
     }
     const handleDeny = (data) => {
       alert(`Sorry 😔 host didn't allowed you ❌ ${joinRoomID}`);
-      socket.emit("cancelPending",{response:"disconnect"});
+      socket.emit("cancelPending", { response: "disconnect" });
     }
-    socket.on("allow",handleApproval);
-    socket.on("deny",handleDeny);
-      return () => {
-        socket.off("allow",handleApproval);
-        socket.off("deny",handleDeny);
-      }
-  
-  },[socket,joinRoomID])
+    socket.on("allow", handleApproval);
+    socket.on("deny", handleDeny);
+    return () => {
+      socket.off("allow", handleApproval);
+      socket.off("deny", handleDeny);
+    }
+
+  }, [socket, joinRoomID])
 
   return (
     <div className="relative min-h-screen w-full ">
+      <SplashCursor
+        DENSITY_DISSIPATION={2}
+        VELOCITY_DISSIPATION={1.5}
+        PRESSURE={0.05}
+        CURL={3}
+        SPLAT_RADIUS={0.13}
+        SPLAT_FORCE={3000}
+        COLOR_UPDATE_SPEED={23}
+        SHADING
+        RAINBOW_MODE={false}
+        COLOR="#7C3AED"
+      />
       {/* Background layer */}
       <div className=" absolute inset-0 bg-[#0a0014]">
         <Ferrofluid
@@ -258,14 +271,14 @@ export default function Welcome() {
             <label className="text-[11px] text-violet-300 font-semibold uppercase tracking-[0.15em] mb-1 block">
               Host Permission
             </label>
-            <button onClick={() => {setHostpermission(prev => !prev)}}>
-              <div className={`relative w-14 h-8 rounded-xl text-sm font-semibold text-white border border-white/10 transition-colors duration-300 ${hostpermission? "bg-blue-500":"bg-white/[0.07]"}`}>
-                  <div className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white transition-transform duration-300
-                  ${hostpermission? "translate-x-6":"translate-x-0"}
+            <button onClick={() => { setHostpermission(prev => !prev) }}>
+              <div className={`relative w-14 h-8 rounded-xl text-sm font-semibold text-white border border-white/10 transition-colors duration-300 ${hostpermission ? "bg-blue-500" : "bg-white/[0.07]"}`}>
+                <div className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white transition-transform duration-300
+                  ${hostpermission ? "translate-x-6" : "translate-x-0"}
                     `}></div>
-                  <div className={`absolute top-1 left-1 w-6 h-6 text-sm font-semibold text-white  transition-transform duration-300
-                         ${hostpermission? "translate-x-0":"translate-x-6"}
-                    `}> {hostpermission? "yes":"no"}</div>
+                <div className={`absolute top-1 left-1 w-6 h-6 text-sm font-semibold text-white  transition-transform duration-300
+                         ${hostpermission ? "translate-x-0" : "translate-x-6"}
+                    `}> {hostpermission ? "yes" : "no"}</div>
 
               </div>
 
