@@ -12,17 +12,19 @@ const App = () => {
     return (
         <SocketProvider>
         <BrowserRouter>
-        <RoomProvider>
+        
           <InfinityProvider>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/Welcome" element={<Welcome />} />
-            <Route path="/Workspace/:roomID" element={<Workspace />} />
+            <Route path="/Workspace/:roomID" element={<RoomProvider>
+              <Workspace />
+             </RoomProvider>} />
           </Routes>
           </InfinityProvider>
-        </RoomProvider>
+        
         </BrowserRouter>
         </SocketProvider>
         
