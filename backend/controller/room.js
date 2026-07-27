@@ -49,7 +49,7 @@ async function UserEnterRoom(req, res) {
 
   user.ActiveRoom = room._id;
   await user.save();
-  room.participants.push({user:userid,role:"Viewer"});
+  room.participants.push({user:userid,role:"Editor"});
   await room.save();
   room.activeParticipants.push(userid);
   await room.save();
