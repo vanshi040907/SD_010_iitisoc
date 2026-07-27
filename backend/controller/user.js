@@ -41,7 +41,27 @@ async function LogoutUser (req,res){
 }
 
     
+async function GetCurrentUser(req, res) {
+    try{
+        const token = req.cookies?.uid;
+        if(!token){
+            return res.status(401).json({error: "not logged in"});
+        }
+
+        const payload = ValidateToken(token);
+
+        const user = await User.findById(payload.id).select("-password -salt");
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.json({ user });
+    }
+    catch(err){
+        return res.status(401).json({ error: "Invalid or expired session" });
+
+    }
+}
 
 
-
-module.exports = {SigninUser,LoginUser,LogoutUser};
+module.exports = {SigninUser,LoginUser,LogoutUser, GetCurrentUser};

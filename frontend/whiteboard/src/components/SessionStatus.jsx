@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react'
-import { useState, useContext} from "react";
+import { useState, useContext, useRef} from "react";
+import { RoomContext } from '../context/RoomContext';
 import { LogOut, MessageCircle, X, Send } from "lucide-react";
 import { ThemeContext } from '../context/ThemeContext';
 import { useSocket } from '../context/Socket';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from "react-router-dom";
 import conf from "../conf/conf";
 
@@ -12,41 +13,85 @@ import axios from "axios";
 const EMOJIS = ["👍", "❤️", "😂", "😮", "🔥", "🎉", "👏", "💡", "✅", "🚀"];
  
 let reactionIdCounter = 0;
-const CURRENT_USER = "Vishruthi";
 
 const SessionStatus = () => {
 
   const navigate= useNavigate();
+  const socket = useSocket();
 
   const {theme} = useContext(ThemeContext);
+  const {roomId} = useContext(RoomContext);
 
+  const [CURRENT_USER, setCURRENT_USER] = useState(null);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [reactions, setReactions] = useState([]);
   const [emojiCurrent, setEmojiCurrent]  = useState(null);
 
   const [chatOpen, setChatOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    { id: 1, sender: "Rithika", text: "Hey everyone!", time: "19:41" },
-    { id: 2, sender: "Aryan", text: "Let's start the session 🚀", time: "19:42" },
-    { id: 3, sender: "Vishruthi", text: "Let's start the session 🚀", time: "19:45" }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const chatEndRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+
+  //get logged in user
+  useEffect(()=>{
+    fetch(`${conf.path}/user/me`, {credentials: 'include'})
+    .then((res) => res.json())
+    .then((data)=> setCURRENT_USER(data.user || data))
+    .catch((err)=> console.error("Failed to fetch current user:", err))
+    
+  },[]);
+
+  //load chat history
+  useEffect(()=>{
+    if(!roomId) return;
+
+    setLoading(true);
+    fetch(`${conf.path}/api/rooms/${roomId}/chats`, {credentials: 'include'})
+    .then((res) => res.json())
+    .then((data) => {
+      setMessages(data);
+      setLoading(false);
+    })
+    .catch((err)=>{
+      console.error("failed to load  chat history:", err);
+      setLoading(false);
+    })
+  }, [roomId])
+
+  //listen for live messages
+  useEffect(()=>{
+    if(!socket || !roomId) return;
+
+    const handleNewMessage = (msg) => {
+      setMessages((prev)=>[...prev, msg]);
+    };
+
+    socket.on('newMessage', handleNewMessage);
+    return ()=>{
+      socket.off('newMessage', handleNewMessage);
+    }
+  }, [socket, roomId]);
 
   useEffect(() => {
     if (chatOpen) chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, chatOpen]);
 
-  const sendMessage = ()=>{
-    if (!input.trim()) return;
-    const now = new Date();
-    const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2, "0")}`;
-    setMessages((prev) => [...prev, { id: Date.now(), sender: CURRENT_USER, text: input.trim(), time }]);
+  const sendMessage = (e) => {
+    e.preventDefault();
+    if (!input.trim() || !CURRENT_USER) return;
+
+    socket.emit('sendMessage', {
+      roomId,
+      userId: CURRENT_USER._id,
+      userName: CURRENT_USER.userName,
+      content: input.trim(),
+    });
     setInput("");
   };
 
-
-  const socket = useSocket();
+  const FormatTime = (dateString) => 
+    new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   
   const LaunchReaction =useCallback( (data) => {
     const {emoji, user} = data;
@@ -133,7 +178,7 @@ const SessionStatus = () => {
       {/* chat box */}
 
       <div 
-      className={`fixed right-4 rounded-2xl border ${theme.border} flex flex-col overflow-hidden z-40`}
+      className={`fixed right-40 ounded-2xl border ${theme.border} flex flex-col overflow-hidden z-40`}
         style={{
           ...glassStyle,
           bottom: "84px",
@@ -159,13 +204,25 @@ const SessionStatus = () => {
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-3" style={{ minHeight: 0 }}>
-            {messages.map((msg)=>{
-              const isMe = msg.sender === CURRENT_USER;
+
+            {loading && (
+              <div className="text-center text-gray-400 text-sm mt-5">
+                Loading Messages...
+              </div>
+            )}
+            {!loading && messages.length === 0 && (
+              <div className="text-center text-gray-400 text-sm mt-5">
+                No messages yet. Start conversation 👋
+              </div>
+            )}
+
+            {!loading && CURRENT_USER && messages.map((msg)=>{
+              const isMe = String(msg.user) === String(CURRENT_USER._id);
               return(
-                <div key={msg.id} className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
+                <div key={msg._id} className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
                   {!isMe && (
                     <span className={`${theme.accent} text-[10px] font-medium mb-0.5 px-1`}>
-                      {msg.sender}
+                      {isMe ? 'You' : msg.userName}
                     </span>
                   )}
                   <div
@@ -176,9 +233,9 @@ const SessionStatus = () => {
                   }`}
                   style={isMe ? {} : { background: `${theme.messageBg}` }}
                 >
-                  {msg.text}
+                  {msg.content}
                 </div>
-                <span className="text-slate-600 text-[10px] mt-0.5 px-1">{msg.time}</span>
+                <span className="text-slate-600 text-[10px] mt-0.5 px-1">{FormatTime(msg.sentAt)}</span>
                 </div>
               );
             })}
@@ -186,19 +243,26 @@ const SessionStatus = () => {
           </div>
 
           {/* Input */}
-          <div className={`px-3 py-3 border-t ${theme.border} flex items-center gap-2`}>
-            <input
+          <div>
+            <form
+             onSubmit={sendMessage}
+             className={`px-3 py-3 border-t ${theme.border} flex items-center gap-2`}>
+              <input
+              type="text"
               className={`flex-1 ${theme.away} rounded-xl px-3 py-2 text-xs ${theme.textPrimary} placeholder-slate-500 outline-none border ${theme.border} focus:border-purple-500/50 transition-colors`}
               placeholder="Type a message..."
               value={input}
+              maxLength={1000}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}/>
               <button
-              onClick={sendMessage}
-              className={`w-8 h-8 rounded-xl ${theme.iconBg} hover:bg-purple-400 flex items-center justify-center transition-colors flex-shrink-0`}
+               type="submit"
+               disabled={!input.trim()}
+               className={`w-8 h-8 rounded-xl ${theme.iconBg} hover:bg-purple-400 flex items-center justify-center transition-colors flex-shrink-0`}
               >
                 <Send size={13} className={`${theme.textPrimary}`} />
               </button>
+            </form>
           </div>
       </div>
 

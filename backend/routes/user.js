@@ -1,11 +1,11 @@
 const {Router} = require("express");
 const router = Router();
-const {SigninUser,LoginUser,UserAllowed,UserEnterRoom, LogoutUser} = require("../controller/user");
+const {SigninUser,LoginUser,UserAllowed,UserEnterRoom, LogoutUser, GetCurrentUser} = require("../controller/user");
 
 router.post("/signin",SigninUser);
 router.post("/login",LoginUser);
 router.get("/logout",LogoutUser)
-
+router.get("/me", GetCurrentUser);
 
 
 

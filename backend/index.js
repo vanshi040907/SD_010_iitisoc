@@ -7,8 +7,11 @@ const server = http.createServer(app);
 const cors = require("cors");
 const User = require("./models/user");
 const Room = require("./models/room");
+const Chat = require("./models/chat");
 const { ValidateToken } = require("./service/auth");
 const cookie = require("cookie");
+const chatRoutes = require("./routes/chat");
+
 
 const io = new Server(server, {
     cors: {
@@ -47,6 +50,7 @@ app.get('/', (req, res) => {
 
 app.use('/user', userrouter);
 
+app.use('/api', chatRoutes);
 
 io.use((socket, next) => {
     const cookies = cookie.parse(socket.handshake.headers.cookie || " ");
@@ -61,7 +65,37 @@ io.use((socket, next) => {
 
 
 io.on('connection', (socket) => {
-    
+
+socket.on('sendMessage', async ({ roomId, userId, userName, content }) => {
+  try{
+    if (!content?.trim()) return;
+
+  const room = await Room.findOne({roomId});
+  if(!room){
+    console.error("sendMessage: room not found for this roomId", roomId);
+    return;
+  }
+
+  const chat = await Chat.create({
+    room: room._id,
+    user: userId,
+    userName,
+    content: content.trim(),
+  });
+
+  io.to(roomId).emit('newMessage', {
+    _id: chat._id,
+    user: chat.user,
+    userName: chat.userName,
+    content: chat.content,
+    sentAt: chat.sentAt,
+  });
+  }
+  catch(err){
+    console.error('Error saving/broadcasting message:', err);
+  }
+});
+
 
     socket.on('joinroom', async(data) => {
         const { roomID, myName } = data;

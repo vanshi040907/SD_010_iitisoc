@@ -9,12 +9,9 @@ import conf from "../conf/conf";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import LetsCoSketh from "../animations/LetsCoSketh";
-import { RoomContext } from "../context/RoomContext";
 import { useEffect } from "react";
 
 export default function Welcome() {
-
-  const { setRoomId } = useContext(RoomContext);
 
   const [myName, setMyName] = useState("");
   const [roomID, setRoomID] = useState("");
@@ -56,7 +53,7 @@ export default function Welcome() {
       "Room " + roomID + " created!\nShare this room ID with your friends.",
     );
 
-    setRoomId(roomID);
+
     try {
       await axios.post(
         `${conf.path}/room/createroom`,
