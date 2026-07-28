@@ -170,12 +170,12 @@ const Whiteboard = () => {
 
   const undo = async () => {
     if (role === "Viewer") return;
-    console.log("UNDO START");
+    
     if (historyStackRef.current.length === 0) return;
     const last = historyStackRef.current.pop();
     redoStackRef.current.push(last);
     try {
-      await axios.get(
+      const res = await axios.get(
         ` ${conf.path}/whiteboard/undo`, {
         withCredentials: true,
       }
@@ -195,11 +195,13 @@ const Whiteboard = () => {
 
   const redo = async () => {
     if (role === "Viewer") return;
+    
+
     if (redoStackRef.current.length === 0) return;
     const restored = redoStackRef.current.pop();
     historyStackRef.current.push(restored);
     try {
-      await axios.post(
+      const res = await axios.post(
         `${conf.path}/whiteboard/redo`, {
         drawingOperations: restored,
       }, { withCredentials: true }
@@ -207,6 +209,7 @@ const Whiteboard = () => {
       const { remainingHistory, remainingRedoHistory } = res.data;
       historyStackRef.current = remainingHistory;
       redoStackRef.current = remainingRedoHistory;
+      
       bump();
     } catch (error) {
       console.log(error);

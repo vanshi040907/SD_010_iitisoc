@@ -106,8 +106,12 @@ export default function Welcome() {
 
       }
       else if (response.data.pending) {
-        alert("wait for approval");
+        if (!socket.connected) {
+          socket.connect();
+        }
         socket.emit("pending", { myName: joinName.trim() });
+        
+        alert("wait for approval");
       }
 
 
