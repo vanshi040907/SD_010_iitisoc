@@ -67,6 +67,7 @@ io.use((socket, next) => {
 
 io.on('connection', (socket) => {
 
+    // sending the message
 socket.on('sendMessage', async ({ roomId, userId, userName, content }) => {
   try{
     if (!content?.trim()) return;
@@ -97,7 +98,33 @@ socket.on('sendMessage', async ({ roomId, userId, userName, content }) => {
   }
 });
 
+// for broadcasting laser
 
+    socket.on('laserMove', (data) => {
+        const{ roomID, x, y} = data;
+        if(roomID == null || x==null || y==null) return;
+
+        socket.to(roomID).emit('laserMoveReceived', {
+            userId: socket.user.id,
+            x,
+            y,
+        });
+    });
+
+    // for ending laser trail
+
+    socket.on('laserEnd', (data) => {
+        const {roomID} = data;
+        if(roomID == null) return;
+
+        socket.to(roomID).emit('laserEndReceived', {
+            userId: socket.user.id,
+        });
+    });
+
+
+
+// join room broadcasting and updating the memberlist
     socket.on('joinroom', async(data) => {
         const { roomID, myName } = data;
         console.log("socket id",socket.user.id);
