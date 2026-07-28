@@ -84,7 +84,9 @@ async function Redo (req, res) {
            const undoroom = redowhiteboard[i].room;
          const undouserid = redowhiteboard[i].user;
          const undodrawingOperation  = redowhiteboard[i].drawingOperations;
+         
          await redowhiteboard[i].deleteOne();
+           
          const whiteboard = await Whiteboard.create({
           room:undoroom,
           user:undouserid,
@@ -92,6 +94,7 @@ async function Redo (req, res) {
 
 
          })
+           
 
           break;
 
