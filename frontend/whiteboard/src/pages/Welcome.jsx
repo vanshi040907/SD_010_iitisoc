@@ -151,7 +151,7 @@ export default function Welcome() {
 
   return (
     <div className="relative min-h-screen w-full ">
-      <SplashCursor
+      {/* <SplashCursor
         DENSITY_DISSIPATION={2}
         VELOCITY_DISSIPATION={1.5}
         PRESSURE={0.05}
@@ -162,7 +162,7 @@ export default function Welcome() {
         SHADING
         RAINBOW_MODE={false}
         COLOR="#7C3AED"
-      />
+      /> */}
       {/* Background layer */}
       <div className=" absolute inset-0 bg-[#0a0014]">
         <Ferrofluid
