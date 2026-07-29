@@ -25,10 +25,10 @@ const Whiteboard = () => {
   const [add, setAdd] = useState(0);
   const [selectedId, setSelectedId] = useState(null);
   const selectedIdRef = useRef(null);
-  const [role, setRole] = useState("Editor");
+  
   useEffect(() => { selectedIdRef.current = selectedId; }, [selectedId]);
 
-  const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump, notifyHistortChange, setActiveShape, setActiveTool, registerDrawing, selectExport, setSelectExport } = useContext(WhiteboardContext);
+  const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump, notifyHistortChange, setActiveShape, setActiveTool, registerDrawing, selectExport, setSelectExport, role, setRole } = useContext(WhiteboardContext);
 
   const { camera, setCamera, worldtoscreen, screentoworld, zoom, setZoom, cameraonzoom, isZoom, setIsZoom, canvasRef } = useInfinity();
   const { laserLeave, laserMove, laserUp } = useContext(LaserContext);
@@ -1030,7 +1030,7 @@ const Whiteboard = () => {
 
   //function for undo/redo/ first initialisation of the canvas- complete redraw through object array saved
   const redrawAll = useCallback(() => {
-    console.log(camera);
+    
     const ctx = ctxRef.current;
     const canvas = canvasRef.current;
     if (!ctx || !canvas) return;

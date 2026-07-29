@@ -286,6 +286,7 @@ const { camera, setCamera, worldtoscreen, screentoworld, zoom, setZoom, cameraon
         const entry = remoteLasersRef.current.get(userId);
         if (!entry) return;
         clearTimeout(entry.idleTimeoutId);
+           
         startRemoteFadeOut(userId);
       };
 

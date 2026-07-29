@@ -354,6 +354,36 @@ socket.on('sendMessage', async ({ roomId, userId, userName, content }) => {
         socket.to(room.roomId).emit("showobjectmoving", data);
     });
 
+    socket.on("hostFollow",async() => {
+            console.log("viewer :",socket.user.id);
+        const userid = socket.user.id;
+        const user = await User.findById(userid).populate("ActiveRoom");
+        const room= await user.ActiveRoom.populate("owner");
+        const owner = room.owner;
+        console.log(owner._id.toString());
+        socket.to(owner._id.toString()).emit("askingHostFollowup", {userid});
+
+
+    })
+    socket.on("givingHostcamera",async(data) => {
+        const {camera,userid} = data;
+             console.log("receiver :",userid);
+        socket.to(userid).emit("sendingHostCamera", {camera});
+
+
+    })
+    socket.on("hostcoordinatesent",async(data) => {
+        const {world} = data;
+        const userid = socket.user.id;
+        const user = await User.findById(userid).populate("ActiveRoom");
+        const room= user.ActiveRoom;
+        
+        socket.to(room.roomId).emit("sendingHostCoordinate", {world});
+
+
+    })
+
+
 });
 
 app.use('/room', restrictToLoggedinUser, roomrouter);

@@ -9,6 +9,7 @@ export function WhiteboardProvider({ children }) {
   const [strokeWidth, setStrokeWidth] = useState(3);
   const [activeShape, setActiveShape] = useState("rect");
   const [selectExport, setSelectExport] = useState(false);
+  const [role, setRole] = useState("Editor");
 
   //for the undo and redo functions
   const engineRef = useRef(null);
@@ -73,6 +74,8 @@ export function WhiteboardProvider({ children }) {
         setSelectExport
         , drawingRefs, 
         registerDrawing,
+        role,
+        setRole,
 
       }}
     >
