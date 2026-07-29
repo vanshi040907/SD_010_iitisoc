@@ -30,7 +30,7 @@ const roomrouter = require("./routes/room");
 const whiteboardrouter = require("./routes/whiteboard");
 const { restrictToLoggedinUser,requiredEditorAccess} = require("./middleware/auth");
 
-console.log("MONGO_URI is:", process.env.MONGO_URI);
+// console.log("MONGO_URI is:", process.env.MONGO_URI);
 connectmongoose(process.env.MONGO_URI);
 
 app.use((req, res, next) => {
