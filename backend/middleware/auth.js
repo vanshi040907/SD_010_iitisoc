@@ -2,7 +2,7 @@ const { ValidateToken } = require("../service/auth");
 const User = require("../models/user"); 
 const Room = require("../models/room");
 const Whiteboard = require("../models/whiteBoard");
-const RedoWhiteboard = require("../models/redowhiteBoard");
+const RedoWhiteboard = require("../models/redowhiteboard");
 function  restrictToLoggedinUser(req,res,next) {
      const useruid = req.cookies?.uid;
     if(!useruid) return res.status(401).json({ error: "Login required" });

@@ -1,7 +1,7 @@
 const User = require("../models/user"); 
 const Room = require("../models/room");
 const Whiteboard = require("../models/whiteBoard");
-const RedoWhiteboard = require("../models/redowhiteBoard");
+const RedoWhiteboard = require("../models/redowhiteboard");
 async function EventHandling (req, res) {
     const userid = req.user.id;
      const user = await User.findById(req.user.id);
