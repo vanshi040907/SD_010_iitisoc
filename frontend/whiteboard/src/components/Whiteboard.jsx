@@ -28,7 +28,7 @@ const Whiteboard = () => {
   const [role, setRole] = useState("Editor");
   useEffect(() => { selectedIdRef.current = selectedId; }, [selectedId]);
 
-  const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump, notifyHistortChange, setActiveShape, setActiveTool, registerDrawing, selectExport, setSelectExport } = useContext(WhiteboardContext);
+  const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump, notifyHistortChange, setActiveShape, setActiveTool, registerDrawing, selectExport, setSelectExport, setHistoryLength, historyLength } = useContext(WhiteboardContext);
 
   const { camera, setCamera, worldtoscreen, screentoworld, zoom, setZoom, cameraonzoom, isZoom, setIsZoom, canvasRef } = useInfinity();
   const { laserLeave, laserMove, laserUp } = useContext(LaserContext);
@@ -170,9 +170,10 @@ const Whiteboard = () => {
 
   const undo = async () => {
     if (role === "Viewer") return;
-    
+
     if (historyStackRef.current.length === 0) return;
     const last = historyStackRef.current.pop();
+    setHistoryLength(historyStackRef.current.length);
     redoStackRef.current.push(last);
     try {
       const res = await axios.get(
@@ -195,11 +196,12 @@ const Whiteboard = () => {
 
   const redo = async () => {
     if (role === "Viewer") return;
-    
+
 
     if (redoStackRef.current.length === 0) return;
     const restored = redoStackRef.current.pop();
     historyStackRef.current.push(restored);
+    setHistoryLength(historyStackRef.current.length);
     try {
       const res = await axios.post(
         `${conf.path}/whiteboard/redo`, {
@@ -209,7 +211,7 @@ const Whiteboard = () => {
       const { remainingHistory, remainingRedoHistory } = res.data;
       historyStackRef.current = remainingHistory;
       redoStackRef.current = remainingRedoHistory;
-      
+
       bump();
     } catch (error) {
       console.log(error);
@@ -1247,6 +1249,7 @@ const Whiteboard = () => {
     };
 
     historyStackRef.current.push(newTextItem);
+    setHistoryLength(historyStackRef.current.length);
     redoStackRef.current = [];
 
     try {
@@ -1531,6 +1534,7 @@ const Whiteboard = () => {
       historyStackRef.current.push(
         currentStrokeRef.current
       );
+      setHistoryLength(historyStackRef.current.length);
 
       try {
         await axios.post(
@@ -1586,6 +1590,8 @@ const Whiteboard = () => {
 
     if (activeToolRefLocal.current === "shape" && previewShapeRef.current) {
       historyStackRef.current.push(previewShapeRef.current);
+
+      setHistoryLength(historyStackRef.current.length);
       try {
         await axios.post(`${conf.path}/whiteboard/event`, {
           drawingOperations: previewShapeRef.current,
