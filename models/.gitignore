@@ -1,0 +1,47 @@
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# VS Code settings
+.vscode/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# TensorFlow logs
+logs/
+events.out.tfevents.*
+
+# Training datasets
+datasets/
+
+# Temporary files
+*.tmp
+*.log
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Testing files
+test/
+
+# Pytest cache
+.pytest_cache/
+
+# Coverage reports
+.coverage
+htmlcov/
+
+# Build files
+build/
+dist/
+*.egg-info/
+

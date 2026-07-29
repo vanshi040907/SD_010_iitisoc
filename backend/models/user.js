@@ -22,7 +22,8 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref:"room",
 
-    }
+    },
+   
 }
 ,
 {timestamps: true});

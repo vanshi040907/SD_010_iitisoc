@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom"
 import { motion } from 'framer-motion'
 import Ferrofluid from "../animations/Ferrofluid";
@@ -17,6 +17,15 @@ function Signup() {
     const [Mail, setMail] = useState("");
     const [isLampOn, setIsLampOn] = useState(false);
     const navigate = useNavigate();
+
+      useEffect(()=>{
+        const timer = setTimeout(()=>{
+          setIsLampOn(true);
+        }, 1000);
+    
+        return ()=> clearTimeout(timer);
+      }, []);
+
     const handleAccountCreate = (e) => {
         e.preventDefault();
 
@@ -34,7 +43,7 @@ function Signup() {
 
         {/* Cord + housing — behind the title */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 z-[8] flex flex-col items-center">
-            <SplashCursor
+            {/* <SplashCursor
                 DENSITY_DISSIPATION={2}
                 VELOCITY_DISSIPATION={1.5}
                 PRESSURE={0.05}
@@ -45,7 +54,7 @@ function Signup() {
                 SHADING
                 RAINBOW_MODE={false}
                 COLOR="#7C3AED"
-            />
+            /> */}
             <div className="w-[2px] h-[180px] bg-gradient-to-b from-[#26203a] to-[#3a3454]" />
             <div className="w-[100px] h-[50px] bg-[#201a30] rounded-b-md rounded-t-[40px] shadow-md" />
         </div>
@@ -54,9 +63,9 @@ function Signup() {
         <div className="absolute top-[230px] left-1/2 -translate-x-1/2 z-20 flex flex-col items-center">
             <motion.div
                 animate={{
-                    backgroundColor: isLampOn ? "#ffd76a" : "#3a3450",
+                    backgroundColor: isLampOn ? "#C084FC" : "#3b0764",
                     boxShadow: isLampOn
-                        ? "0 0 20px 6px rgba(255,215,106,0.9), 0 0 60px 30px rgba(255,205,90,0.35)"
+                        ? "0 0 20px 6px rgba(192, 132, 252, 0.8), 0 0 60px 30px rgba(168, 85, 247, 0.35)"
                         : "0 0 0px rgba(0,0,0,0)",
                 }}
                 transition={{ duration: 0.4 }}
@@ -83,7 +92,7 @@ function Signup() {
             transition={{ duration: 1 }}
             style={{
                 clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)",
-                background: "linear-gradient(to bottom, rgba(255,221,140,0.35), rgba(255,221,140,0.05) 70%, transparent)",
+                background: "linear-gradient(to bottom, rgba(192, 132, 252, 0.35), rgba(168, 85, 247, 0.05) 70%, transparent)",
             }}
             className="absolute top-[230px] left-1/2 -translate-x-1/2 w-[500px] h-[500px] z-[6] pointer-events-none"
         />

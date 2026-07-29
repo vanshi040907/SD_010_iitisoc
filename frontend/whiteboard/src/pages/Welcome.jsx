@@ -9,13 +9,10 @@ import conf from "../conf/conf";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import LetsCoSketh from "../animations/LetsCoSketh";
-import { RoomContext } from "../context/RoomContext";
 import { useEffect } from "react";
 import SplashCursor from "../animations/cursor";
 
 export default function Welcome() {
-
-  const { setRoomId } = useContext(RoomContext);
 
   const [myName, setMyName] = useState("");
   const [roomID, setRoomID] = useState("");
@@ -57,7 +54,7 @@ export default function Welcome() {
       "Room " + roomID + " created!\nShare this room ID with your friends.",
     );
 
-    setRoomId(roomID);
+
     try {
       await axios.post(
         `${conf.path}/room/createroom`,
@@ -109,8 +106,12 @@ export default function Welcome() {
 
       }
       else if (response.data.pending) {
-        alert("wait for approval");
+        if (!socket.connected) {
+          socket.connect();
+        }
         socket.emit("pending", { myName: joinName.trim() });
+        
+        alert("wait for approval");
       }
 
 
@@ -154,7 +155,7 @@ export default function Welcome() {
 
   return (
     <div className="relative min-h-screen w-full ">
-      <SplashCursor
+      {/* <SplashCursor
         DENSITY_DISSIPATION={2}
         VELOCITY_DISSIPATION={1.5}
         PRESSURE={0.05}
@@ -165,7 +166,7 @@ export default function Welcome() {
         SHADING
         RAINBOW_MODE={false}
         COLOR="#7C3AED"
-      />
+      /> */}
       {/* Background layer */}
       <div className=" absolute inset-0 bg-[#0a0014]">
         <Ferrofluid

@@ -474,27 +474,17 @@ Used Socket.IO middleware with cookies and socket handshake authentication.
 
 # 🚧 Future Improvements
 
-
-- Infinite canvas with Zoom and pan support
-- Live cursor sharing
-- Chat system
-- Voice/video calling
-- ML based shape recognition
-- Host permissions and access
-- Keyboard shortcuts
-- Production deployment
-- Session Summmary using AI models- GEMINI
-- Laser Pointer tool
-- Sticky Notes
-- Grid Layout
-- Select and Drag and Drop
-- Clear and Reset canvas
-- Responsive UI
-- Production deployment
-- About and Help
-- Share Code on Workspace
-- Access previous Boards
-
+- Live cursor sharing of host -  Saumya
+- Voice/video calling - Pranjali
+- ML based shape recognition - integration - Pranjali
+- Session Summmary using AI models- GEMINI - Saumya
+- Sticky Notes - Vishruthi
+- Responsive UI/Mobile view - Vanshika
+- Production deployment - Vanshika
+- Access to previous Boards - Vishruthi
+- fix UI for replay canvas - Vanshika/ Vishruthi
+- whenever we are closing, the name is not removed from members list
+- there is an issue with the socket connection of shapes
 
 ---
 

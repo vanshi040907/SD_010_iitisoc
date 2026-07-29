@@ -5,7 +5,7 @@ const { restrictToLoggedinUser,requiredEditorAccess} = require("../middleware/au
 
 router.post("/event",requiredEditorAccess, EventHandling);
 router.get("/undo",requiredEditorAccess,Undo );
-router.get("/redo",requiredEditorAccess,Redo);
+router.post("/redo",requiredEditorAccess,Redo);
 router.get("/getdata",Get);
 router.post("/update",requiredEditorAccess,Update)
 
