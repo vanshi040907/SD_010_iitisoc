@@ -484,7 +484,7 @@ Used Socket.IO middleware with cookies and socket handshake authentication.
 - Access to previous Boards - Vishruthi
 - fix UI for replay canvas - Vanshika/ Vishruthi
 - whenever we are closing, the name is not removed from members list
-
+- there is an issue with the socket connection of shapes
 
 ---
 

@@ -9,7 +9,7 @@ const Btn_grid = () => {
 
     return (
         <>
-            <div className={`fixed bottom-38 right-4 p-5 h-14 rounded-xl flex z-50 items-center justify-center ${theme.textPrimary} ${theme.iconButtonHover} transition-all duration-200 z-5 border ${theme.border}`}
+            <div className={`fixed bottom-48 right-4 p-5 h-14 rounded-xl flex z-50 items-center justify-center ${theme.textPrimary} ${theme.iconButtonHover} transition-all duration-200 z-5 border ${theme.border}`}
                 style={{
                     ...theme.glass
                 }}>
