@@ -7,8 +7,8 @@ import { RoomContext } from '../context/RoomContext';
 import { useSocket } from '../context/Socket';
 
 
-const TRAIL_LENGTH    = 100;    // how many trail points to keep
-const TRAIL_DECAY_MS  = 1000;    // ms between each fade-out frame
+const TRAIL_LENGTH    = 20;    // how many trail points to keep
+const TRAIL_DECAY_MS  = 200;    // ms between each fade-out frame
 const DOT_RADIUS      = 6;     // radius of the laser dot in px
 const TRAIL_WIDTH_MAX = 4;     // widest part of the trail (at the dot end)
 const LASER_COLOR     = "rgba(239, 68, 68,";  // red-500 base (opacity appended)
@@ -180,13 +180,13 @@ const { camera, setCamera, worldtoscreen, screentoworld, zoom, setZoom, cameraon
         return;
       }
 
-      current.points = current.points.slice(1);
+      current.points = current.points.slice(8);
 
       cancelAnimationFrame(animRafRef.current);
       animRafRef.current = requestAnimationFrame(render);
 
       if (current.points.length > 0) {
-        current.fadeTimeoutId = setTimeout(fade, TRAIL_DECAY_MS);
+        current.fadeTimeoutId = setTimeout(fade, 16);
       } else {
         remoteLasersRef.current.delete(userId);
         cancelAnimationFrame(animRafRef.current);
@@ -194,7 +194,7 @@ const { camera, setCamera, worldtoscreen, screentoworld, zoom, setZoom, cameraon
       }
     };
 
-    entry.fadeTimeoutId = setTimeout(fade, TRAIL_DECAY_MS);
+    entry.fadeTimeoutId = setTimeout(fade, 16);
   }, [render]);
 
 
@@ -285,6 +285,7 @@ const { camera, setCamera, worldtoscreen, screentoworld, zoom, setZoom, cameraon
       const handleRemoteEnd = ({userId}) => {
         const entry = remoteLasersRef.current.get(userId);
         if (!entry) return;
+        console.log("end received");
         clearTimeout(entry.idleTimeoutId);
         startRemoteFadeOut(userId);
       };

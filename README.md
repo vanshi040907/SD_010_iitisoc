@@ -478,7 +478,6 @@ Used Socket.IO middleware with cookies and socket handshake authentication.
 - Voice/video calling - Pranjali
 - ML based shape recognition - integration - Pranjali
 - Session Summmary using AI models- GEMINI - Saumya
-- Laser Pointer tool - broadcasting - Vanshika
 - Sticky Notes - Vishruthi
 - Responsive UI/Mobile view - Vanshika
 - Production deployment - Vanshika
