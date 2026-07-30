@@ -5,6 +5,7 @@ import uvicorn
 from scipy.interpolate import interp1d
 import numpy as np
 import tensorflow as tf
+import os
 app = FastAPI()
 model = tf.keras.models.load_model("Shapepredict.keras")
 class pts(BaseModel):
@@ -72,4 +73,6 @@ async def predict(stroke:Strokes):
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", port=1000, log_level="info")
+    port = int(os.environ.get("PORT",10000))
+    uvicorn.run(app,host="0.0.0.0",port=port)
+    
