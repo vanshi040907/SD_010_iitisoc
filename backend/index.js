@@ -313,7 +313,7 @@ socket.on('sendMessage', async ({ roomId, userId, userName, content }) => {
           return;
         }
 
-        io.to(room.roomId).emit("currentshapereceived", data);
+        socket.to(room.roomId).emit("currentshapereceived", data);
     });
 
     socket.on("text", async (data) => {

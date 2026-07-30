@@ -1136,7 +1136,7 @@ const Whiteboard = () => {
   };
 
   const drawShape = (ctx, shape) => {
-    console.log("Drawing:", shape.type);
+    
     switch (shape.type) {
       case "rect": drawRect(ctx, shape); break;
       case "circle": drawCircle(ctx, shape); break;
