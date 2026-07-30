@@ -3,14 +3,14 @@ import { WhiteboardContext } from '../context/WhiteboardContext'
 import { ThemeContext } from '../context/ThemeContext'
 
 function Playback() {
-    const { drawingRefs } = useContext(WhiteboardContext);
+    const { drawingRefs, historyLength } = useContext(WhiteboardContext);
     const { theme } = useContext(ThemeContext);
 
     const replayIndexRef = useRef(0);
     const replayTimeoutRef = useRef(null);
     const [isReplaying, setIsReplaying] = useState(false);
     const [replayProgress, setReplayProgress] = useState(0);
-    const [replayTotal, setReplayTotal] = useState(0);
+
 
     const playReplayStep = () => {
         const { historyStackRef, ctxRef, drawStroke, drawText, drawShape } = drawingRefs.current;
@@ -19,6 +19,7 @@ function Playback() {
 
         if (index >= items.length) {
             setIsReplaying(false);
+            replayIndexRef.current = 0; // reset so the next Play starts fresh, not "resumes"
             return;
         }
 
@@ -45,7 +46,7 @@ function Playback() {
         const canvas = canvasRef.current;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        setReplayTotal(historyStackRef.current.length);
+
         replayIndexRef.current = 0;
         setReplayProgress(0);
         setIsReplaying(true);
@@ -65,6 +66,8 @@ function Playback() {
     const stopReplay = () => {
         clearTimeout(replayTimeoutRef.current);
         setIsReplaying(false);
+        replayIndexRef.current = 0; // actually reset, so Stop means "start over" next time
+        setReplayProgress(0);
         drawingRefs.current.redrawAll?.();
     };
 
@@ -79,7 +82,10 @@ function Playback() {
         }
     };
 
-    const replayPercent = replayTotal > 0 ? (replayProgress / replayTotal) * 100 : 0;
+    const replayPercent =
+        historyLength > 0
+            ? (replayProgress / historyLength) * 100
+            : 0;
 
     const PlayIcon = () => (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -129,7 +135,7 @@ function Playback() {
             </div>
 
             <span className={`${theme.accent} text-xs font-inherit min-w-[50px]`}>
-                {replayProgress}/{replayTotal}
+                {replayProgress}/{historyLength}
             </span>
         </div>
     )

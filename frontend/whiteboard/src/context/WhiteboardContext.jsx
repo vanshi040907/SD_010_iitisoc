@@ -10,6 +10,7 @@ export function WhiteboardProvider({ children }) {
   const [activeShape, setActiveShape] = useState("rect");
   const [selectExport, setSelectExport] = useState(false);
   const [role, setRole] = useState("Editor");
+  const [historyLength, setHistoryLength] = useState(0);
 
   //for the undo and redo functions
   const engineRef = useRef(null);
@@ -27,11 +28,11 @@ export function WhiteboardProvider({ children }) {
   const downloadCanvas = useCallback(() => {
     engineRef.current?.downloadCanvas?.();
   }, []);
-   const downloadCurrentCanvas = useCallback(()=>{
+  const downloadCurrentCanvas = useCallback(() => {
     engineRef.current?.downloadCurrentCanvas?.();
   }, []);
-   
-  
+
+
 
 
   const undo = useCallback(() => {
@@ -59,6 +60,7 @@ export function WhiteboardProvider({ children }) {
   return (
     <WhiteboardContext.Provider
       value={{
+        historyLength, setHistoryLength,
         activeTool, setActiveTool,
         activeColor, setActiveColor,
         strokeWidth, setStrokeWidth,
@@ -72,7 +74,7 @@ export function WhiteboardProvider({ children }) {
         downloadCurrentCanvas,
         selectExport,
         setSelectExport
-        , drawingRefs, 
+        , drawingRefs,
         registerDrawing,
         role,
         setRole,

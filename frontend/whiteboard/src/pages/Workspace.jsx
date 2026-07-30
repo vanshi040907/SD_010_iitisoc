@@ -12,7 +12,7 @@ import Btn_clearCanvas from '../components/ClearCanvas'
 import Btn_coordinates from '../components/cordinates'
 
 import { WhiteboardProvider } from '../context/WhiteboardContext'
-import LaserWhiteboard from '../components/LaserWHITEboard'
+import LaserWhiteboard from '../components/LaserWhiteboard'
 import Zoom from '../components/zoom'
 import AlertPopup from '../components/Hostpermission'
 import { Play } from 'lucide-react'

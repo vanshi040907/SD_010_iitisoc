@@ -16,13 +16,13 @@ const chatRoutes = require("./routes/chat");
 
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: process.env.FRONTEND_URL,
         methods: ["GET", "POST"],
         credentials: true
     }
 });
 
-const PORT = 5001;
+const PORT = process.env.PORT || 5001;
 const { connectmongoose } = require("./connection");
 const cookieparser = require("cookie-parser");
 const userrouter = require("./routes/user");
@@ -30,7 +30,9 @@ const roomrouter = require("./routes/room");
 const whiteboardrouter = require("./routes/whiteboard");
 const { restrictToLoggedinUser,requiredEditorAccess} = require("./middleware/auth");
 
-connectmongoose("mongodb://127.0.0.1:27017/whiteboard");
+// console.log("MONGO_URI is:", process.env.MONGO_URI);
+
+connectmongoose(process.env.MONGO_URI);
 
 app.use((req, res, next) => {
     req.io = io;
@@ -39,7 +41,7 @@ app.use((req, res, next) => {
 
 app.use(cookieparser());
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     credentials: true
 }));
 app.use(express.json());

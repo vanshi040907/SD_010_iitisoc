@@ -478,14 +478,13 @@ Used Socket.IO middleware with cookies and socket handshake authentication.
 - Voice/video calling - Pranjali
 - ML based shape recognition - integration - Pranjali
 - Session Summmary using AI models- GEMINI - Saumya
-- Laser Pointer tool - broadcasting - Vanshika
 - Sticky Notes - Vishruthi
 - Responsive UI/Mobile view - Vanshika
 - Production deployment - Vanshika
 - Access to previous Boards - Vishruthi
 - fix UI for replay canvas - Vanshika/ Vishruthi
 - whenever we are closing, the name is not removed from members list
-
+- there is an issue with the socket connection of shapes
 
 ---
 

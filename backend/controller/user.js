@@ -23,7 +23,11 @@ async function LoginUser(req,res) {
 });;
     
     const token = CreateTokenForUser(user);
-    res.cookie('uid',token);
+    res.cookie('uid',token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    });
     
     
     return res.json({Success:"true",token});
@@ -34,7 +38,11 @@ async function LoginUser(req,res) {
 async function LogoutUser (req,res){
     console.log(req)
 
-    res.clearCookie("uid");
+    res.clearCookie("uid", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    });
 
     
     res.json({success:"true"})
