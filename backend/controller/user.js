@@ -50,6 +50,7 @@ async function LogoutUser (req,res){
 
     
 async function GetCurrentUser(req, res) {
+      res.set('Cache-Control', 'no-store');
     try{
         const token = req.cookies?.uid;
         if(!token){
