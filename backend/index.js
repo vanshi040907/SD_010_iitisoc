@@ -11,7 +11,7 @@ const Chat = require("./models/chat");
 const { ValidateToken } = require("./service/auth");
 const cookie = require("cookie");
 const chatRoutes = require("./routes/chat");
-const Whiteboard = require("../models/whiteBoard");
+const Whiteboard = require("./models/whiteBoard");
 
 
 
