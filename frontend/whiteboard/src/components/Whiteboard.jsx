@@ -83,7 +83,7 @@ const Whiteboard = () => {
       };
     }
 
-    // shapes: rect / circle / triangle / line all have start + end
+    // shapes: rect / circle / triangle / line / sticky all have start + end
     const start = worldtoscreen({ world: item.start, camera });
     const end = worldtoscreen({ world: item.end, camera });
 
@@ -262,7 +262,7 @@ const Whiteboard = () => {
 
       }
       else {
-        if (item.type === "rect" || item.type === "line") {
+        if (item.type === "rect" || item.type === "line" || item.type === "sticky") {
           if (item.start.x < MIN_X) MIN_X = item.start.x;
           if (item.start.y < MIN_Y) MIN_Y = item.start.y;
           if (item.start.x > MAX_X) MAX_X = item.start.x;
@@ -534,6 +534,10 @@ const Whiteboard = () => {
               LineShape(ctx, shape);
               break;
 
+            case "sticky":
+              Rect(ctx, shape);
+              break;
+
             default:
               break;
           }
@@ -799,6 +803,10 @@ const Whiteboard = () => {
 
             case "line":
               LineShape(ctx, shape);
+              break;
+
+            case "sticky":
+              Rect(ctx, shape);
               break;
 
             default:
@@ -1134,6 +1142,29 @@ const Whiteboard = () => {
     ctx.stroke();
   };
 
+  // Sticky note: same drag-to-size rectangle as drawRect, but filled so it
+  // reads visually as a note instead of an outline. Uses the same
+  // start/end/color/width fields a shape already carries.
+  const drawSticky = (ctx, shape) => {
+    const start = worldtoscreen({ world: shape.start, camera });
+    const end = worldtoscreen({ world: shape.end, camera });
+
+    const x = Math.min(start.x, end.x);
+    const y = Math.min(start.y, end.y);
+    const width = Math.abs(end.x - start.x);
+    const height = Math.abs(end.y - start.y);
+
+    ctx.save();
+    ctx.globalAlpha = 0.85;
+    ctx.fillStyle = shape.color;
+    ctx.fillRect(x, y, width, height);
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = shape.color;
+    ctx.lineWidth = shape.width;
+    ctx.strokeRect(x, y, width, height);
+    ctx.restore();
+  };
+
   const drawShape = (ctx, shape) => {
     console.log("Drawing:", shape.type);
     switch (shape.type) {
@@ -1141,6 +1172,7 @@ const Whiteboard = () => {
       case "circle": drawCircle(ctx, shape); break;
       case "triangle": drawTriangle(ctx, shape); break;
       case "line": drawLineShape(ctx, shape); break;
+      case "sticky": drawSticky(ctx, shape); break;
       default: break;
     }
   };
@@ -1341,6 +1373,20 @@ const Whiteboard = () => {
         color: activeColorRef.current,
         width: strokeWidthRef.current,
       };
+    } else if (activeToolRefLocal.current === "sticky") {
+      // Sticky note: drag-to-size box, same lifecycle as a shape
+      // (live-previewed via 'currentshapesend', committed on mouse-up).
+      isDrawingRef.current = true;
+      shapeStartRef.current = point_stored;
+
+      previewShapeRef.current = {
+        id: crypto.randomUUID(),
+        type: "sticky",
+        start: point_stored,
+        end: point_stored,
+        color: activeColorRef.current,
+        width: strokeWidthRef.current,
+      };
     } else if (activeToolRefLocal.current === "select") {
       const point = getMousePos(e);
       const hit = hitTestScreen(point);
@@ -1435,7 +1481,7 @@ const Whiteboard = () => {
     if (point_stored.x > MAX_X_STROKE) MAX_X_STROKE = point_stored.x;
     if (point_stored.y > MAX_Y_STROKE) MAX_Y_STROKE = point_stored.y;
 
-    if (activeToolRefLocal.current === "shape") {
+    if (activeToolRefLocal.current === "shape" || activeToolRefLocal.current === "sticky") {
       previewShapeRef.current.end = point_stored;
       redrawAll();
       socket.emit('currentshapesend', { shape: previewShapeRef.current });
@@ -1588,7 +1634,7 @@ const Whiteboard = () => {
       return;
     }
 
-    if (activeToolRefLocal.current === "shape" && previewShapeRef.current) {
+    if ((activeToolRefLocal.current === "shape" || activeToolRefLocal.current === "sticky") && previewShapeRef.current) {
       historyStackRef.current.push(previewShapeRef.current);
 
       setHistoryLength(historyStackRef.current.length);

@@ -110,7 +110,7 @@ export default function Welcome() {
           socket.connect();
         }
         socket.emit("pending", { myName: joinName.trim() });
-        
+
         alert("wait for approval");
       }
 
@@ -155,6 +155,13 @@ export default function Welcome() {
 
   return (
     <div className="relative min-h-screen w-full ">
+
+      <Link
+        to="/Dashboard"
+        className="fixed top-5 right-5 z-20 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-white/[0.07] border border-white/10 hover:bg-white/[0.12] active:scale-95 transition"
+      >
+        My Boards
+      </Link>
       {/* <SplashCursor
         DENSITY_DISSIPATION={2}
         VELOCITY_DISSIPATION={1.5}
