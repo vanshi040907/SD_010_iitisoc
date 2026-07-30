@@ -268,8 +268,9 @@ export default function Welcome() {
               </button>
             </div>
 
-            <p className="text-violet-400 text-xs mb-5 h-4">{copyMsg}</p>
-            <label className="text-[11px] text-violet-300 font-semibold uppercase tracking-[0.15em] mb-1 block">
+            <p className="text-violet-400 text-xs mb-1 h-4">{copyMsg}</p>
+            <div className="flex justify-center w-full align-center pb-4 gap-4">
+              <label className="text-[11px] text-violet-300 flex flex-col align-center justify-center font-semibold uppercase tracking-[0.15em]  block">
               Host Permission
             </label>
             <button onClick={() => { setHostpermission(prev => !prev) }}>
@@ -284,6 +285,7 @@ export default function Welcome() {
               </div>
 
             </button>
+            </div>
 
             <button
               onClick={createRoom}

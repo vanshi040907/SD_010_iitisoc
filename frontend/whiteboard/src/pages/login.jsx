@@ -215,7 +215,7 @@ function Login() {
         {/* Signup link */}
         <Link
           to="/signup"
-          className="text-violet-300/70 mt-6 text-sm hover:text-violet-300 transition"
+          className="text-violet-300/70 mt-6 text-sm z-50 hover:text-violet-300 transition"
         >
           Don't have an account? Sign up
         </Link>

@@ -27,7 +27,7 @@ const LetsCoSketh = () => {
   }, []);
 
   return (
-    <div ref={titleRef} className={`text-5xl font-black text-white tracking-tight font-[Clash_Display] mb-2`}>
+    <div ref={titleRef} className={` text-3xl min-[360px]:text-4xl min-[600px]:text-5xl font-black text-white tracking-tight font-[Clash_Display] mb-2`}>
       ✏️ Let's CoSketch
     </div>
   )

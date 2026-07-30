@@ -5,6 +5,7 @@ import Signup from './pages/signup.jsx'
 import Home from './pages/home.jsx'
 import Welcome from './pages/Welcome.jsx'
 import Workspace from './pages/Workspace.jsx'
+import Hello from './pages/Hello.jsx'
 import { SocketProvider } from './context/Socket.jsx'
 import { RoomProvider } from './context/RoomContext.jsx'
 import { InfinityProvider } from './context/infinity.jsx'
@@ -17,7 +18,8 @@ const App = () => {
         
           <InfinityProvider>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Hello />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/Welcome" element={<ProtectedRoute><Welcome /></ProtectedRoute>} />
