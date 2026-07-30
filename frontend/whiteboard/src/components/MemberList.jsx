@@ -217,7 +217,7 @@ useEffect (() => {
        
       ) 
        if(res.data.success){
-
+         console.log("logot hu mai")
         socket.emit("logout");
           navigate('/login')
         }
