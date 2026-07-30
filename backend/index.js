@@ -11,6 +11,7 @@ const Chat = require("./models/chat");
 const { ValidateToken } = require("./service/auth");
 const cookie = require("cookie");
 const chatRoutes = require("./routes/chat");
+const Whiteboard = require("../models/whiteBoard");
 
 
 
@@ -29,6 +30,7 @@ const userrouter = require("./routes/user");
 const roomrouter = require("./routes/room");
 const whiteboardrouter = require("./routes/whiteboard");
 const { restrictToLoggedinUser,requiredEditorAccess} = require("./middleware/auth");
+const WhiteBoard = require('./models/whiteBoard');
 
 // console.log("MONGO_URI is:", process.env.MONGO_URI);
 
@@ -251,7 +253,7 @@ socket.on('sendMessage', async ({ roomId, userId, userName, content }) => {
          socket.leave(socket.user.id);
 
     });
-
+   
 
     socket.on("emojisend", async (data) => {
         const { emoji } = data;
@@ -315,6 +317,23 @@ socket.on('sendMessage', async ({ roomId, userId, userName, content }) => {
 
         socket.to(room.roomId).emit("currentshapereceived", data);
     });
+
+    socket.on("remove this",async({shapeRef})=>{
+        const userid = socket.user.id;
+        const user =  await User.findById(userid);
+        const room = user.ActiveRoom;
+        
+         const whiteboard = await Whiteboard.find({room : room}).sort({ createdAt:- 1 });
+        await whiteboard[0].deleteOne();
+        
+          await Whiteboard.create({
+                   room:room,
+                   user:user,
+                   drawingOperations: shapeRef
+                  });
+
+
+    })
 
     socket.on("text", async (data) => {
         const userid = socket.user.id;

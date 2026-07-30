@@ -1266,6 +1266,8 @@ const Whiteboard = () => {
     bump();
   }, [redrawAll]);
 
+
+
   // Mouse Handlers
   const handleMouseDown = (e) => {
 
@@ -1546,11 +1548,42 @@ const Whiteboard = () => {
           withCredentials: true,
         },
         );
+        
 
 
       } catch (error) {
         console.log(error);
       }
+
+      try {
+      const res = await axios.post(
+        "http://localhost:1000/predict",
+        { points: currentStrokeRef.current.points.map((p) => ({ x: p.x, y: p.y })) }
+      );
+      const { shape, accuracy } = res.data;
+      console.log("recognized:", shape, accuracy);
+
+       
+      if (accuracy > 0.85 && shape === "line") {
+        previewShapeRef.current = {
+        id: crypto.randomUUID(),
+        type: shape,
+        start:currentStrokeRef.current.points[0],
+        end: currentStrokeRef.current.points[currentStrokeRef.current.points.length -1],
+        color: currentStrokeRef.current.color,
+        width:currentStrokeRef.current.width,
+      };
+       
+      historyStackRef.current.pop();
+      historyStackRef.current.push(previewShapeRef.current)
+
+      const shapeRef = previewShapeRef.current;
+      socket.emit("remove this",{shapeRef});
+        // replaceStrokeWithShape(stroke, shape);  // hook this up once it exists
+      }
+    } catch (err) {
+      console.log("shape recognition failed", err);
+    }
 
       redoStackRef.current = [];
       redrawAll();
