@@ -8,6 +8,8 @@ import Workspace from './pages/Workspace.jsx'
 import { SocketProvider } from './context/Socket.jsx'
 import { RoomProvider } from './context/RoomContext.jsx'
 import { InfinityProvider } from './context/infinity.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
+
 const App = () => {
     return (
         <SocketProvider>
@@ -18,10 +20,10 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/Welcome" element={<Welcome />} />
-            <Route path="/Workspace/:roomID" element={<RoomProvider>
+            <Route path="/Welcome" element={<ProtectedRoute><Welcome /></ProtectedRoute>} />
+            <Route path="/Workspace/:roomID" element={<ProtectedRoute><RoomProvider>
               <Workspace />
-             </RoomProvider>} />
+             </RoomProvider></ProtectedRoute>} />
           </Routes>
           </InfinityProvider>
         
