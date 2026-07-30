@@ -49,10 +49,20 @@ async function UserEnterRoom(req, res) {
 
   user.ActiveRoom = room._id;
   await user.save();
+  const y = 0;
+     for(let i=0;i<n;i++){
+   if( room.participants[i].user.toString()===userid.toString()){
+    y = 1;
+    break;
+    }
+   }
+   
+  if(y==0) {
   room.participants.push({user:userid,role:"Editor"});
   await room.save();
   room.activeParticipants.push(userid);
   await room.save();
+  }
 
   
   return res.json({
@@ -84,16 +94,26 @@ async function Allowance(req,res) {
   
   const {access,roomid,user} = req.body;
    const room = await Room.findOne({ roomId: roomid });
-   const newuser = await User.findById(user._id)
+   const newuser = await User.findById(user._id);
+   const y = 0;
+     for(let i=0;i<n;i++){
+   if( room.participants[i].user.toString()===userid.toString()){
+    y = 1;
+    break;
+    }
+   }
+  
 
   newuser.ActiveRoom = room._id;
   await newuser.save();
+  if(y==0) {
   room.participants.push({user:newuser._id,role:access});
   
 
   await room.save();
   room.activeParticipants.push(newuser._id);
   await room.save();
+  }
 
   req.io.to(user._id.toString()).emit("allow",{access:access});
   return res.json({
