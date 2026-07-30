@@ -49,7 +49,7 @@ async function UserEnterRoom(req, res) {
 
   user.ActiveRoom = room._id;
   await user.save();
-  const y = 0;
+  let y = 0;
      for(let i=0;i<n;i++){
    if( room.participants[i].user.toString()===userid.toString()){
     y = 1;
@@ -95,7 +95,7 @@ async function Allowance(req,res) {
   const {access,roomid,user} = req.body;
    const room = await Room.findOne({ roomId: roomid });
    const newuser = await User.findById(user._id);
-   const y = 0;
+   let y = 0;
      for(let i=0;i<n;i++){
    if( room.participants[i].user.toString()===userid.toString()){
     y = 1;
