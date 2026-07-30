@@ -4,9 +4,12 @@ import conf from '../conf/conf';
 
 export default function ProtectedRoute({ children }) {
   const [authState, setAuthState] = useState('checking');
-  
+
   useEffect(() => {
-    fetch(`${conf.path}/user/me`, { credentials: 'include' })
+    fetch(`${conf.path}/user/me`, {
+         credentials: 'include', 
+         cache:'no-store' 
+        })
       .then((res) => {
         if (res.ok) {
           setAuthState('authed');
