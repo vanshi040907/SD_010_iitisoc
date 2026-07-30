@@ -1261,6 +1261,7 @@ const Whiteboard = () => {
       console.log(error);
     }
     redrawAll();
+    redraw();
     setTextInput(null);
     bump();
   }, [redrawAll]);
@@ -1603,6 +1604,7 @@ const Whiteboard = () => {
       redoStackRef.current = [];
       previewShapeRef.current = null;
       redrawAll();
+      redraw();
       bump();
     }
   };
