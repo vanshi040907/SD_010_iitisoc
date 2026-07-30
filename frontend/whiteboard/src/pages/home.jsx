@@ -31,12 +31,6 @@ const FEATURES = [
     tag: "Rooms",
   },
   {
-    icon: "⚡",
-    title: "Instant Sync",
-    description: "Every stroke syncs across all participants immediately via Socket.io.",
-    tag: "Sync",
-  },
-  {
     icon: "✏️",
     title: "Full Drawing Toolkit",
     description:
@@ -72,24 +66,31 @@ const FEATURES = [
     tag: null,
   },
   {
-    icon: "👥",
-    title: "Live Member Presence",
-    description:
-      "See who's in your room — avatars, names, online/offline status, and roles (Host, Editor, Viewer). The member list updates in real time as people join or leave, synced via Socket.IO room events.",
-    tag: "Coming Soon",
-  },
-  {
     icon: "💬",
     title: "Live Chat",
     description: "Communicate without ever leaving the whiteboard.",
     tag: null,
   },
   {
-    icon: "🔗",
-    title: "Room Sharing & Invite Links",
-    description:
-      "Share your room instantly via a copyable room code or a direct URL. The Share popup gives both options with a one-click copy that flashes a confirmation checkmark so you always know it worked.",
-    tag: null,
+  icon: "🔴",
+  title: "Laser Pointer",
+  description:
+    "Highlight important areas on the whiteboard in real time with a smooth laser pointer. Perfect for presentations, teaching, and collaborative discussions without leaving permanent marks on the canvas.",
+  tag: null,
+  },
+  {
+  icon: "📐",
+  title: "Grid Layout Toggle",
+  description:
+    "Enable or disable grid overlays instantly for better alignment and precision. Perfect for diagrams, sketches, wireframes, and structured designs while keeping the workspace clean when the grid isn't needed.",
+  tag: "Workspace",
+  },
+  {
+  icon: "🎙️",
+  title: "Built-in Voice Calls",
+  description:
+    "Communicate seamlessly without leaving the whiteboard. Start voice conversations directly inside the room to brainstorm ideas, explain concepts, and collaborate more efficiently in real time.",
+  tag: "Communication",
   },
 ];
 
@@ -185,6 +186,24 @@ function Home() {
         {/* Row 2 — three equal cards */}
         <div className="grid grid-cols-3 gap-4">
           {FEATURES.slice(2, 5).map((f, i) => (
+            <TiltedFeatureCard key={i} feature = {f} />
+          ))}
+        </div>
+
+        {/* Row 3 */}
+        <div className="grid grid-cols-3 gap-4">
+          <TiltedFeatureCard feature = {FEATURES[5]} />
+          <div className="col-span-2">
+            <TiltedFeatureCard
+              feature = {FEATURES[6]}
+              
+            />
+          </div>        
+        </div>
+ 
+        {/* Row 2 — three equal cards */}
+        <div className="grid grid-cols-3 gap-4">
+          {FEATURES.slice(7, 10).map((f, i) => (
             <TiltedFeatureCard key={i} feature = {f} />
           ))}
         </div>
