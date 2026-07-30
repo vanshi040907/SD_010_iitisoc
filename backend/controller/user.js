@@ -36,13 +36,6 @@ async function LoginUser(req,res) {
 }
 
 async function LogoutUser (req,res){
-   
-
-    res.clearCookie("uid", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    });
    const userid = req.user.id;
    const user = await User.findById(userid);
    const username = user.userName;
@@ -66,7 +59,11 @@ async function LogoutUser (req,res){
    user.ActiveRoom = null;
    user.save();
    room.save();
-   
+   res.clearCookie("uid", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    });
 
     
     res.json({success:"true"})
