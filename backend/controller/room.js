@@ -49,15 +49,8 @@ async function UserEnterRoom(req, res) {
 
   user.ActiveRoom = room._id;
   await user.save();
-  let y = 0;
-     for(let i=0;i<n;i++){
-   if( room.participants[i].user.toString()===userid.toString()){
-    y = 1;
-    break;
-    }
-   }
-   
-  if(y==0) {
+  const y = activeParticipants.some((p) => p._id.toString() === userid.toString())   
+  if(!y) {
   room.participants.push({user:userid,role:"Editor"});
   await room.save();
   room.activeParticipants.push(userid);
@@ -95,17 +88,9 @@ async function Allowance(req,res) {
   const {access,roomid,user} = req.body;
    const room = await Room.findOne({ roomId: roomid });
    const newuser = await User.findById(user._id);
-   let y = 0;
-     for(let i=0;i<n;i++){
-   if( room.participants[i].user.toString()===userid.toString()){
-    y = 1;
-    break;
-    }
-   }
-  
-
   newuser.ActiveRoom = room._id;
   await newuser.save();
+  const y = room.participants.some((p) => p.user.toString() === user._id.toString())  
   if(y==0) {
   room.participants.push({user:newuser._id,role:access});
   
