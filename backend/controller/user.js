@@ -36,8 +36,9 @@ async function LoginUser(req,res) {
 }
 
 async function LogoutUser (req,res){
-   
-   res.clearCookie("uid", {
+    console.log(req)
+
+    res.clearCookie("uid", {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
