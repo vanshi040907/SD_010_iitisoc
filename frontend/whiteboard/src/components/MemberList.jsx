@@ -225,7 +225,7 @@ useEffect (() => {
        
       ) 
        if(res.data.success){
-
+         console.log("logot hu mai")
         socket.emit("logout");
           navigate('/login')
         }
@@ -234,6 +234,9 @@ useEffect (() => {
 
     }catch(error){
       console.log(error);
+      console.log(error.response);
+     console.log(error.response.data);
+     console.log(error.response.status);
     }
   }
 
