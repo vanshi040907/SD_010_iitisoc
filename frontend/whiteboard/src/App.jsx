@@ -5,7 +5,7 @@ import Signup from './pages/signup.jsx'
 import Home from './pages/home.jsx'
 import Welcome from './pages/Welcome.jsx'
 import Workspace from './pages/Workspace.jsx'
-import Dashboard from './pages/Dashboard.jsx'
+
 import Hello from './pages/Hello.jsx'
 import { SocketProvider } from './context/Socket.jsx'
 import { RoomProvider } from './context/RoomContext.jsx'
@@ -24,7 +24,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/Welcome" element={<Welcome />} />
-            <Route path="/Dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+
             <Route path="/Workspace/:roomID" element={<RoomProvider>
               <Workspace />
             </RoomProvider>} />
