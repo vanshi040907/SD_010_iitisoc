@@ -210,7 +210,18 @@ const { camera, setCamera, worldtoscreen, screentoworld, zoom, setZoom, cameraon
  
     const canvas = laserRef.current;
     const rect   = canvas.getBoundingClientRect();
-    const pt     = { x:  e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
+    let X,Y;
+    if(e.nativeEvent.touches && e.nativeEvent.touches.length > 0 ){
+      X = e.nativeEvent.touches[0].clientX - rect.left;
+      Y = e.nativeEvent.touches[0].clientY - rect.top;
+    }else if(e.nativeEvent.changedTouches && e.nativeEvent.changedTouches.length>0){
+       X = e.nativeEvent.changedTouches[0].clientX - rect.left;
+      Y = e.nativeEvent.changedTouches[0].clientY - rect.top;
+    }else{
+      X = e.nativeEvent.offsetX;
+      Y = e.nativeEvent.offsetY;
+    }
+    const pt     = { x:  X, y: Y };
     
     const world =  screentoworld({screen:pt,camera})
     const worldpt = {

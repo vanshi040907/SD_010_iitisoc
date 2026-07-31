@@ -1349,7 +1349,21 @@ const Whiteboard = () => {
 
 
   const getMousePos = (e) => {
-    return { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
+  const canvas = canvasRef.current;
+  const rect = canvas.getBoundingClientRect();
+
+    let X,Y;
+    if(e.nativeEvent.touches && e.nativeEvent.touches.length > 0 ){
+      X = e.nativeEvent.touches[0].clientX - rect.left;
+      Y = e.nativeEvent.touches[0].clientY - rect.top;
+    }else if(e.nativeEvent.changedTouches && e.nativeEvent.changedTouches.length>0){
+       X = e.nativeEvent.changedTouches[0].clientX - rect.left;
+      Y = e.nativeEvent.changedTouches[0].clientY - rect.top;
+    }else{
+      X = e.nativeEvent.offsetX;
+      Y = e.nativeEvent.offsetY;
+    }
+    return { x: X, y: Y };
   };
 
   const drawText = (ctx, item) => {
@@ -1959,7 +1973,11 @@ const Whiteboard = () => {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        onTouchStart={(e) => { e.preventDefault(); handleMouseDown(e); }}
+        onTouchMove={(e) => { e.preventDefault(); handleMouseMove(e); }}
+        onTouchEnd={(e) => { e.preventDefault(); handleMouseUp(e); }}
         className="absolute inset-0 touch-none"
+
         style={{
           cursor: TOOL_CURSORS[activeTool] ?? "crosshair",
         }}
