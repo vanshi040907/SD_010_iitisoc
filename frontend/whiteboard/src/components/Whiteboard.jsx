@@ -1049,6 +1049,11 @@ const Whiteboard = () => {
     if (showGrid) {
       drawGrid(ctx, canvas);
     }
+    historyStackRef.current.forEach((item) => {
+      if (item.type === "sticky") {
+        drawSticky(ctx, item);
+      }
+    });
 
     historyStackRef.current.forEach((item) => {
       if (item.type === "sticky") return;
@@ -1063,11 +1068,7 @@ const Whiteboard = () => {
 
     });
 
-    historyStackRef.current.forEach((item) => {
-      if (item.type === "sticky") {
-        drawSticky(ctx, item);
-      }
-    });
+
 
 
 
