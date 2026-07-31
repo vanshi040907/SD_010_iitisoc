@@ -156,12 +156,7 @@ export default function Welcome() {
   return (
     <div className="relative min-h-screen w-full ">
 
-      <Link
-        to="/Dashboard"
-        className="fixed top-5 right-5 z-20 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-white/[0.07] border border-white/10 hover:bg-white/[0.12] active:scale-95 transition"
-      >
-        My Boards
-      </Link>
+
       {/* <SplashCursor
         DENSITY_DISSIPATION={2}
         VELOCITY_DISSIPATION={1.5}
@@ -278,20 +273,20 @@ export default function Welcome() {
             <p className="text-violet-400 text-xs mb-1 h-4">{copyMsg}</p>
             <div className="flex justify-center w-full align-center pb-4 gap-4">
               <label className="text-[11px] text-violet-300 flex flex-col align-center justify-center font-semibold uppercase tracking-[0.15em]  block">
-              Host Permission
-            </label>
-            <button onClick={() => { setHostpermission(prev => !prev) }}>
-              <div className={`relative w-14 h-8 rounded-xl text-sm font-semibold text-white border border-white/10 transition-colors duration-300 ${hostpermission ? "bg-blue-500" : "bg-white/[0.07]"}`}>
-                <div className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white transition-transform duration-300
+                Host Permission
+              </label>
+              <button onClick={() => { setHostpermission(prev => !prev) }}>
+                <div className={`relative w-14 h-8 rounded-xl text-sm font-semibold text-white border border-white/10 transition-colors duration-300 ${hostpermission ? "bg-blue-500" : "bg-white/[0.07]"}`}>
+                  <div className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white transition-transform duration-300
                   ${hostpermission ? "translate-x-6" : "translate-x-0"}
                     `}></div>
-                <div className={`absolute top-1 left-1 w-6 h-6 text-sm font-semibold text-white  transition-transform duration-300
+                  <div className={`absolute top-1 left-1 w-6 h-6 text-sm font-semibold text-white  transition-transform duration-300
                          ${hostpermission ? "translate-x-0" : "translate-x-6"}
                     `}> {hostpermission ? "yes" : "no"}</div>
 
-              </div>
+                </div>
 
-            </button>
+              </button>
             </div>
 
             <button
