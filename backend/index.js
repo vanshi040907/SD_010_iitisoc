@@ -11,7 +11,7 @@ const Chat = require("./models/chat");
 const { ValidateToken } = require("./service/auth");
 const cookie = require("cookie");
 const chatRoutes = require("./routes/chat");
-const Whiteboard = require("../models/whiteBoard");
+const Whiteboard = require("./models/whiteBoard");
 
 
 
@@ -402,7 +402,15 @@ socket.on('sendMessage', async ({ roomId, userId, userName, content }) => {
         socket.to(room.roomId).emit("sendingHostCoordinate", {world});
 
 
-    })
+    });
+
+    socket.on("clear canvas" ,async()=>{
+         const userid = socket.user.id;
+        const user =  await User.findById(userid);
+        const room = user.ActiveRoom;
+        await Whiteboard.deleteMany({ room: room });
+    });
+
 
 
 });

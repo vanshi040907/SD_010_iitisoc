@@ -355,6 +355,7 @@ const Whiteboard = () => {
             color,
             width,
             isEraser,
+            isAutoShape,
             opacity = 1
           } = stroke;
 
@@ -515,6 +516,46 @@ const Whiteboard = () => {
           ctx.closePath();
           ctx.stroke();
         };
+         const AutoCircle = (ctx,shape)=>{
+           const start =  shape.start;
+    const end = shape.end;
+    const center ={ x: (shape.start.x + shape.end.x) / 2, y: (shape.start.y + shape.end.y) / 2};
+    const radius = Math.max((end.x - start.x)/2 , (end.y - start.y)/2);
+     ctx.strokeStyle = shape.color;
+    ctx.lineWidth = shape.width;
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
+    ctx.stroke();
+        };
+        const AutoRect =  (ctx, shape) => {
+    const start = shape.start;
+    const end = shape.end;
+
+    const x = Math.min(start.x, end.x);
+    const y = Math.min(start.y, end.y);
+    const width = Math.abs(end.x - start.x);
+    const height = Math.abs(end.y - start.y);
+
+    ctx.strokeStyle = shape.color;
+    ctx.lineWidth = shape.width;
+    ctx.strokeRect(x, y, width, height);
+  };
+
+
+  const AutoTriangle = (ctx, shape) => {
+    const start =  shape.start;
+    const end =  shape.end;
+
+    ctx.strokeStyle = shape.color;
+    ctx.lineWidth = shape.width;
+
+    ctx.beginPath();
+    ctx.moveTo((start.x + end.x) / 2, start.y);
+    ctx.lineTo(start.x, end.y);
+    ctx.lineTo(end.x, end.y);
+    ctx.closePath();
+    ctx.stroke();
+  };
 
         const Shape = (ctx, shape) => {
 
@@ -533,6 +574,15 @@ const Whiteboard = () => {
 
             case "line":
               LineShape(ctx, shape);
+              break;
+              case "autocircle": 
+              AutoCircle(ctx, shape);
+               break;
+            case "autoRect":
+              AutoRect(ctx, shape); 
+              break;
+            case "autoTriangle":
+              AutoTriangle(ctx, shape); 
               break;
 
             default:
@@ -623,6 +673,7 @@ const Whiteboard = () => {
             color,
             width,
             isEraser,
+            isAutoShape,
             opacity = 1
           } = stroke;
 
@@ -783,6 +834,48 @@ const Whiteboard = () => {
           ctx.stroke();
         };
 
+        const AutoCircle = (ctx,shape)=>{
+           const start =  shape.start;
+    const end = shape.end;
+    const center ={ x: (shape.start.x + shape.end.x) / 2, y: (shape.start.y + shape.end.y) / 2};
+    const radius = Math.max((end.x - start.x)/2 , (end.y - start.y)/2);
+     ctx.strokeStyle = shape.color;
+    ctx.lineWidth = shape.width;
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
+    ctx.stroke();
+        };
+
+        const AutoRect =  (ctx, shape) => {
+    const start = shape.start;
+    const end = shape.end;
+
+    const x = Math.min(start.x, end.x);
+    const y = Math.min(start.y, end.y);
+    const width = Math.abs(end.x - start.x);
+    const height = Math.abs(end.y - start.y);
+
+    ctx.strokeStyle = shape.color;
+    ctx.lineWidth = shape.width;
+    ctx.strokeRect(x, y, width, height);
+  };
+
+
+  const AutoTriangle = (ctx, shape) => {
+    const start =  shape.start;
+    const end =  shape.end;
+
+    ctx.strokeStyle = shape.color;
+    ctx.lineWidth = shape.width;
+
+    ctx.beginPath();
+    ctx.moveTo((start.x + end.x) / 2, start.y);
+    ctx.lineTo(start.x, end.y);
+    ctx.lineTo(end.x, end.y);
+    ctx.closePath();
+    ctx.stroke();
+  };
+
         const Shape = (ctx, shape) => {
 
           switch (shape.type) {
@@ -800,6 +893,15 @@ const Whiteboard = () => {
 
             case "line":
               LineShape(ctx, shape);
+              break;
+            case "autocircle": 
+              AutoCircle(ctx, shape);
+               break;
+            case "autoRect":
+              AutoRect(ctx, shape); 
+              break;
+            case "autoTriangle":
+              AutoTriangle(ctx, shape); 
               break;
 
             default:
@@ -1047,7 +1149,7 @@ const Whiteboard = () => {
         drawStroke(ctx, item);
       } else if (item.type === "text") {
         drawText(ctx, item);
-      } else {
+      } else  {
         drawShape(ctx, item);
       }
     });
@@ -1093,6 +1195,20 @@ const Whiteboard = () => {
     ctx.strokeRect(x, y, width, height);
   };
 
+  const drawAutoRect = (ctx,shape)=>{
+    const start = worldtoscreen({ world: shape.start, camera });
+    const end = worldtoscreen({ world: shape.end, camera });
+
+    const x = start.x;
+    const y = start.y;
+    const width = Math.abs(end.x - start.x);
+    const height = Math.abs(end.y - start.y);
+
+    ctx.strokeStyle = shape.color;
+    ctx.lineWidth = shape.width;
+    ctx.strokeRect(x, y, width, height);
+  }
+
   const drawLineShape = (ctx, shape) => {
     const start = worldtoscreen({ world: shape.start, camera });
     const end = worldtoscreen({ world: shape.end, camera });
@@ -1120,6 +1236,19 @@ const Whiteboard = () => {
     ctx.stroke();
   };
 
+  const drawAutoCircle = (ctx,shape)=>{
+     const start = worldtoscreen({ world: shape.start, camera });
+    const end = worldtoscreen({ world: shape.end, camera });
+    const center = worldtoscreen({ world: { x: (shape.start.x + shape.end.x) / 2, y: (shape.start.y + shape.end.y) / 2}, camera });
+    const radius = Math.max((end.x - start.x)/2 , (end.y - start.y)/2);
+     ctx.strokeStyle = shape.color;
+    ctx.lineWidth = shape.width;
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
+    ctx.stroke();
+
+  }
+
   const drawTriangle = (ctx, shape) => {
     const start = worldtoscreen({ world: shape.start, camera });
     const end = worldtoscreen({ world: shape.end, camera });
@@ -1135,6 +1264,22 @@ const Whiteboard = () => {
     ctx.stroke();
   };
 
+  const drawAutoTriangle = (ctx,shape)=>{
+    const start = worldtoscreen({ world: shape.start, camera });
+    const end = worldtoscreen({ world: shape.end, camera });
+    const corner = worldtoscreen({ world: shape.corner, camera });
+
+    ctx.strokeStyle = shape.color;
+    ctx.lineWidth = shape.width;
+
+    ctx.beginPath();
+    ctx.moveTo(corner.x,corner.y);
+    ctx.lineTo(start.x, start.y);
+    ctx.lineTo(end.x, end.y);
+    ctx.closePath();
+    ctx.stroke();
+  }
+
   const drawShape = (ctx, shape) => {
     
     switch (shape.type) {
@@ -1142,6 +1287,9 @@ const Whiteboard = () => {
       case "circle": drawCircle(ctx, shape); break;
       case "triangle": drawTriangle(ctx, shape); break;
       case "line": drawLineShape(ctx, shape); break;
+      case "autocircle":drawAutoCircle(ctx,shape);break;
+      case "autoTriangle":drawAutoTriangle(ctx,shape); break;
+      case "autoRect":drawAutoRect(ctx,shape);break;
       default: break;
     }
   };
@@ -1299,7 +1447,8 @@ const Whiteboard = () => {
     else if (
       activeToolRefLocal.current === "pen" ||
       activeToolRefLocal.current === "eraser" ||
-      activeToolRefLocal.current === "highlighter"
+      activeToolRefLocal.current === "highlighter"||
+      activeToolRefLocal.current ==="autoShape"
     ) {
       isDrawingRef.current = true;
       lastPointRef.current = point_stored;
@@ -1331,6 +1480,10 @@ const Whiteboard = () => {
 
         isHighlighter:
           activeToolRefLocal.current === "highlighter",
+
+          isAutoShape:
+          activeToolRefLocal.current ==="autoShape",
+
         bounds: {}
       };
     } else if (activeToolRefLocal.current === "shape") {
@@ -1492,7 +1645,8 @@ const Whiteboard = () => {
       color: currentStrokeRef.current.color,
       width: currentStrokeRef.current.width,
       isEraser: currentStrokeRef.current.isEraser,
-      opacity: currentStrokeRef.current.opacity
+      opacity: currentStrokeRef.current.opacity,
+      isAutoShape:currentStrokeRef.current. isAutoShape
     });
 
     drawSegment(
@@ -1502,7 +1656,8 @@ const Whiteboard = () => {
       currentStrokeRef.current.color,
       currentStrokeRef.current.width,
       currentStrokeRef.current.isEraser,
-      currentStrokeRef.current.opacity
+      currentStrokeRef.current.opacity,
+      currentStrokeRef.current. isAutoShape
     );
 
     currentStrokeRef.current.points.push(point_stored);
@@ -1525,7 +1680,8 @@ const Whiteboard = () => {
     if (
       (activeToolRefLocal.current === "pen" ||
         activeToolRefLocal.current === "eraser" ||
-        activeToolRefLocal.current === "highlighter") &&
+        activeToolRefLocal.current === "highlighter"||
+      activeToolRefLocal.current === "autoShape") &&
       currentStrokeRef.current &&
       currentStrokeRef.current.points.length > 1
     ) {
@@ -1554,12 +1710,14 @@ const Whiteboard = () => {
       } catch (error) {
         console.log(error);
       }
-
-      try {
+      
+      if(activeToolRefLocal.current === "autoShape"){
+        try {
       const res = await axios.post(
         "http://localhost:1000/predict",
         { points: currentStrokeRef.current.points.map((p) => ({ x: p.x, y: p.y })) }
       );
+      console.log("shape data",res.data);
       const { shape, accuracy } = res.data;
       console.log("recognized:", shape, accuracy);
 
@@ -1579,11 +1737,109 @@ const Whiteboard = () => {
 
       const shapeRef = previewShapeRef.current;
       socket.emit("remove this",{shapeRef});
-        // replaceStrokeWithShape(stroke, shape);  // hook this up once it exists
+       
+      }else if(accuracy > 0.85 && shape === "circle"){
+        
+         const points = currentStrokeRef.current.points;
+         const n = points.length;
+         const maxX = Math.max(...points.map(p => p.x));
+         const maxY = Math.max(...points.map(p => p.y));
+         const minX = Math.min(...points.map(p => p.x));
+         const minY = Math.min(...points.map(p => p.y));
+        
+        
+
+         const start = {x:minX,y: minY};
+         const end= {x:maxX,y:maxY};
+
+        
+        previewShapeRef.current = {
+        id: crypto.randomUUID(),
+        type: "autocircle",
+        start:start,
+        end: end,
+        color: currentStrokeRef.current.color,
+        width:currentStrokeRef.current.width,
+      };
+      
+       historyStackRef.current.pop();
+      historyStackRef.current.push(previewShapeRef.current);
+      console.log("hitoryRef",historyStackRef.current);
+
+      const shapeRef = previewShapeRef.current;
+      socket.emit("remove this",{shapeRef});
+      }else if(accuracy > 0.85 && shape === "square"){
+         const points = currentStrokeRef.current.points;
+         const n = points.length;
+         const maxX = Math.max(...points.map(p => p.x));
+         const maxY = Math.max(...points.map(p => p.y));
+         const minX = Math.min(...points.map(p => p.x));
+         const minY = Math.min(...points.map(p => p.y));
+        
+        
+
+         const start = {x:minX,y: minY};
+         const end= {x:maxX,y:maxY};
+
+        
+        previewShapeRef.current = {
+        id: crypto.randomUUID(),
+        type: "autoRect",
+        start:start,
+        end: end,
+        color: currentStrokeRef.current.color,
+        width:currentStrokeRef.current.width,
+      };
+      
+       historyStackRef.current.pop();
+      historyStackRef.current.push(previewShapeRef.current)
+
+      const shapeRef = previewShapeRef.current;
+      socket.emit("remove this",{shapeRef});
+      }else if(accuracy > 0.85 && shape === "triangle"){
+        let end;
+        let start;
+        let corner;
+        const points = currentStrokeRef.current.points;
+         const n = points.length;
+        const maxX = Math.max(...points.map(p => p.x));
+          const minY = Math.min(...points.map(p => p.y));
+         const minX = Math.min(...points.map(p => p.x));
+         
+         for(let i=0;i<n;i++){
+          if(points[i].x === maxX){
+            end = points[i];
+          }
+          if(points[i].x === minX){
+            start= points[i];
+          }
+          if(points[i].y === minY){
+            corner=points[i];
+          }
+         }
+        
+        previewShapeRef.current = {
+        id: crypto.randomUUID(),
+        type: "autoTriangle",
+        start:start,
+        end: end,
+        corner:corner,
+        color: currentStrokeRef.current.color,
+        width:currentStrokeRef.current.width,
+      };
+      
+       historyStackRef.current.pop();
+      historyStackRef.current.push(previewShapeRef.current)
+
+      const shapeRef = previewShapeRef.current;
+      socket.emit("remove this",{shapeRef});
       }
+
     } catch (err) {
       console.log("shape recognition failed", err);
     }
+      }
+      
 
       redoStackRef.current = [];
       redrawAll();

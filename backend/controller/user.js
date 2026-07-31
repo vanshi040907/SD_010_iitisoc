@@ -43,6 +43,7 @@ async function LogoutUser (req,res){
         secure: process.env.NODE_ENV === 'production',
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     });
+
    const userid = req.user.id;
    const user = await User.findById(userid);
    const username = user.userName;
