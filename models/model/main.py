@@ -6,6 +6,7 @@ from scipy.interpolate import interp1d
 import numpy as np
 import tensorflow as tf
 from fastapi.middleware.cors import CORSMiddleware
+import os
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -80,4 +81,6 @@ async def predict(stroke:Strokes):
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", port=1000, log_level="info")
+    port = int(os.environ.get("PORT",10000))
+    uvicorn.run(app,host="0.0.0.0",port=port)
+    

@@ -39,22 +39,10 @@ function Signup() {
 
 
     }
-    return (<>
+    return (<div className='min-h-screen'>
 
         {/* Cord + housing — behind the title */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 z-[8] flex flex-col items-center">
-            {/* <SplashCursor
-                DENSITY_DISSIPATION={2}
-                VELOCITY_DISSIPATION={1.5}
-                PRESSURE={0.05}
-                CURL={3}
-                SPLAT_RADIUS={0.13}
-                SPLAT_FORCE={3000}
-                COLOR_UPDATE_SPEED={23}
-                SHADING
-                RAINBOW_MODE={false}
-                COLOR="#7C3AED"
-            /> */}
             <div className="w-[2px] h-[180px] bg-gradient-to-b from-[#26203a] to-[#3a3454]" />
             <div className="w-[100px] h-[50px] bg-[#201a30] rounded-b-md rounded-t-[40px] shadow-md" />
         </div>
@@ -97,7 +85,7 @@ function Signup() {
             className="absolute top-[230px] left-1/2 -translate-x-1/2 w-[500px] h-[500px] z-[6] pointer-events-none"
         />
 
-        <div className="relative h-[100vh] w-full ">
+        <div className="relative min-h-screen w-full min-w-screen ">
             {/* Background layer */}
             <div className=" absolute inset-0 bg-[#0a0014]">
                 <Ferrofluid
@@ -198,13 +186,13 @@ function Signup() {
                 </motion.div>
 
 
-                <Link to="/login" className="text-violet-300/70 mt-[40px]"> Have an account? login now! </Link>
+                <Link to="/login" className="text-violet-300/70 mt-[40px] z-50"> Have an account? login now! </Link>
 
 
 
             </div>
         </div>
-    </>
+    </div>
     )
 }
 

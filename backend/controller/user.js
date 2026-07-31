@@ -65,12 +65,18 @@ async function LogoutUser (req,res){
    
 
    user.ActiveRoom = null;
-   user.save();
-   room.save();
+   await user.save();
+   await room.save();
    
 
+    res.clearCookie("uid", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    });
+
     
-    res.json({success:"true"})
+    res.json({success:"true",room:Rid,user:username})
 }
 
     

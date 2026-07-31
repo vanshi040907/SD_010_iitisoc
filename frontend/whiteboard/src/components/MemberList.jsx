@@ -101,9 +101,9 @@ const [enabled ,setEnabled] = useState(true);
 
 const MemberList = () => {
  
-   const navigate = useNavigate();
-  const socket = useSocket();
-  const [MEMBERS, setMEMBERS] = useState([]);
+const navigate = useNavigate();
+const socket = useSocket();
+const [MEMBERS, setMEMBERS] = useState([]);
 const [remoteStream , setRemoteStream] = useState([]);
 const memberRef = useRef([]);
 const peerConnection = useRef(new Map());
@@ -114,9 +114,17 @@ const streamPromiseRef = useRef(null);
 const [ismute,setMute] = useState(false);
 const [munteunmute , setMuteUnmute] = useState([]);
 const [allStreams,setAllStreams] = useState([]);
+const [currentUser, setCurrentUser] = useState(null);
 
+  useEffect(()=>{
+    fetch(`${conf.path}/user/me`, {credentials: 'include'})
+    .then((res) => res.json())
+    .then((data)=> setCurrentUser(data.user.userName || data))
+    .catch((err)=>console.error("Failed to fetch currentUser:", err));
 
-  
+    
+  }, []);
+
   useEffect(() => {
     const fetchMember = async () => {
       streamPromiseRef.current = navigator.mediaDevices.getUserMedia({ audio: true })
@@ -217,8 +225,8 @@ useEffect (() => {
        
       ) 
        if(res.data.success){
-
-        socket.emit("logout");
+         
+        socket.emit("logout",{room:res.data.room,username:res.data.user});
           navigate('/login')
         }
       
@@ -226,6 +234,9 @@ useEffect (() => {
 
     }catch(error){
       console.log(error);
+      console.log(error.response);
+     console.log(error.response.data);
+     console.log(error.response.status);
     }
   }
 
@@ -595,7 +606,7 @@ const handlemuteaudio = ()=>{
           ...theme.glass,
         }}
         >
-           V
+           {currentUser ? currentUser[0].toUpperCase() : "?"}
         </button>
        
         {!ismute ? <button className={`${theme.muteme}`} onClick={handlemuteaudio} ><FaMicrophone size={24}/></button> 

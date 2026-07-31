@@ -474,17 +474,21 @@ Used Socket.IO middleware with cookies and socket handshake authentication.
 
 # 🚧 Future Improvements
 
-- Live cursor sharing of host -  Saumya
 - Voice/video calling - Pranjali
 - ML based shape recognition - integration - Pranjali
 - Session Summmary using AI models- GEMINI - Saumya
 - Sticky Notes - Vishruthi
 - Responsive UI/Mobile view - Vanshika
-- Production deployment - Vanshika
 - Access to previous Boards - Vishruthi
-- fix UI for replay canvas - Vanshika/ Vishruthi
 - whenever we are closing, the name is not removed from members list
-- there is an issue with the socket connection of shapes
+- Technical Report
+- Demo Video
+- Code spacing //not an issue just we need to do remove the unwanted comments and functions. this we will do last
+- Readme update
+- Share link feature
+- Home page adding more feature cards
+- if user already present in the room, re-entry from same profile not valid
+- still the strokes from backend are not not synced instantly in the playback component
 
 ---
 

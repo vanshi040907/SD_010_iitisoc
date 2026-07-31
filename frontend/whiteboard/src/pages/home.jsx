@@ -31,12 +31,6 @@ const FEATURES = [
     tag: "Rooms",
   },
   {
-    icon: "⚡",
-    title: "Instant Sync",
-    description: "Every stroke syncs across all participants immediately via Socket.io.",
-    tag: "Sync",
-  },
-  {
     icon: "✏️",
     title: "Full Drawing Toolkit",
     description:
@@ -72,24 +66,31 @@ const FEATURES = [
     tag: null,
   },
   {
-    icon: "👥",
-    title: "Live Member Presence",
-    description:
-      "See who's in your room — avatars, names, online/offline status, and roles (Host, Editor, Viewer). The member list updates in real time as people join or leave, synced via Socket.IO room events.",
-    tag: "Coming Soon",
-  },
-  {
     icon: "💬",
     title: "Live Chat",
     description: "Communicate without ever leaving the whiteboard.",
     tag: null,
   },
   {
-    icon: "🔗",
-    title: "Room Sharing & Invite Links",
-    description:
-      "Share your room instantly via a copyable room code or a direct URL. The Share popup gives both options with a one-click copy that flashes a confirmation checkmark so you always know it worked.",
-    tag: null,
+  icon: "🔴",
+  title: "Laser Pointer",
+  description:
+    "Highlight important areas on the whiteboard in real time with a smooth laser pointer. Perfect for presentations, teaching, and collaborative discussions without leaving permanent marks on the canvas.",
+  tag: null,
+  },
+  {
+  icon: "📐",
+  title: "Grid Layout Toggle",
+  description:
+    "Enable or disable grid overlays instantly for better alignment and precision. Perfect for diagrams, sketches, wireframes, and structured designs while keeping the workspace clean when the grid isn't needed.",
+  tag: "Workspace",
+  },
+  {
+  icon: "🎙️",
+  title: "Built-in Voice Calls",
+  description:
+    "Communicate seamlessly without leaving the whiteboard. Start voice conversations directly inside the room to brainstorm ideas, explain concepts, and collaborate more efficiently in real time.",
+  tag: "Communication",
   },
 ];
 
@@ -137,7 +138,7 @@ function Home() {
                 <div className="fixed bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-violet-900/20 -translate-x-1/2 translate-y-1/2 blur-[200px]" />
                 <div className="fixed bottom-0 right-0 w-[500px] h-[500px] rounded-full bg-violet-900/20 blur-[200px] translate-x-1/2 translate-y-1/2" />
 
-<br / >
+<br / ><br />
                 <motion.div
                     initial={{ opacity: 0, y: -50 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -169,29 +170,19 @@ function Home() {
 
                 <div className="flex flex-col gap-4">
  
-        {/* Row 1 */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid lg:grid-cols-2 md:grid-cols-2 gap-8 min-[850px]:pl-20 min-[850px]:pr-20 min-[950px]:pl-40 min-[950px]:pr-40 min-[550px]:pl-10 min-[550px]:pr-10">
           {/* Feature 1 — spans 2 columns, matches your big card */}
-          <div className="col-span-2">
-            <TiltedFeatureCard
-              feature = {FEATURES[0]}
-              
-            />
-          </div>
-          {/* Feature 2 */}
-          <TiltedFeatureCard feature = {FEATURES[1]} />
-        </div>
- 
-        {/* Row 2 — three equal cards */}
-        <div className="grid grid-cols-3 gap-4">
-          {FEATURES.slice(2, 5).map((f, i) => (
-            <TiltedFeatureCard key={i} feature = {f} />
-          ))}
-        </div>
+          
+            {FEATURES.map((feature, i)=>(
+              <TiltedFeatureCard feature = {feature} />
+            ))}
+          
+          
  
       </div>
 
-                <Link to="/login">
+                <div className='w-full flex  justify-center'>
+                  <Link to="/login">
                     <button className="mt-12 px-10 py-3 rounded-xl text-white font-bold text-sm bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 shadow-[0_4px_20px_rgba(124,58,237,0.35)]">
                         <div className="flex items-center gap-2">
                           <span>Get Started!</span>
@@ -199,14 +190,10 @@ function Home() {
                         </div>
                     </button>
                 </Link>
+                </div>
             </div>
         </div>
-
-
-
-
-
-
+</div>
     )
 }
 
