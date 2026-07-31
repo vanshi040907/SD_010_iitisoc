@@ -58,7 +58,7 @@ const TitleCard_download = () => {
           <Download className="w-4 h-4 lg:w-[30px] lg:h-[30px]" strokeWidth={1.8} />
         </button>
         <div
-        className={`absolute right-0 top-full mt-2 w-44 lg:w-69.5 rounded-xl border ${theme.border} overflow-hidden z-50`}
+        className={`absolute right-0 top-full mt-2  w-44 lg:w-69.5 rounded-xl border ${theme.border} overflow-hidden z-500`}
         style={{
           ...theme.glass,
           // animate open/close
