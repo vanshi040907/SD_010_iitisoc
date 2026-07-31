@@ -119,7 +119,6 @@ async function Allowance(req, res) {
   await room.save();
   room.activeParticipants.push(newuser._id);
   await room.save();
-}
 
 req.io.to(user._id.toString()).emit("allow", { access: access });
 return res.json({
