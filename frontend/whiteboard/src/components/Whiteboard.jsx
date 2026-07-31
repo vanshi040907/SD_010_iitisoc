@@ -1795,7 +1795,7 @@ const Whiteboard = () => {
         try {
           console.log("fdfd",currentStrokeRef.current.points);
         const res = await axios.post(
-          "https://sd-010-iitisoc.onrender.com",
+          "https://sd-010-iitisoc.onrender.com/",
           { points: currentStrokeRef.current.points.map((p) => ({ x: p.x, y: p.y })) }
         );
       console.log("shape data",res.data);
