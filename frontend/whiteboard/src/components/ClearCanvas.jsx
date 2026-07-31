@@ -21,7 +21,7 @@ const Btn_clearCanvas = () => {
 
   return (
     <div>
-      <div className={` group fixed bottom-4 left-1/2 translate-x-30 w-14 h-14 rounded-xl flex z-50 items-center justify-center ${theme.textSecondary} ${theme.iconButtonHover} transition-all duration-200 z-5`}
+      <div className={` group fixed bottom-4 left-1/2 translate-x-30 w-14 max-[480px]:w-10 max-[480px]:h-10 max-[480px]:bottom-7 max-[480px]:rounded-full max-[480px]:translate-x-27 h-14 rounded-xl flex z-40 items-center justify-center ${theme.textSecondary} ${theme.iconButtonHover} transition-all duration-200 z-5`}
         style={{ ...theme.glass }}>
         <button className="h-18" onClick={clearCanvas}>
           <Trash2 />

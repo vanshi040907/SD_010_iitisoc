@@ -97,33 +97,9 @@ function SharePopup({ onClose }) {
             <p className={`${theme.textSecondary} text-xs mt-2 text-center`}>Share this code with anyone you want to invite</p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className={`flex-1 h-px ${theme.popupDiv}`} />
-            <span className="text-slate-600 text-xs">or share link</span>
-            <div className={`flex-1 h-px ${theme.popupDiv}`} />
-          </div>
-
-          <div>
-            <label className={`${theme.popupLabel} text-xs font-medium uppercase tracking-wider mb-2 block`}> ROOM LINK</label>
-            <div className="flex items-center gap-2">
-              <div className={`flex-1 flex items-center gap-2 px-3 py-2.5 rounded-xl border ${theme.popupBorder} min-w-0 ${theme.textPrimary}`}
-                style={{ background: "rgba(168,85,247,0.08)" }}>
-                <Link size={13} className={`${theme.textPrimary} flex-shrink-0`} />
-                <span className={`${theme.textPrimary} text-xs truncate font-mono`}>{ROOM_LINK}</span>
-              </div>
-
-              <button onClick={() => copy(ROOM_LINK, setLinkCopied)}
-                className={`w-11 h-11 rounded-xl flex items-center justify-center border transition-all duration-200 flex-shrink-0 ${linkCopied
-                  ? `${theme.copied}`
-                  : `${theme.popupBorder} ${theme.textPrimary} ${theme.iconButtonHover}`}`}
-              >
-                {linkCopied ? <Check size={16} /> : <Copy size={16} />}
-              </button>
-            </div>
-          </div>
         </div>
         <div className={`px-6 py-4 border-t ${theme.popupBorder} flex items-center gap-2`}>
-          <span className={`${theme.textSecondary} text-xs`}>Anyone with the code or link can join this room</span>
+          <span className={`${theme.textSecondary} text-xs`}>Anyone with the code can join this room</span>
         </div>
       </div>
     </>
@@ -438,13 +414,14 @@ const Invite_help = () => {
 
   return (
     <>
-      <div className={`fixed bottom-4 right-4 z-40 flex items-center gap-1.5 px-2 py-2 rounded-xl border ${theme.border}`} style={glassBtn}>
+      <div className={`max-sm:p-0 max-sm:rounded-full max-sm:h-10 max-sm:w-10
+        max-sm:bottom-7 max-[480px]:left-0 fixed bottom-4 right-4 z-40 flex items-center gap-1.5 px-2 py-2 rounded-xl h-14 ${theme.textSecondary} ${theme.iconButtonHover} transition-all duration-200 z-5`} style={glassBtn}>
         <div className="relative group">
           <button
             onClick={() => { setShareOpen(true); setAboutOpen(false); }}
             className={`flex items-center gap-2 px-3 py-2 rounded-lg ${theme.textPrimary} ${theme.iconButtonHover} transition-all duration-200`}>
             <Share2 size={15} strokeWidth={1.8} />
-            <span className="text-xs font-medium">Share</span>
+            <span className="max-md:hidden text-xs font-medium">Share</span>
           </button>
           <div className={`absolute bottom-full mb-4 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md border ${theme.border} text-xs text-slate-200 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-xl`}
             style={{ background: theme.tooltipBg }}>
@@ -453,9 +430,9 @@ const Invite_help = () => {
           </div>
         </div>
 
-        <div className={`w-px h-5 ${theme.divider} rounded-full`} />
+        <div className={`max-sm:hidden w-px h-5 ${theme.divider} rounded-full`} />
 
-        <div className="relative group">
+        <div className="max-sm:hidden relative group">
           <button
             onClick={() => { setAboutOpen(true); setShareOpen(false); }}
             className={`w-9 h-9 rounded-lg flex items-center justify-center ${theme.textPrimary} ${theme.iconButtonHover} transition-all duration-200`}>

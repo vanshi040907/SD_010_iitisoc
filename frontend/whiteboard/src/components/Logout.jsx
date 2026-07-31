@@ -7,7 +7,7 @@ const Logout = ({onCustomClick}) => {
     const {theme} = useContext(ThemeContext);
     
   return (
-    <div className={` group p-3 rounded-xl flex z-50 items-center justify-center ${theme.textSecondary} ${theme.iconButtonHover} transition-all duration-200 z-50`}
+    <div className={` group p-3 rounded-xl flex z-100 items-center justify-center ${theme.textSecondary} ${theme.iconButtonHover} transition-all duration-200 z-50`}
           style={{
             ...theme.glass
           }}>

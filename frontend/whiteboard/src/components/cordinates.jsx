@@ -82,7 +82,7 @@ const Btn_coordinates = () => {
     },[socket,camera,zoom])
 
     return (
-        <div className={`fixed bottom-65 right-4 -4 p-5 h-14 rounded-xl flex z-50 items-center justify-center ${theme.textPrimary} ${theme.iconButtonHover} transition-all duration-200 z-5 border ${theme.border}`}
+        <div className={`fixed top-25 right-2 p-3 h-12 rounded-full flex z-10 items-center justify-center ${theme.textPrimary} ${theme.iconButtonHover} transition-all duration-200  ${theme.border}`}
             style={{ ...theme.glass }}>
                  <button className="font-semibold text-sm">
                 X: {coords.x}, Y: {coords.y}

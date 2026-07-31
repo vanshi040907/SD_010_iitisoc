@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useState, useContext, useRef } from "react";
-import { StickyNote, Type, Shapes, ChevronDown, Undo2, Redo2, Eraser, MousePointer2, Minus, Square, Circle, Triangle, Highlighter, Pen, Pointer, } from "lucide-react";
+import { StickyNote, Type, Shapes, ChevronDown, Undo2, Redo2, Eraser, MousePointer2, Minus, PencilRuler, Square, Circle, Triangle, Highlighter, Pen, Pointer, } from "lucide-react";
 import { ThemeContext } from '../context/ThemeContext';
 import { WhiteboardContext } from '../context/WhiteboardContext';
 import ColorPicker from './ColorPicker';
@@ -28,7 +28,9 @@ const Toolbar = () => {
   const pickerRef = useRef(null);
   const shapesRef = useRef(null);
   const rangeRef = useRef(null);
-
+  const toolBarRef = useRef(null);
+  const [toolbarOpen, setToolbarOpen] = useState(true);
+  
   const { theme, isDark } = useContext(ThemeContext);
   const { activeTool, setActiveTool, activeColor, setActiveColor, strokeWidth, setStrokeWidth, undo, redo, canUndo, canRedo, activeShape,
     setActiveShape } = useContext(WhiteboardContext);
@@ -62,6 +64,7 @@ const Toolbar = () => {
     return ()=>document.removeEventListener("mousedown", handleClickOOutside);
   }, [shapesOpen]);
 
+
   useEffect(()=>{
     const handleClickOOutside = (e)=>{
       if(rangeRef.current && !rangeRef.current.contains(e.target)){
@@ -74,12 +77,12 @@ const Toolbar = () => {
     return ()=>document.removeEventListener("mousedown", handleClickOOutside);
   }, [rangeOpen]);
 
-  const ToolTipButton = ({ id, icon: Icon, label, onClick, isActive, disabled }) => (<div className="relative group flex items-center justify-center">
+  const ToolTipButton = ({ id, icon: Icon, label, onClick, isActive, disabled }) => (<div className="relative group flex items-center mx-0 justify-center">
     <button
       onClick={onClick}
       disabled={disabled}
       className={`
-          w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200
+          w-10 h-10 max-[400px]:w-8 max-[400px]:h-8 rounded-xl flex items-center justify-center transition-all duration-200
           ${isActive
           ? `${theme.activeBg} ${theme.textPrimary} shadow-lg ${theme.activeShadow}`
           : `${theme.textSecondary} ${theme.hover}`
@@ -103,8 +106,21 @@ const Toolbar = () => {
 
   return (
     <>
-      <div
-        className={`w-18 fixed top-28 left-4 flex flex-col items-center gap-1 px-2 py-3 rounded-2xl border ${theme.border} shadow-2xl z-50`}
+    
+      <button
+    className={`min-sm:hidden w-10 h-10 fixed bg-purple-900 left-3 top-15 z-50 rounded-xl flex items-center justify-center transition-all duration-200
+          ${toolbarOpen
+          ? `${theme.activeBg} ${theme.textPrimary} shadow-lg ${theme.activeShadow}`
+          : `${theme.textSecondary} ${theme.hover}`
+        }`}
+        ref={toolBarRef}
+    onClick={()=>setToolbarOpen(!toolbarOpen)}>
+      <PencilRuler />
+    </button>
+    
+     {toolbarOpen && (<div>
+       <div
+        className={`w-18 max-sm:w-13 fixed max-sm:left-15 top-15 lg:top-25 left-4 flex flex-col items-center gap-1 px-1 py-3 rounded-2xl border ${theme.border} shadow-2xl z-50`}
         style={{
           ...theme.glass
         }}
@@ -265,7 +281,8 @@ const Toolbar = () => {
         <ToolTipButton id="redo" icon={Redo2} label="Redo" onClick={redo} isActive={false} disabled={!canRedo} />
       </div>
 
-      <div className={`left-13 -translate-x-1/2 fixed top-167 px-4 py-1.5 rounded-full border ${theme.border} text-xs ${theme.textSecondary}`}
+     </div>)}
+     <div className={`fixed top-25 max-lg:top-14 right-4 max-lg:right-1 px-4 py-1.5 rounded-full border ${theme.border} text-xs ${theme.textSecondary}`}
         style={{ ...theme.glass }}
       >
         Active: <span className={`${theme.accent} font-medium capitalize`}>{activeTool === "shape" ? activeShape : activeTool}</span>

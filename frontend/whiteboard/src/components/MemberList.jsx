@@ -552,13 +552,23 @@ const handlemuteaudio = ()=>{
 
   return (
     <>
-    <div className="fixed top-4 right-4 z-50 flex flex-col items-end">
-      <div className='flex gap-5'>
+    <div className="relative lg:fixed lg:top-4 lg:right-4 z-50 flex items-center lg:flex-col lg:items-end">
+      <div className='flex gap-2 lg:gap-5 items-center'>
         
-        
+        {/* Mobile: compact avatar-chip, matches mockup */}
+       <button
+        onClick={() => setOpen(!open)}
+        className={`md:hidden flex items-center gap-1.5 pl-1 pr-2.5 py-1 rounded-full border ${theme.border}`}
+        style={{ ...theme.glass }}>
+  <div className="w-5.5 h-5.5 rounded-full bg-purple-600 flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0">
+    {MEMBERS[0]?.name[0]?.toUpperCase() || "?"}
+  </div>
+  <span className={`${theme.accent} text-[10px] font-medium`}>{onlineCount} online</span>
+</button>
+
         <button
        onClick={()=> setOpen(!open)}
-       className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border ${theme.border} transition-all duration-200 hover:border-purple-500/40`}
+       className={`hidden md:flex items-center gap-1.5 lg:gap-2.5 px-2 py-1 lg:px-3 lg:py-2 rounded-lg lg:rounded-xl border ${theme.border} transition-all duration-200 hover:border-purple-500/40`}
         style={{
           ...theme.glass
         }}
@@ -567,7 +577,7 @@ const handlemuteaudio = ()=>{
           <div className="flex items-center">
            
             {MEMBERS.slice(0, 3).map((m,i) => (
-              <div key={m.id} className={`w-10 h-10 rounded-full flex items-center justify-center text-l font-semibold text-white ring-2 ${theme.ringColor} flex-shrink-0`}
+              <div key={m.id} className={`w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-[10px] lg:text-l font-semibold text-white ring-1 lg:ring-2 ${theme.ringColor} flex-shrink-0`}
               style={{ background:"#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0'), marginLeft: i === 0 ? 0 : "-8px", zIndex: 3 - i }}
               >
                 {m.name[0].toUpperCase()}
@@ -578,7 +588,7 @@ const handlemuteaudio = ()=>{
             
              {/* For Extra members */}
             {MEMBERS.length > 3 && (
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-semibold text-slate-300 ring-2 ${theme.ringColor} flex-shrink-0`}
+            <div className={`w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-[8px] lg:text-xs font-semibold text-slate-300 ring-1 lg:ring-2 ${theme.ringColor} flex-shrink-0`}
               style={{ background: "rgba(73, 72, 73, 0.67)", marginLeft: "-8px" }}
             >
               +{MEMBERS.length - 3}
@@ -586,14 +596,14 @@ const handlemuteaudio = ()=>{
           )}
           </div>
 
-          <div className="h-14 flex flex-col justify-center items-start leading-tight">
-          <span className={`${theme.textPrimary} text-m font-semibold`}>{MEMBERS.length} Members</span>
-          <span className={`${theme.accent} text-[12px]`}>{onlineCount} online</span>
+          <div className="h-8 lg:h-14 flex flex-col justify-center items-start leading-tight">
+          <span className={`${theme.textPrimary} text-[10px] lg:text-m font-semibold`}>{MEMBERS.length} Members</span>
+          <span className={`${theme.accent} text-[8px] lg:text-[12px]`}>{onlineCount} online</span>
          </div>
 
          <ChevronDown
           size={14}
-          className={`${theme.textSecondary}transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+          className={`w-2.5 h-2.5 lg:w-3.5 lg:h-3.5 ${theme.textSecondary}transition-transform duration-300 ${open ? "rotate-180" : ""}`}
         />
         </button>  
        
@@ -601,7 +611,7 @@ const handlemuteaudio = ()=>{
          
         <button 
          onClick={()=> setLogoutOpen(!logoutOpen)}
-         className={`h-18 w-18 border ${theme.border} rounded-full flex justify-center items-center ${theme.textPrimary} text-4xl`}
+         className={`h-8 w-8 lg:h-18 lg:w-18 border ${theme.border} rounded-full flex justify-center items-center ${theme.textPrimary} text-xl lg:text-4xl`}
         style={{
           ...theme.glass,
         }}
@@ -609,13 +619,13 @@ const handlemuteaudio = ()=>{
            {currentUser ? currentUser[0].toUpperCase() : "?"}
         </button>
        
-        {!ismute ? <button className={`${theme.muteme}`} onClick={handlemuteaudio} ><FaMicrophone size={24}/></button> 
-        :<button className={`${theme.muteme}`}   onClick={handleunmuteaudio} ><FaMicrophoneSlash size={28}/> </button>}
+        {!ismute ? <button className={`${theme.muteme} [&>svg]:w-4 [&>svg]:h-4 lg:[&>svg]:w-6 lg:[&>svg]:h-6`} onClick={handlemuteaudio} ><FaMicrophone size={24}/></button> 
+        :<button className={`${theme.muteme} [&>svg]:w-4 [&>svg]:h-4 lg:[&>svg]:w-7 lg:[&>svg]:h-7`}   onClick={handleunmuteaudio} ><FaMicrophoneSlash size={28}/> </button>}
        
       </div>
       
 
-      <div className={`mt-2 w-69.5 rounded-2xl border ${theme.border}  z-400`}
+      <div className={`absolute right-0 top-full mt-2 w-40 lg:w-69.5 rounded-2xl border ${theme.border} z-50`}
         style={{
           ...theme.glass,
           maxHeight: logoutOpen ? "50px" : "0px",
@@ -629,7 +639,7 @@ const handlemuteaudio = ()=>{
         </div>
         
         <div
-        className={`mt-2 w-69.5 rounded-xl border ${theme.border} overflow-hidden`}
+        className={`absolute right-0 top-full mt-2 w-69.5 rounded-xl border ${theme.border} overflow-hidden  z-50`}
         style={{
           ...theme.glass,
           // animate open/close
@@ -667,15 +677,7 @@ const handlemuteaudio = ()=>{
                 <span className={`${theme.textMuted} text-xs`}>{m.role}</span>
                 </div>
 
-                <span
-                className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
-                  m.online
-                    ? `${theme.onlinePill}`
-                    : `${theme.awayPill}`
-                }`}
-              >
-                {m.online ? "Online" : "Away"}
-              </span>
+                
               </div>
             ))}
           </div>

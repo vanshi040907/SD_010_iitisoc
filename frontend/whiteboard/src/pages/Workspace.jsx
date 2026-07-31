@@ -1,6 +1,7 @@
 import React from 'react'
 import Toolbar from '../components/Toolbar'
 import TitleCard_download from '../components/TitleCard_download'
+import Header from '../components/Header'
 import MemberList from '../components/MemberList'
 import SessionStatus from '../components/SessionStatus'
 import Invite_help from '../components/Invite_help'
@@ -32,15 +33,13 @@ const Workspace = () => {
           <LaserProvider>
             <GridProvider>
               <Background />
-              <TitleCard_download />
+              <Header />
               <Toolbar />
-              <MemberList />
               <SessionStatus />
               <Invite_help />
               <Zoom />
               <AlertPopup />
-              <Playback />
-              <ToggleBtn />
+              <Playback />             
               <Whiteboard />
               <LaserWhiteboard />
               <Btn_clearCanvas />

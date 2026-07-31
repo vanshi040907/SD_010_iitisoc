@@ -2,23 +2,21 @@ import React from "react";
 import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { useGrid } from "../context/GridContext";
+import { Grid3x3 } from 'lucide-react';
 const Btn_grid = () => {
 
-    const { isDark, theme } = useContext(ThemeContext);
+    const { theme } = useContext(ThemeContext);
     const { showGrid, toggleGrid } = useGrid();
 
     return (
         <>
-            <div className={`fixed bottom-48 right-4 p-5 h-14 rounded-xl flex z-50 items-center justify-center ${theme.textPrimary} ${theme.iconButtonHover} transition-all duration-200 z-5 border ${theme.border}`}
+            <div className={` display-none sm:fixed bottom-4 left-1/2 -translate-x-44 w-14 h-14 rounded-xl flex z-40 items-center justify-center ${theme.textSecondary} ${theme.iconButtonHover} transition-all duration-200 z-5`}
                 style={{
                     ...theme.glass
                 }}>
                 <button className=" h-18" onClick={toggleGrid} >
-                    {showGrid ? "Hide grid" : "Show grid"}
+                    <Grid3x3 />
                 </button>
-
-
-
             </div>
         </>
     )

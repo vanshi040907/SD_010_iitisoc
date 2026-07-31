@@ -178,7 +178,7 @@ const SessionStatus = () => {
       {/* chat box */}
 
       <div 
-      className={`fixed right-40 ounded-2xl border ${theme.border} flex flex-col overflow-hidden z-40`}
+      className={`fixed left-1/2 -translate-x-1/2 rounded-2xl border ${theme.border} flex flex-col overflow-hidden z-40`}
         style={{
           ...glassStyle,
           bottom: "84px",
@@ -226,7 +226,8 @@ const SessionStatus = () => {
                     </span>
                   )}
                   <div
-                  className={`px-3 py-2 rounded-2xl text-xs max-w-[85%] leading-relaxed ${
+                  className={`px-3 py-2 break-words
+                     rounded-2xl text-xs max-w-[85%] leading-relaxed ${
                     isMe
                       ? `${theme.memessageBg} ${theme.textPrimary} rounded-br-sm`
                       : ` ${theme.textPrimary} rounded-bl-sm`
@@ -267,7 +268,7 @@ const SessionStatus = () => {
       </div>
 
       <div
-        className={`fixed bottom-20 left-1/2 -translate-x-1/2 px-3 py-2.5 rounded-2xl ${theme.divider} flex items-center gap-1 z-40`}
+        className={`fixed w-105 max-[400px]:w-55 max-sm:h-50 bottom-20 left-1/2 -translate-x-1/2 px-3 py-2.5 rounded-2xl ${theme.divider} flex items-center flex-wrap gap-1 z-40`}
         style={{
           ...glassStyle,
           maxHeight: emojiOpen ? "80px" : "0px",
@@ -292,7 +293,7 @@ const SessionStatus = () => {
       {/* Bottom card */}
       <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
         <div
-          className={`flex items-center gap-1 px-2 py-2 rounded-2xl ${theme.divider}`}
+          className={`flex items-center gap-1 max-[480px]:px-1 px-2 py-2 rounded-2xl ${theme.divider}`}
           style={glassStyle}
         >
           {/* End Session */}

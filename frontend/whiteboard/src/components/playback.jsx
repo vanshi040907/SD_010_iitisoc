@@ -122,7 +122,7 @@ function Playback() {
 
     return (
         <div
-            className={`absolute bottom-20 left-1/2 -translate-x-1/2 z-10 flex items-center gap-[14px] border ${theme.border} px-[18px] py-[10px] rounded-full backdrop-blur-md`}
+            className={`display-none sm:absolute bottom-20 left-1/2 -translate-x-1/2 z-10 flex items-center gap-[14px] border ${theme.border} px-[18px] py-[10px] rounded-full backdrop-blur-md`}
             style={theme.glass}
         >
 
