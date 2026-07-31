@@ -1,0 +1,55 @@
+# Query: redowhit
+# ContextLines: 1
+
+26 results - 3 files
+
+backend\controller\whiteboard.js:
+    3  const Whiteboard = require("../models/whiteBoard");
+    4: const RedoWhiteboard = require("../models/redowhiteboard");
+    5  async function EventHandling (req, res) {
+
+   44           await whiteboard[i].deleteOne();
+   45:          const redoWhiteBoard = await RedoWhiteboard.create({
+   46            room:redoroom,
+
+   61  
+   62:        const newredowhiteboard = await RedoWhiteboard.find({room:room}).sort({createdAt:1});
+   63  
+   64:        if(!newredowhiteboard) return;
+   65  
+   66:          const remainingRedoHistory = newredowhiteboard.map((w)=> w.drawingOperations).flat();   
+   67  
+
+   75       const room = user.ActiveRoom;
+   76:      const redowhiteboard = await RedoWhiteboard.find({room : room}).sort({ createdAt:- 1 });
+   77:        const n = redowhiteboard.length;
+   78      
+
+   82  
+   83:       if(redowhiteboard[i].user.toString() === user._id.toString()){
+   84:            const undoroom = redowhiteboard[i].room;
+   85:          const undouserid = redowhiteboard[i].user;
+   86:          const undodrawingOperation  = redowhiteboard[i].drawingOperations;
+   87           
+   88:          await redowhiteboard[i].deleteOne();
+   89             
+
+  110  
+  111:        const newredowhiteboard = await RedoWhiteboard.find({room:room}).sort({createdAt:1});
+  112  
+  113:          const remainingRedoHistory = newredowhiteboard.map((w)=> w.drawingOperations).flat();   
+  114  
+
+backend\middleware\auth.js:
+  4  const Whiteboard = require("../models/whiteBoard");
+  5: const RedoWhiteboard = require("../models/redowhiteboard");
+  6  function  restrictToLoggedinUser(req,res,next) {
+
+backend\models\redowhiteboard.js:
+   2  
+   3: const redoWhiteboardSchema = new Schema(
+   4    {
+
+  28  
+  29: const RedoWhiteboard = model("redoWhiteboard" , redoWhiteboardSchema );
+  30: module.exports = RedoWhiteboard;

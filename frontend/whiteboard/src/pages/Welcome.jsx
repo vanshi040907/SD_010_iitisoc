@@ -110,7 +110,7 @@ export default function Welcome() {
           socket.connect();
         }
         socket.emit("pending", { myName: joinName.trim() });
-        
+
         alert("wait for approval");
       }
 
@@ -155,6 +155,13 @@ export default function Welcome() {
 
   return (
     <div className="relative min-h-screen w-full ">
+
+      <Link
+        to="/Dashboard"
+        className="fixed top-5 right-5 z-20 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-white/[0.07] border border-white/10 hover:bg-white/[0.12] active:scale-95 transition"
+      >
+        My Boards
+      </Link>
       {/* <SplashCursor
         DENSITY_DISSIPATION={2}
         VELOCITY_DISSIPATION={1.5}
@@ -268,8 +275,9 @@ export default function Welcome() {
               </button>
             </div>
 
-            <p className="text-violet-400 text-xs mb-5 h-4">{copyMsg}</p>
-            <label className="text-[11px] text-violet-300 font-semibold uppercase tracking-[0.15em] mb-1 block">
+            <p className="text-violet-400 text-xs mb-1 h-4">{copyMsg}</p>
+            <div className="flex justify-center w-full align-center pb-4 gap-4">
+              <label className="text-[11px] text-violet-300 flex flex-col align-center justify-center font-semibold uppercase tracking-[0.15em]  block">
               Host Permission
             </label>
             <button onClick={() => { setHostpermission(prev => !prev) }}>
@@ -284,6 +292,7 @@ export default function Welcome() {
               </div>
 
             </button>
+            </div>
 
             <button
               onClick={createRoom}

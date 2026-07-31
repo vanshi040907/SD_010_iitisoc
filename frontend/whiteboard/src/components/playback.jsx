@@ -1,9 +1,9 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { WhiteboardContext } from '../context/WhiteboardContext'
 import { ThemeContext } from '../context/ThemeContext'
 
 function Playback() {
-    const { drawingRefs, historyLength } = useContext(WhiteboardContext);
+    const { drawingRefs } = useContext(WhiteboardContext);
     const { theme } = useContext(ThemeContext);
 
     const replayIndexRef = useRef(0);
@@ -11,6 +11,20 @@ function Playback() {
     const [isReplaying, setIsReplaying] = useState(false);
     const [replayProgress, setReplayProgress] = useState(0);
 
+    // Total item count read directly from the shared historyStackRef,
+    // instead of the WhiteboardContext `historyLength` state (which only
+    // updates on the client that personally drew/undid something, not on
+    // clients that received history over the socket).
+    const [totalItems, setTotalItems] = useState(0);
+
+    useEffect(() => {
+        const poll = setInterval(() => {
+            const liveLength = drawingRefs.current?.historyStackRef?.current?.length ?? 0;
+            setTotalItems((prev) => (prev !== liveLength ? liveLength : prev));
+        }, 250);
+
+        return () => clearInterval(poll);
+    }, [drawingRefs]);
 
     const playReplayStep = () => {
         const { historyStackRef, ctxRef, drawStroke, drawText, drawShape } = drawingRefs.current;
@@ -46,7 +60,7 @@ function Playback() {
         const canvas = canvasRef.current;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-
+        setTotalItems(historyStackRef.current.length);
         replayIndexRef.current = 0;
         setReplayProgress(0);
         setIsReplaying(true);
@@ -83,8 +97,8 @@ function Playback() {
     };
 
     const replayPercent =
-        historyLength > 0
-            ? (replayProgress / historyLength) * 100
+        totalItems > 0
+            ? (replayProgress / totalItems) * 100
             : 0;
 
     const PlayIcon = () => (
@@ -135,7 +149,7 @@ function Playback() {
             </div>
 
             <span className={`${theme.accent} text-xs font-inherit min-w-[50px]`}>
-                {replayProgress}/{historyLength}
+                {replayProgress}/{totalItems}
             </span>
         </div>
     )

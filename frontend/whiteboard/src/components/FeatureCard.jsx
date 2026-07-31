@@ -44,7 +44,7 @@ const FeatureCard = ({ feature }) => {
       style={style}
       className={`
         relative overflow-hidden rounded-2xl cursor-pointer
-        border p-6 flex flex-col gap-3 min-h-[180px]
+        border p-6 flex flex-col gap-3 min-h-[210px]
         will-change-transform
         bg-[rgba(20,10,40,0.75)]
         transition-[box-shadow,border-color] duration-300
