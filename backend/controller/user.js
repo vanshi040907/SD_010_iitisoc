@@ -36,8 +36,15 @@ async function LoginUser(req,res) {
 }
 
 async function LogoutUser (req,res){
-    console.log(req.user);
-    const userid = req.user.id;
+   
+
+    res.clearCookie("uid", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    });
+
+   const userid = req.user.id;
    const user = await User.findById(userid);
    const username = user.userName;
    const roomid = user.ActiveRoom;

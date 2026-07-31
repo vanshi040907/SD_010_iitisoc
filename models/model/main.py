@@ -5,8 +5,16 @@ import uvicorn
 from scipy.interpolate import interp1d
 import numpy as np
 import tensorflow as tf
+from fastapi.middleware.cors import CORSMiddleware
 import os
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://sd-010-iitisoc-frontend.vercel.app"],  # your Vite frontend origin, or ["*"] for dev
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 model = tf.keras.models.load_model("Shapepredict.keras")
 class pts(BaseModel):
     x:float

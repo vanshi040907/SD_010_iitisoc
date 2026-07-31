@@ -20,11 +20,21 @@ function Playback() {
     useEffect(() => {
         const poll = setInterval(() => {
             const liveLength = drawingRefs.current?.historyStackRef?.current?.length ?? 0;
-            setTotalItems((prev) => (prev !== liveLength ? liveLength : prev));
+
+            setTotalItems((prev) => {
+                if (prev === liveLength) return prev;
+
+                if (!isReplaying) {
+                    replayIndexRef.current = 0;
+                    setReplayProgress(0);
+                }
+
+                return liveLength;
+            });
         }, 250);
 
         return () => clearInterval(poll);
-    }, [drawingRefs]);
+    }, [drawingRefs, isReplaying]);
 
     const playReplayStep = () => {
         const { historyStackRef, ctxRef, drawStroke, drawText, drawShape } = drawingRefs.current;

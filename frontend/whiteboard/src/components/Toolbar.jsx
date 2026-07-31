@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useState, useContext, useRef } from "react";
-import { StickyNote, Type, Shapes, ChevronDown, Undo2, Redo2, Eraser, MousePointer2, Minus, PencilRuler, Square, Circle, Triangle, Highlighter, Pen, Pointer, } from "lucide-react";
+import { StickyNote, Type, Shapes, ChevronDown, Undo2, Redo2, Eraser, MousePointer2, Minus, PencilRuler, Square, Circle, Triangle, Highlighter, Pen, Pointer,Wand2 } from "lucide-react";
 import { ThemeContext } from '../context/ThemeContext';
 import { WhiteboardContext } from '../context/WhiteboardContext';
 import ColorPicker from './ColorPicker';
@@ -8,6 +8,7 @@ import ColorPicker from './ColorPicker';
 const tools = [
   { id: "select", icon: MousePointer2, label: "Select" },
   { id: "pen", icon: Pen, label: "Pen" },
+  {id:  "autoShape",icon:Wand2 , lable:"AutoShape"},
   { id: "sticky", icon: StickyNote, label: "Sticky Note" },
   { id: "highlighter", icon: Highlighter, label: "Highlighter" },
   { id: "text", icon: Type, label: "Text" },

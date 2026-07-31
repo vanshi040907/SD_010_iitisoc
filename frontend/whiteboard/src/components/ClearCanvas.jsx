@@ -1,9 +1,11 @@
-import React, { useContext } from 'react'
-import { Trash2 } from 'lucide-react'
-import { ThemeContext } from '../context/ThemeContext'
-import { WhiteboardContext } from '../context/WhiteboardContext'
+import React, { useContext, useEffect } from 'react';
+import { Trash2 } from 'lucide-react';
+import { ThemeContext } from '../context/ThemeContext';
+import { WhiteboardContext } from '../context/WhiteboardContext';
+import { useSocket } from '../context/Socket';
 
 const Btn_clearCanvas = () => {
+  const socket = useSocket();
   const { isDark, theme } = useContext(ThemeContext);
   const { drawingRefs, bump } = useContext(WhiteboardContext);
 
@@ -15,9 +17,25 @@ const Btn_clearCanvas = () => {
     if (!ctxRef?.current || !canvasRef?.current || !redrawAll) return;
 
     historyStackRef.current = [];
+  
+    socket.emit("clear canvas");
     redrawAll();
     bump();
   }
+
+  useEffect(()=>{
+    const handleClearCanvas = async()=>{
+     const { historyStackRef, redrawAll } = drawingRefs.current;
+     historyStackRef.current = [];
+     redrawAll();
+     bump();
+    }
+    socket.on("clear canvas",handleClearCanvas);
+
+    return ()=>{
+      socket.off("clear canvas",handleClearCanvas);
+    }
+  },[socket]);
 
   return (
     <div>
