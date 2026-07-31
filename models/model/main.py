@@ -10,7 +10,7 @@ import os
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://sd-010-iitisoc-frontend.vercel.app/"],  # your Vite frontend origin, or ["*"] for dev
+    allow_origins=["https://sd-010-iitisoc-frontend.vercel.app"],  # your Vite frontend origin, or ["*"] for dev
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
