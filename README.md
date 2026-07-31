@@ -1,558 +1,226 @@
-# SD_010_iitisoc
-
 # 🎨 Real-Time Collaborative Whiteboard
 
-A full-stack **real-time collaborative whiteboard application** where multiple users can draw, write, annotate, and collaborate on the same canvas simultaneously.
+A feature-rich, full-stack collaborative whiteboard built for seamless real-time teamwork, brainstorming, online teaching, technical interviews, and remote collaboration. The application enables multiple users to work simultaneously on an infinite canvas with instant synchronization, role-based access control, integrated voice communication, AI-assisted shape recognition, and persistent collaboration history.
 
-Built using **React, HTML5 Canvas, Node.js, Express, Socket.IO, and MongoDB**.
-
----
-
-## 🚀 Features
-
-## ✏️ Drawing Tools
-
-- Freehand drawing
-- Pencil tool
-- Eraser tool
-- Highlighter tool
-- Rectangle shape
-- Circle shape
-- Triangle shape
-- Line tool
-- Text tool
-- Custom colors
-- Adjustable stroke width
-
-
-## 🔄 Real-Time Collaboration
-
-- Multiple users can work on the same whiteboard
-- Live drawing synchronization
-- Room-based collaboration
-- Unique room codes
-- Socket.IO based communication
-
-
-## 🧠 Canvas Features
-
-- HTML5 Canvas drawing engine
-- Smooth stroke rendering
-- Operation based history
-- Undo / Redo support
-- Canvas replay system
-
-
-## 🔐 Authentication
-
-- User Signup
-- User Login
-- JWT authentication
-- Secure password hashing
-- Protected routes
-
-
-## 💾 Database
-
-MongoDB stores:
-
-- User information
-- Room details
-- Drawing operations
-
-
-## 📤 Export
-
-- Download whiteboard as JPEG
-
-
-## 🎨 UI Features
-
-- Dark / Light theme
-- Glassmorphism toolbar
-- Animated landing page
-- Responsive design
-- Framer Motion animations
-
+Designed with scalability and performance in mind, the project combines modern web technologies with real-time communication and machine learning to provide a smooth, production-ready collaborative experience.
 
 ---
 
-# 🛠️ Tech Stack
-
-
-## Frontend
-
-| Technology | Usage |
-|---|---|
-| React.js | UI development |
-| Vite | Frontend build tool |
-| HTML5 Canvas | Drawing engine |
-| Tailwind CSS | Styling |
-| Framer Motion | Animations |
-| Socket.IO Client | Real-time updates |
-
-
-## Backend
-
-| Technology | Usage |
-|---|---|
-| Node.js | Server runtime |
-| Express.js | REST APIs |
-| Socket.IO | Real-time communication |
-| MongoDB | Database |
-| Mongoose | Database modeling |
-| JWT | Authentication |
-
-
----
-
-# 📂 Project Structure
-
-
-```
-SD_010_iitisoc
-
-│
-├── backend
-│
-│── controller
-│   ├── authController.js
-│   ├── roomController.js
-│   └── whiteboardController.js
-│
-│── middleware
-│   └── authMiddleware.js
-│
-│── models
-│   ├── userModel.js
-│   ├── roomModel.js
-│   └── whiteboardModel.js
-│
-│── routes
-│   ├── authRoutes.js
-│   ├── roomRoutes.js
-│   └── whiteboardRoutes.js
-│
-│── service
-│
-│── connection.js
-│── index.js
-│
-│
-├── frontend
-│
-│── whiteboard
-│
-│── src
-│
-│   ├── animations
-│   │   ├── Ferrofluid.jsx
-│   │   ├── LetsCoSketh.jsx
-│   │   └── TextPressure.jsx
-│   │
-│   ├── components
-│   │   ├── Whiteboard.jsx
-│   │   ├── Background.jsx
-│   │   ├── FeatureCard.jsx
-│   │   ├── Invite_help.jsx
-│   │   ├── MemberList.jsx
-│   │   ├── SessionStatus.jsx
-│   │   ├── TitleCard_download.jsx
-│   │   ├── ToggleBtn.jsx
-│   │   └── Toolbar.jsx
-│   │
-│   ├── context
-│   │   ├── RoomContext.jsx
-│   │   ├── ThemeContext.jsx
-│   │   ├── Socket.jsx
-│   │   └── WhiteboardContext.jsx
-│   │
-│   ├── pages
-│   │   ├── Login.jsx
-│   │   ├── Signup.jsx
-│   │   ├── Home.jsx
-│   │   ├── Welcome.jsx
-│   │   └── Workspace.jsx
-│   │
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── index.css
-│
-└── README.md
-
-```
-
-
----
-
-# ⚙️ Installation
-
-
-## Clone Repository
-
-```bash
-git clone https://github.com/vanshi040907/SD_010_iitisoc.git
-
-cd SD_010_iitisoc
-```
-
-
----
-
-# Backend Setup
-
-
-Move into backend folder:
-
-```bash
-cd backend
-```
-
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-
-Create `.env` file:
-
-
-```
-PORT=5000
-
-MONGO_URI=your_mongodb_connection
-
-JWT_SECRET=your_secret_key
-```
-
-
-Start backend:
-
-
-```bash
-npm start
-```
-
-
-Backend runs on:
-
-```
-http://localhost:5000
-```
-
-
----
-
-# Frontend Setup
-
-
-Open another terminal:
-
-
-```bash
-cd frontend/whiteboard
-```
-
-
-Install dependencies:
-
-
-```bash
-npm install
-```
-
-
-Run frontend:
-
-
-```bash
-npm run dev
-```
-
-
-Frontend runs on:
-
-
-```
-http://localhost:5173
-```
-
-
----
-
-# 🔁 Working Flow
-
-
-```
-User draws on canvas
-
-        ↓
-
-Canvas captures drawing data
-
-        ↓
-
-Frontend emits Socket.IO event
-
-        ↓
-
-Backend receives event
-
-        ↓
-
-Event broadcasted to room members
-
-        ↓
-
-Other users see drawing instantly
-
-```
-
-
----
-
-# 🔌 API Routes
-
-
-## Authentication
-
-
-### Signup
-
-```
-POST /auth/signup
-```
-
-
-### Login
-
-```
-POST /auth/login
-```
-
-
-
----
-
-## Room Management
-
-
-### Create Room
-
-```
-POST /room/create
-```
-
-
-### Join Room
-
-```
-POST /room/join
-```
-
-
-
----
-
-## Whiteboard
-
-
-### Save Drawing
-
-```
-POST /whiteboard/event
-```
-
-
-### Get Canvas Data
-
-```
-GET /whiteboard/getdata
-```
-
-
-### Undo
-
-```
-GET /whiteboard/undo
-```
-
-
-### Redo
-
-```
-POST /whiteboard/redo
-```
-
-
-
----
-
-# 🧩 Project Modules
-
-
-## Canvas Engine
-
-Responsible for:
-
-- Drawing strokes
-- Shapes
-- Text rendering
-- Erasing
-- Canvas replay
-
-
----
-
-## Real-Time Engine
-
-Handles:
-
-- Live strokes
-- Shape synchronization
-- Room communication
+## ✨ Key Features
+
+### 🖌️ Collaborative Drawing
+- Real-time multi-user drawing using Socket.IO
+- Pen, Highlighter, Eraser, Text, and Shape tools
+- Smooth freehand drawing using HTML5 Canvas
+- Undo & Redo functionality
+- Drag, Select & Move existing objects
+- Sticky Notes support
+- Clear Canvas with confirmation
+
+### ♾️ Infinite Canvas
+- Unlimited drawing space
+- Smooth panning and zooming
+- Cursor-centric zoom
+- World-coordinate based rendering
+- Responsive on desktop and touch devices
+
+### 👥 Collaboration & Permissions
+- Secure user authentication with JWT
+- Create and join rooms using unique room codes
+- Host-controlled room approval system
+- Role-based access (Host, Editor, Viewer)
+- Live participant list
+- "Go To Host View" synchronization
+
+### 💬 Communication
+- Real-time room chat
+- Persistent chat history
+- Voice calling powered by WebRTC
+- Laser Pointer for live presentations
 - Emoji reactions
 
+### 🤖 AI Features
+- Machine Learning based shape recognition
+- Converts rough hand-drawn sketches into clean geometric shapes
+- Powered by FastAPI + TensorFlow
+
+### 📤 Productivity
+- Export complete whiteboard
+- Export current viewport
+- Export selected object
+- Playback previous drawing sessions
+- Grid overlay
+- Dark & Light themes
 
 ---
 
-## Authentication Module
+## 🛠️ Tech Stack
 
-Handles:
-
-- Signup
-- Login
-- JWT verification
-- Secure sessions
-
-
----
-
-## Database Module
-
-Stores:
-
-- Users
-- Rooms
-- Drawing history
-
+| Layer | Technologies |
+|--------|--------------|
+| Frontend | React, Vite, Tailwind CSS, Framer Motion |
+| Drawing Engine | HTML5 Canvas |
+| Backend | Node.js, Express.js |
+| Real-Time Communication | Socket.IO |
+| Database | MongoDB, Mongoose |
+| Authentication | JWT, Cookies |
+| Machine Learning | FastAPI, TensorFlow, NumPy, SciPy |
+| Voice Communication | WebRTC |
+| Deployment | Vercel, Render |
 
 ---
 
-# 🐛 Challenges Solved
+## 🚀 Highlights
 
-
-## Undo / Redo Issue
-
-Problem:
-
-Canvas history was stored using `useRef`, therefore React UI was not updating automatically.
-
-
-Solution:
-
-Implemented a state update trigger after history modification to refresh the canvas.
-
+- ⚡ Real-time synchronization with minimal latency
+- ♾️ Infinite canvas with smooth navigation
+- 🔐 Secure authentication & protected routes
+- 👥 Role-based collaboration with host approval
+- 🤖 AI-assisted drawing experience
+- 🎙️ Built-in voice communication
+- 📱 Fully responsive UI
+- 🎨 Modern glassmorphism interface with dark/light mode
 
 ---
 
-## Socket Authentication
+## 🏗️ System Architecture
 
-Problem:
+```text
+                                  +-----------------------+
+                                  |    React + Vite       |
+                                  |    Frontend Client    |
+                                  +-----------+-----------+
+                                              |
+                +-----------------------------+-----------------------------+
+                |                             |                             |
+      HTTP / REST APIs                 Socket.IO Events                HTTP / REST
+     (Auth, Rooms, History)          (Sync, Chat, Pointer)          (Shape Predict)
+                |                             |                             |
+                v                             v                             v
+    +-----------------------+     +-----------------------+     +-----------------------+
+    |    Node.js / Express  |     |   Socket.IO Server    |     |   FastAPI ML Service  |
+    |    Backend API        | <--->  (Real-Time Engine)   |     |  (TensorFlow / Keras) |
+    +-----------+-----------+     +-----------+-----------+     +-----------+-----------+
+                |                             |                             |
+                +-----------------------------+                             |
+                                              |                             |
+                                              v                             v
+                                  +-----------------------+     +-----------------------+
+                                  |    MongoDB Database   |     |   LSTM Neural Network |
+                                  | (Users, Rooms, Sync)  |     |   (QuickDraw Model)   |
+                                  +-----------------------+     +-----------------------+
+```
 
-Multiple API calls were required to identify users.
 
 
-Solution:
+## 🔌 API & Socket Reference
+REST Endpoints
+Authentication
+```
+POST /signin — Register a new salted/hashed user account
+POST /login — Validate credentials and assign HTTP-only JWT cookie
+GET /me — Fetch current session profile details
+GET /logout — Invalidate user session and clear auth cookies
+```
+Room & Permission Controls
+```
+POST /createroom — Generate a new room instance (Requester designated as Host)
+POST /joinRoom — Submit request to join a room code
+POST /allowed — Host endpoint to approve pending users
+POST /deny — Host endpoint to decline pending users
+GET /getmember — Fetch active room member list and assigned roles
+GET /leaveRoom — Disconnect from current active room
+```
+Whiteboard Data Operations
+```
+GET /whiteboard/getdata — Retrieve board operation state history
+POST /whiteboard/event — Save completed canvas draw/mod operation
+GET /whiteboard/undo — Revert previous operation step
+POST /whiteboard/redo — Re-apply undone operation step
+POST /update — Persist coordinate changes following drag actions
+GET /rooms/:roomId/chats — Retrieve historical message logs
+```
 
-Used Socket.IO middleware with cookies and socket handshake authentication.
 
+## User schema 
+```
+const userSchema = new Schema({
+  userName:   { type: String, required: true },
+  email:      { type: String, required: true, unique: true },
+  salt:       { type: String },
+  password:   { type: String, required: true },
+  ActiveRoom: { type: Schema.Types.ObjectId, ref: "room" }
+});
+```
+## Room schema
+```
+const roomSchema = new Schema({
+  roomId:         { type: String, required: true },
+  hostpermission: { type: Boolean, default: false },
+  owner:          { type: Schema.Types.ObjectId, ref: "user", required: true },
+  participants: [{
+    user:         { type: Schema.Types.ObjectId, ref: "user" },
+    role:         { type: String, enum: ["Host", "Viewer", "Editor"], default: "Editor" },
+    enabled:      { type: Boolean, default: true }
+  }],
+  activeParticipants: [{ type: Schema.Types.ObjectId, ref: "user" }]
+}, { timestamps: true });
+```
+
+## Chat schema
+```
+const chatSchema = new Schema({
+  room:     { type: Schema.Types.ObjectId, ref: "room", required: true },
+  user:     { type: Schema.Types.ObjectId, ref: "user", required: true },
+  userName: { type: String, required: true },
+  content:  { type: String, required: true },
+  sentAt:   { type: Date, default: Date.now }
+}, { timestamps: true });
+```
+##📦 Installation
+
+```bash
+# Clone the repository
+git clone <repository-url>
+
+# Move into the project
+cd collaborative-whiteboard
+
+# Install dependencies
+npm install
+
+# Start the frontend
+npm run dev
+
+# Start the backend
+npm start
+
+```
+---
+
+## 🌍 Use Cases
+
+- Online classrooms
+- Team brainstorming sessions
+- Technical interviews
+- Product & UI design discussions
+- Collaborative note-taking
+- Remote meetings and presentations
+
+---
+## Future Improvemnents
+
+ - 🤖 AI Features & Smart Tools
+- Access to previously made boards
+  
+
+## 👨‍💻 Contributors
+
+- Vanshika Agrawal
+- Saumya Roy
+- Kampurne Pranjali Dhondiba
+- Vishruthi CV
 
 ---
 
-# 🚧 Future Improvements
-
-- Voice/video calling - Pranjali
-- ML based shape recognition - integration - Pranjali
-- Session Summmary using AI models- GEMINI - Saumya
-- Sticky Notes - Vishruthi
-- Responsive UI/Mobile view - Vanshika
-- Access to previous Boards - Vishruthi
-- whenever we are closing, the name is not removed from members list
-- Technical Report
-- Demo Video
-- Code spacing //not an issue just we need to do remove the unwanted comments and functions. this we will do last
-- Readme update
-- Share link feature
-- Home page adding more feature cards
-- if user already present in the room, re-entry from same profile not valid
-- still the strokes from backend are not not synced instantly in the playback component
-
----
-
-# 👥 Team
-
-
-## Frontend
-
-
-### Vanshika Agrawal
-
-- Canvas engine
-- Toolbar
-- Drawing tools
-- Undo/Redo
-- Download feature
-- Theme system
-- UI animations
-
-
-### Vishruthi CV
-
-- Login/signup UI
-- Join room logic
-- Shapes
-- Highlighter
-- Eraser
-- Text tool
-
-
-
-## Backend
-
-
-### Saumya Roy
-
-- JWT authentication
-- Socket.IO handling
-- MongoDB setup
-- Room management
-
-
-### Pranjali Dhondiba
-
-- Database schemas
-- Password hashing
-- Authentication logic
-
-
----
-
-# 📸 Screenshots
-
-<img width="1912" height="948" alt="Screenshot 2026-06-30 103656" src="https://github.com/user-attachments/assets/8da6a1e6-cf50-4840-a570-096ea6f2f06c" />
-<img width="980" height="960" alt="Screenshot 2026-06-30 140306" src="https://github.com/user-attachments/assets/ad3109e4-0c54-478f-bf9f-94c35c8d381e" />
-<img width="977" height="937" alt="Screenshot 2026-06-30 140712" src="https://github.com/user-attachments/assets/dffb7e27-a6c7-4fcc-89af-6c7c965c34ed" />
-<img width="1895" height="952" alt="Screenshot 2026-06-30 141133" src="https://github.com/user-attachments/assets/63b144f7-0f1f-4ebb-9fd5-091ffcca28d3" />
-<img width="1895" height="945" alt="Screenshot 2026-06-30 162405" src="https://github.com/user-attachments/assets/94df3651-0c65-4a02-abf9-d0dbcd2d03dd" />
-
-
-
----
-
-# 📜 License
-
-
-This project is developed for educational purposes as part of IITISoC 2026.
+⭐ If you found this project interesting, consider giving it a **star** and contributing!
