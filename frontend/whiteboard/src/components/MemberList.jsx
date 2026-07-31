@@ -606,7 +606,7 @@ const handlemuteaudio = ()=>{
           ...theme.glass,
         }}
         >
-           {currentUser[0].toUpperCase()}
+           {currentUser ? currentUser[0].toUpperCase() : "?"}
         </button>
        
         {!ismute ? <button className={`${theme.muteme}`} onClick={handlemuteaudio} ><FaMicrophone size={24}/></button> 
