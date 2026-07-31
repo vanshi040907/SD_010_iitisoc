@@ -25,11 +25,11 @@ const Whiteboard = () => {
   const [add, setAdd] = useState(0);
   const [selectedId, setSelectedId] = useState(null);
   const selectedIdRef = useRef(null);
-  
+
   useEffect(() => { selectedIdRef.current = selectedId; }, [selectedId]);
 
-  const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump, notifyHistortChange, setActiveShape, setActiveTool, registerDrawing, selectExport, setSelectExport, role, setRole ,setHistoryLength, historyLength} = useContext(WhiteboardContext);
-  
+  const { activeTool, activeShape, activeColor, strokeWidth, registerEngine, bump, notifyHistortChange, setActiveShape, setActiveTool, registerDrawing, selectExport, setSelectExport, role, setRole, setHistoryLength, historyLength } = useContext(WhiteboardContext);
+
 
   const { camera, setCamera, worldtoscreen, screentoworld, zoom, setZoom, cameraonzoom, isZoom, setIsZoom, canvasRef } = useInfinity();
   const { laserLeave, laserMove, laserUp } = useContext(LaserContext);
@@ -1041,7 +1041,7 @@ const Whiteboard = () => {
 
   //function for undo/redo/ first initialisation of the canvas- complete redraw through object array saved
   const redrawAll = useCallback(() => {
-    
+
     const ctx = ctxRef.current;
     const canvas = canvasRef.current;
     if (!ctx || !canvas) return;
@@ -1051,6 +1051,7 @@ const Whiteboard = () => {
     }
 
     historyStackRef.current.forEach((item) => {
+      if (item.type === "sticky") return;
       if (item.type === "stroke") {
         drawStroke(ctx, item);
       } else if (item.type === "text") {
@@ -1058,7 +1059,17 @@ const Whiteboard = () => {
       } else {
         drawShape(ctx, item);
       }
+
+
     });
+
+    historyStackRef.current.forEach((item) => {
+      if (item.type === "sticky") {
+        drawSticky(ctx, item);
+      }
+    });
+
+
 
     if (selectedIdRef.current) {
       const item = historyStackRef.current.find((i) => i.id === selectedIdRef.current);
@@ -1167,7 +1178,7 @@ const Whiteboard = () => {
   };
 
   const drawShape = (ctx, shape) => {
-    
+
     switch (shape.type) {
       case "rect": drawRect(ctx, shape); break;
       case "circle": drawCircle(ctx, shape); break;
@@ -1594,7 +1605,7 @@ const Whiteboard = () => {
           withCredentials: true,
         },
         );
-        
+
 
 
       } catch (error) {
@@ -1602,34 +1613,34 @@ const Whiteboard = () => {
       }
 
       try {
-      const res = await axios.post(
-        "http://localhost:1000/predict",
-        { points: currentStrokeRef.current.points.map((p) => ({ x: p.x, y: p.y })) }
-      );
-      const { shape, accuracy } = res.data;
-      console.log("recognized:", shape, accuracy);
+        const res = await axios.post(
+          "http://localhost:1000/predict",
+          { points: currentStrokeRef.current.points.map((p) => ({ x: p.x, y: p.y })) }
+        );
+        const { shape, accuracy } = res.data;
+        console.log("recognized:", shape, accuracy);
 
-       
-      if (accuracy > 0.85 && shape === "line") {
-        previewShapeRef.current = {
-        id: crypto.randomUUID(),
-        type: shape,
-        start:currentStrokeRef.current.points[0],
-        end: currentStrokeRef.current.points[currentStrokeRef.current.points.length -1],
-        color: currentStrokeRef.current.color,
-        width:currentStrokeRef.current.width,
-      };
-       
-      historyStackRef.current.pop();
-      historyStackRef.current.push(previewShapeRef.current)
 
-      const shapeRef = previewShapeRef.current;
-      socket.emit("remove this",{shapeRef});
-        // replaceStrokeWithShape(stroke, shape);  // hook this up once it exists
+        if (accuracy > 0.85 && shape === "line") {
+          previewShapeRef.current = {
+            id: crypto.randomUUID(),
+            type: shape,
+            start: currentStrokeRef.current.points[0],
+            end: currentStrokeRef.current.points[currentStrokeRef.current.points.length - 1],
+            color: currentStrokeRef.current.color,
+            width: currentStrokeRef.current.width,
+          };
+
+          historyStackRef.current.pop();
+          historyStackRef.current.push(previewShapeRef.current)
+
+          const shapeRef = previewShapeRef.current;
+          socket.emit("remove this", { shapeRef });
+          // replaceStrokeWithShape(stroke, shape);  // hook this up once it exists
+        }
+      } catch (err) {
+        console.log("shape recognition failed", err);
       }
-    } catch (err) {
-      console.log("shape recognition failed", err);
-    }
 
       redoStackRef.current = [];
       redrawAll();
