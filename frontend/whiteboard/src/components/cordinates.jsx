@@ -7,7 +7,7 @@ import { useSocket } from "../context/Socket";
 
 const Btn_coordinates = () => {
     const { isDark, theme } = useContext(ThemeContext);
-    const { screentoworld, camera,setCamera, canvasRef } = useInfinity();
+    const { screentoworld, camera,setCamera, canvasRef , zoom, setZoom} = useInfinity();
     const [coords, SetCoords] = useState({ x: 0, y: 0 });
     const [hostcoords, Sethostcoords] = useState({x:0,y:0});
     const {role,setRole} = useContext(WhiteboardContext);
@@ -53,12 +53,13 @@ const Btn_coordinates = () => {
         const handleHost = (data) => {
             const {userid} = data;
             console.log("hi");
-            socket.emit("givingHostcamera",{camera:camera,userid:userid});
+            socket.emit("givingHostcamera",{camera:camera,zoom:zoom,userid:userid});
         }
         const handleCamera = (data) => {
-            const {camera} = data;
+            const {camera,zoom} = data;
             console.log("dfghjk");
              setCamera({ x: Math.round(camera.x), y: Math.round(camera.y) });
+             setZoom(zoom);
 
         }
         const handleCoordinates = (data) => {
@@ -78,7 +79,7 @@ const Btn_coordinates = () => {
 
 
 
-    },[socket,camera])
+    },[socket,camera,zoom])
 
     return (
         <div className={`fixed bottom-65 right-4 -4 p-5 h-14 rounded-xl flex z-50 items-center justify-center ${theme.textPrimary} ${theme.iconButtonHover} transition-all duration-200 z-5 border ${theme.border}`}

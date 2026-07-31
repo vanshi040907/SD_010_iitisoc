@@ -11,7 +11,7 @@ const Chat = require("./models/chat");
 const { ValidateToken } = require("./service/auth");
 const cookie = require("cookie");
 const chatRoutes = require("./routes/chat");
-const Whiteboard = require("../models/whiteBoard");
+const Whiteboard = require("./models/whiteBoard");
 
 
 
@@ -350,14 +350,9 @@ socket.on('sendMessage', async ({ roomId, userId, userName, content }) => {
     });
 
     socket.on("logout", async (data) => {
-        const userid = socket.user.id;
-        const user = await User.findById(userid);
-        const roomid = user.ActiveRoom;
-        const room = await Room.findById(roomid);
-        const rid = room.roomId;
-        if(!rid) return;
-        const username = user.userName;
-        socket.to(rid).emit("leave me!", { username });
+        const{room,username} = data;
+        
+        socket.to(room).emit("leave me!", { username });
     });
 
     socket.on("objectmoving", async (data) => {
@@ -387,9 +382,9 @@ socket.on('sendMessage', async ({ roomId, userId, userName, content }) => {
 
     })
     socket.on("givingHostcamera",async(data) => {
-        const {camera,userid} = data;
+        const {camera,zoom,userid} = data;
              console.log("receiver :",userid);
-        socket.to(userid).emit("sendingHostCamera", {camera});
+        socket.to(userid).emit("sendingHostCamera", {camera:camera,zoom:zoom});
 
 
     })

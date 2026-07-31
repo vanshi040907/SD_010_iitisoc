@@ -143,8 +143,8 @@ async function Denial(req,res) {
    req.io.to(Rid.toString()).emit("leave me!",{username});
 
    user.ActiveRoom = null;
-   user.save();
-   room.save();
+   await user.save();
+   await room.save();
    
     return res.json({success:"true"});
  }

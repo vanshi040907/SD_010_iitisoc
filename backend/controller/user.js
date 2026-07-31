@@ -36,7 +36,31 @@ async function LoginUser(req,res) {
 }
 
 async function LogoutUser (req,res){
-    console.log(req)
+    console.log(req.user);
+    const userid = req.user.id;
+   const user = await User.findById(userid);
+   const username = user.userName;
+   const roomid = user.ActiveRoom;
+   const room = await Room.findById(roomid);
+   const Rid = room.roomId;
+   if(!room.roomId) return;
+
+   const n = room.participants.length;
+  
+   for(let i=0;i<n;i++){
+   if( room.participants[i].user.toString()===userid.toString()){
+    room.participants.splice(i,1);
+    room.activeParticipants.splice(i,1);
+    
+    break;
+   }
+   }
+   
+
+   user.ActiveRoom = null;
+   await user.save();
+   await room.save();
+   
 
     res.clearCookie("uid", {
         httpOnly: true,
@@ -45,7 +69,7 @@ async function LogoutUser (req,res){
     });
 
     
-    res.json({success:"true"})
+    res.json({success:"true",room:Rid,user:username})
 }
 
     
