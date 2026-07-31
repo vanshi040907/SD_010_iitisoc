@@ -407,8 +407,13 @@ socket.on('sendMessage', async ({ roomId, userId, userName, content }) => {
     socket.on("clear canvas" ,async()=>{
          const userid = socket.user.id;
         const user =  await User.findById(userid);
-        const room = user.ActiveRoom;
-        await Whiteboard.deleteMany({ room: room });
+        const roomid = user.ActiveRoom;
+        
+        await Whiteboard.deleteMany({ room: roomid });
+        const room = await Room.findById(roomid);
+        const roomID = room.roomId;
+
+        socket.to(roomID).emit("clear canvas");
     });
 
 
